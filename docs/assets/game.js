@@ -214,7 +214,7 @@
         if (!keepScore) {
             state.score = 0;
         }
-        document.body.style.setProperty("--accent", def.accent);
+        document.body.style.setProperty("--level-accent", def.accent);
         overlay.hidden = true;
         levelSubtitle.textContent = `Уровень ${def.id} · ${def.project}`;
         hudLevel.textContent = `${def.id} / 8`;
@@ -783,7 +783,7 @@
                 return `<li class="${index === 0 ? "is-top" : ""}">
                     <span class="board__rank">${index + 1}.</span>
                     <span class="board__player">${escapeHtml(score.player)}</span>
-                    <span class="board__meta board__meta--level" style="color:${level.accent}">ур. ${score.level} · ${escapeHtml(level.title)}</span>
+                    <span class="board__meta board__meta--level">ур. ${score.level} · ${escapeHtml(level.title)}</span>
                     <span class="board__meta">${score.score} очк · ${formatTime(score.seconds)}</span>
                 </li>`;
             }).join("");
@@ -943,7 +943,7 @@
         };
         state.level = buildLevel(LEVELS[0]);
         state.player = resetPlayer(state.level);
-        document.body.style.setProperty("--accent", LEVELS[0].accent);
+        document.body.style.setProperty("--level-accent", LEVELS[0].accent);
         hudLevel.textContent = "1 / 8";
         updateHud();
         window.requestAnimationFrame(loop);

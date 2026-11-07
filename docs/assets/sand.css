@@ -1,5 +1,6 @@
 .sand-body {
-    --accent: #34d399;
+    --accent: #3f6b4a;
+    --accent-soft: rgba(63, 107, 74, 0.09);
 }
 
 #sand {
@@ -14,12 +15,12 @@
 .sand-tools {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     flex-wrap: wrap;
-    margin-top: 14px;
-    padding: 12px 14px;
+    margin-top: 16px;
+    padding: 14px 16px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: var(--radius);
     background: var(--panel);
 }
 
@@ -33,10 +34,10 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 13px;
-    border: 1px solid var(--line);
-    border-radius: 11px;
-    background: rgba(120, 160, 210, 0.07);
+    padding: 8px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    background: transparent;
     color: var(--text);
     font: inherit;
     font-size: 13px;
@@ -45,30 +46,32 @@
 }
 
 .sand-swatch:hover {
-    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+    border-color: var(--text);
 }
 
 .sand-swatch.is-active {
-    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px var(--accent);
 }
 
 .swatch-dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 1px;
 }
 
-.swatch-dot--wall { background: #2a4a74; box-shadow: inset 0 0 0 1px #4b7aa8; }
-.swatch-dot--water { background: #4a6cf0; box-shadow: 0 0 8px rgba(74, 108, 240, 0.6); }
+.swatch-dot--wall { background: #41526b; }
+.swatch-dot--water { background: #33518c; }
 .swatch-dot--erase { background: transparent; box-shadow: inset 0 0 0 1px var(--muted); }
 
-.sand-brush {    display: inline-flex;
+.sand-brush {
+    display: inline-flex;
     align-items: center;
-    gap: 9px;
+    gap: 10px;
     color: var(--muted);
-    font-size: 12.5px;
-    letter-spacing: 0.06em;
+    font-size: 11px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
@@ -93,54 +96,65 @@
 .levels {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 0;
     justify-content: center;
-    margin: 2px 0 14px;
+    margin: 0 0 18px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 4px 0;
 }
 
 .level-chip {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
     padding: 8px 12px;
-    border: 1px solid var(--line);
-    border-radius: 11px;
-    background: rgba(120, 160, 210, 0.07);
-    color: var(--text);
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--muted);
     font: inherit;
     font-size: 12.5px;
     cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
+    transition: color 0.15s ease, background 0.15s ease;
 }
 
 .level-chip b {
     display: inline-grid;
     place-items: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 6px;
-    background: rgba(120, 160, 210, 0.16);
-    font-size: 11px;
+    width: 17px;
+    height: 17px;
+    border: 1px solid var(--line-strong);
+    border-radius: 1px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 400;
 }
 
 .level-chip:hover {
-    border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+    color: var(--text);
+    background: var(--panel);
 }
 
 .level-chip.is-active {
-    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--text);
+    background: var(--panel);
+    box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.level-chip.is-active b {
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 .hud-item--material {
-    min-width: 128px;
+    min-width: 132px;
 }
 
 .hud-bar {
-    margin-top: 7px;
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(120, 160, 210, 0.14);
+    margin-top: 8px;
+    height: 3px;
+    background: var(--line);
     overflow: hidden;
 }
 
@@ -148,30 +162,29 @@
     display: block;
     height: 100%;
     width: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #34d399, #38bdf8);
+    background: var(--accent);
     transition: width 0.16s ease;
 }
 
 .hud-bar i.is-empty {
-    background: linear-gradient(90deg, #f87171, #fbbf24);
+    background: var(--err);
 }
 
 .spend {
     position: absolute;
     z-index: 5;
     padding: 3px 8px;
-    border-radius: 9px;
-    border: 1px solid rgba(120, 160, 190, 0.28);
+    border: 1px solid rgba(244, 240, 230, 0.28);
+    border-radius: 2px;
     background: rgba(9, 15, 27, 0.92);
-    color: #f87171;
+    color: #f0908a;
     font: 600 12px/1 Consolas, monospace;
     pointer-events: none;
     animation: spend-rise 0.75s ease-out forwards;
 }
 
 .spend--gain {
-    color: #34d399;
+    color: #86d3a4;
 }
 
 @keyframes spend-rise {
@@ -186,9 +199,10 @@
     }
 }
 
-.dot--data { background: #8bd4ff; box-shadow: 0 0 10px #8bd4ff; }.dot--reject { background: #f87171; box-shadow: 0 0 10px #f87171; }
-.dot--narrow { background: #fbbf24; box-shadow: 0 0 10px #fbbf24; }
-.dot--deliver { background: #34d399; box-shadow: 0 0 10px #34d399; }
+.dot--data { background: #8bd4ff; }
+.dot--reject { background: #e2685f; }
+.dot--narrow { background: #e3b05f; }
+.dot--deliver { background: #57a878; }
 
 @media (max-width: 720px) {
     .sand-actions {
@@ -196,6 +210,11 @@
     }
 
     .sand-tools {
-        gap: 10px;
+        gap: 12px;
+    }
+
+    .level-chip {
+        padding: 7px 9px;
+        font-size: 11.5px;
     }
 }

@@ -6,6 +6,7 @@
     <title>JPA без N+1 — проект 2 из восьми</title>
     <meta name="description" content="Одна и та же выборка задач в четырёх вариантах: наивный обход связей, fetch join, EntityGraph и DTO-проекция. Число SQL-запросов измеряется статистикой Hibernate.">
     <link rel="stylesheet" href="/assets/styles.css">
+    <script src="/assets/icons.js" defer></script>
 </head>
 <body style="--accent: #6b3f86">
 <div class="grid-bg" aria-hidden="true"></div>
@@ -13,15 +14,15 @@
 <header class="topbar">
     <div class="wrap topbar__inner">
         <a class="brand" href="/">
-            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__mark" aria-hidden="true"><svg class="icon"><use href="#i-grid"></use></svg></span>
             <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
         </a>
         <nav class="nav" aria-label="Основная навигация">
-            <a href="/">Консоль</a>
-            <a href="/showcase.html">Витрина</a>
-            <a href="/showcase.html#projects" aria-current="page">Проекты</a>
-            <a href="/game.html">Платформер</a>
-            <a href="/sand.html">Поток</a>
+            <a href="/"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>
+            <a href="/showcase.html"><svg class="icon"><use href="#i-window"></use></svg>Витрина</a>
+            <a href="/showcase.html#projects" aria-current="page"><svg class="icon"><use href="#i-folder"></use></svg>Проекты</a>
+            <a href="/game.html"><svg class="icon"><use href="#i-gamepad"></use></svg>Платформер</a>
+            <a href="/sand.html"><svg class="icon"><use href="#i-sand"></use></svg>Поток</a>
         </nav>
     </div>
 </header>
@@ -34,8 +35,17 @@
             <p class="lead">Одна и та же выборка задач в четырёх вариантах: наивный обход связей, fetch join, EntityGraph и DTO-проекция. Число SQL-запросов измеряется статистикой Hibernate.</p>
             <div class="tags"><span class="tag">Hibernate</span><span class="tag">Статистика запросов</span><span class="tag">fetch join</span><span class="tag">EntityGraph</span><span class="tag">DTO-проекция</span><span class="tag">@Version</span></div>
         </div>
-        <div class="project-hero__media">
-            <img src="/svg/p2.svg" alt="Анимация проекта: JPA без N+1" width="480" height="270">
+        <div class="project-hero__media window">
+            <div class="window__bar">
+                <span class="window__app"><svg class="icon"><use href="#i-window"></use></svg>Проект 02</span>
+                <span class="window__title">p2.svg</span>
+                <span class="window__controls">
+                    <span class="window__btn"><svg><use href="#i-minimize"></use></svg></span>
+                    <span class="window__btn"><svg><use href="#i-maximize"></use></svg></span>
+                    <span class="window__btn window__btn--close"><svg><use href="#i-close"></use></svg></span>
+                </span>
+            </div>
+            <div class="window__body"><img src="/svg/p2.svg" alt="Анимация проекта: JPA без N+1" width="480" height="270"></div>
         </div>
     </section>
 

@@ -1,56 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270" role="img" aria-label="подпись">
   <title>подпись</title>
   <defs>
-    <pattern id="grid-p7" width="24" height="24" patternUnits="userSpaceOnUse">
-      <path d="M24 0H0V24" fill="none" stroke="rgba(120, 160, 210, 0.10)" stroke-width="1"/>
-    </pattern>
-    <radialGradient id="glow-p7" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="line-p7" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#c084fc" stop-opacity="0.15"/>
-      <stop offset="50%" stop-color="#c084fc" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.15"/>
+    <linearGradient id="bg-p7" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#eef1f5"/>
     </linearGradient>
-    <filter id="blur-p7" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="5"/>
+    <linearGradient id="line-p7" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4f52b2" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="#4f52b2" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#4f52b2" stop-opacity="0.2"/>
+    </linearGradient>
+    <filter id="sh-p7" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
     </filter>
   </defs>
-  <rect width="480" height="270" fill="#0b1220"/>
-  <rect width="480" height="270" fill="url(#grid-p7)"/>
-  <circle cx="392" cy="64" r="86" fill="url(#glow-p7)">
-    <animate attributeName="r" values="78;92;78" dur="6s" repeatCount="indefinite"/>
+  <rect width="480" height="270" fill="url(#bg-p7)"/>
+  <circle cx="404" cy="52" r="92" fill="#4f52b2" fill-opacity="0.05"/>
+  <text x="22" y="34" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#1b1b1b">подпись</text>
+  <text x="22" y="53" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="11" fill="#6b6b6b">Signature</text>
+  <rect x="22" y="63" width="436" height="1" fill="#ececec"/>
+  <rect x="22" y="63" width="34" height="2" rx="1" fill="#4f52b2" fill-opacity="0.85"/>
+  <rect x="52" y="104" width="96" height="62" rx="8" fill="#ffffff" stroke="#4f52b2" stroke-opacity="0.45" filter="url(#sh-p7)"/>
+  <text x="64" y="126" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#1b1b1b">cert 1</text>
+  <text x="64" y="146" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#6b6b6b">X.509</text>
+  <rect x="52" y="104" width="96" height="62" rx="8" fill="none" stroke="#4f52b2">
+    <animate attributeName="stroke-opacity" values="0.1;0.7;0.1" dur="3.6s" begin="0.0s" repeatCount="indefinite"/>
+  </rect>
+  <line x1="148" y1="135" x2="168" y2="145" stroke="#4f52b2" stroke-opacity="0.45" stroke-width="2"/>
+  <rect x="168" y="108" width="96" height="62" rx="8" fill="#ffffff" stroke="#4f52b2" stroke-opacity="0.45" filter="url(#sh-p7)"/>
+  <text x="180" y="130" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#1b1b1b">cert 2</text>
+  <text x="180" y="150" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#6b6b6b">X.509</text>
+  <rect x="168" y="108" width="96" height="62" rx="8" fill="none" stroke="#4f52b2">
+    <animate attributeName="stroke-opacity" values="0.1;0.7;0.1" dur="3.6s" begin="0.4s" repeatCount="indefinite"/>
+  </rect>
+  <line x1="264" y1="139" x2="284" y2="149" stroke="#4f52b2" stroke-opacity="0.45" stroke-width="2"/>
+  <rect x="284" y="112" width="96" height="62" rx="8" fill="#ffffff" stroke="#4f52b2" stroke-opacity="0.45" filter="url(#sh-p7)"/>
+  <text x="296" y="134" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#1b1b1b">cert 3</text>
+  <text x="296" y="154" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#6b6b6b">X.509</text>
+  <rect x="284" y="112" width="96" height="62" rx="8" fill="none" stroke="#4f52b2">
+    <animate attributeName="stroke-opacity" values="0.1;0.7;0.1" dur="3.6s" begin="0.8s" repeatCount="indefinite"/>
+  </rect>
+  <circle cx="240" cy="220" r="26" fill="#ffffff" stroke="#4f52b2" stroke-width="2" stroke-dasharray="6 6">
+    <animateTransform attributeName="transform" type="rotate" values="0 240 220;360 240 220" dur="9s" repeatCount="indefinite"/>
   </circle>
-  <rect x="0.5" y="0.5" width="479" height="269" fill="none" stroke="#c084fc" stroke-opacity="0.35"/>
-  <text x="22" y="34" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#e6eefc">подпись</text>
-  <text x="22" y="54" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#93a4c0">Signature</text>
-  <line x1="22" y1="64" x2="458" y2="64" stroke="#c084fc" stroke-opacity="0.3"/>
-  <rect x="52" y="108" width="96" height="62" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#c084fc" stroke-opacity="0.4"/>
-  <text x="64" y="128" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">cert 1</text>
-  <text x="64" y="148" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">X.509</text>
-  <rect x="52" y="108" width="96" height="62" rx="8" fill="none" stroke="#c084fc">
-    <animate attributeName="stroke-opacity" values="0.15;0.7;0.15" dur="3.6s" begin="0.0s" repeatCount="indefinite"/>
-  </rect>
-  <line x1="148" y1="139" x2="168" y2="149" stroke="#c084fc" stroke-opacity="0.5" stroke-width="2"/>
-  <rect x="168" y="112" width="96" height="62" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#c084fc" stroke-opacity="0.4"/>
-  <text x="180" y="132" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">cert 2</text>
-  <text x="180" y="152" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">X.509</text>
-  <rect x="168" y="112" width="96" height="62" rx="8" fill="none" stroke="#c084fc">
-    <animate attributeName="stroke-opacity" values="0.15;0.7;0.15" dur="3.6s" begin="0.4s" repeatCount="indefinite"/>
-  </rect>
-  <line x1="264" y1="143" x2="284" y2="153" stroke="#c084fc" stroke-opacity="0.5" stroke-width="2"/>
-  <rect x="284" y="116" width="96" height="62" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#c084fc" stroke-opacity="0.4"/>
-  <text x="296" y="136" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">cert 3</text>
-  <text x="296" y="156" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">X.509</text>
-  <rect x="284" y="116" width="96" height="62" rx="8" fill="none" stroke="#c084fc">
-    <animate attributeName="stroke-opacity" values="0.15;0.7;0.15" dur="3.6s" begin="0.8s" repeatCount="indefinite"/>
-  </rect>
-  <circle cx="240" cy="224" r="26" fill="none" stroke="#c084fc" stroke-width="2" stroke-dasharray="6 6">
-    <animateTransform attributeName="transform" type="rotate" values="0 240 224;360 240 224" dur="9s" repeatCount="indefinite"/>
-  </circle>
-  <path d="M228 224 L236 232 L254 212" fill="none" stroke="#a7f3d0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M228 220 L236 228 L254 208" fill="none" stroke="#107c10" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
     <animate attributeName="opacity" values="0;1;1" keyTimes="0;0.3;1" dur="3s" repeatCount="indefinite"/>
   </path>
-  <text x="52" y="236" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="10" fill="#93a4c0">подпись проверена</text>
+  <text x="52" y="234" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="10" font-weight="400" fill="#6b6b6b">подпись проверена</text>
 </svg>

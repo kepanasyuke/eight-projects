@@ -51,7 +51,7 @@ PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <style>
-html, body {{ margin: 0; padding: 0; background: #0b1220; }}
+html, body {{ margin: 0; padding: 0; background: #ffffff; }}
 body {{ width: {w}px; height: {h}px; overflow: hidden; }}
 svg {{ display: block; width: {w}px; height: {h}px; }}
 </style>
@@ -110,7 +110,7 @@ def shoot(browser: str, work: str, svg: str, seconds: float, output: str) -> Non
     subprocess.run(args, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-def build(browser: str, key: str, name: str, work: str) -> str:
+def build(browser: str, key: str, name: str, work: str, out_dir: str = OUT_DIR) -> str:
     svg = read_svg(name)
     frames = []
     for index in range(FRAMES):
@@ -120,8 +120,8 @@ def build(browser: str, key: str, name: str, work: str) -> str:
         image = Image.open(raw).convert("RGB")
         small = image.resize((WIDTH, HEIGHT), Image.LANCZOS)
         frames.append(small.quantize(colors=PALETTE, method=Image.MEDIANCUT, dither=Image.NONE))
-    os.makedirs(OUT_DIR, exist_ok=True)
-    path = os.path.join(OUT_DIR, f"{key}.gif")
+    os.makedirs(out_dir, exist_ok=True)
+    path = os.path.join(out_dir, f"{key}.gif")
     frames[0].save(
         path,
         save_all=True,

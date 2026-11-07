@@ -6,8 +6,9 @@
     <title>Восемь проектов — рабочая консоль</title>
     <meta name="description" content="Рабочая консоль восьми backend-проектов на Java 17 и Spring Boot: задачи, JPA-отчёты, переводы, пул потоков, брокер с DLQ, XML/XSD, подпись и WebSocket.">
     <link rel="stylesheet" href="/assets/styles.css">
+    <script src="/assets/icons.js" defer></script>
     <link rel="stylesheet" href="/assets/app.css">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2338bdf8'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%2306101f' font-family='monospace'%3E8%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230067c0'/%3E%3Cpath d='M10 10h5v5h-5zM17 10h5v5h-5zM10 17h5v5h-5zM17 17h5v5h-5z' fill='%23fff'/%3E%3C/svg%3E">
 </head>
 <body>
 <div class="grid-bg" aria-hidden="true"></div>
@@ -15,21 +16,32 @@
 <header class="topbar">
     <div class="wrap topbar__inner">
         <a class="brand" href="/">
-            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__mark" aria-hidden="true"><svg class="icon"><use href="#i-grid"></use></svg></span>
             <span class="brand__name">Восемь проектов <span>/ консоль</span></span>
         </a>
         <nav class="nav" aria-label="Основная навигация">
-            <a href="/" aria-current="page">Консоль</a>
-            <a href="/showcase.html">Витрина</a>
-            <a href="/showcase.html#projects">Проекты</a>
-            <a href="/game.html">Платформер</a>
-            <a href="/sand.html">Поток</a>
+            <a href="/" aria-current="page"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>
+            <a href="/showcase.html"><svg class="icon"><use href="#i-window"></use></svg>Витрина</a>
+            <a href="/showcase.html#projects"><svg class="icon"><use href="#i-folder"></use></svg>Проекты</a>
+            <a href="/game.html"><svg class="icon"><use href="#i-gamepad"></use></svg>Платформер</a>
+            <a href="/sand.html"><svg class="icon"><use href="#i-sand"></use></svg>Поток</a>
         </nav>
         <span class="health" id="healthBadge" title="Состояние приложения">сервер: <b>…</b></span>
     </div>
 </header>
 
-<main class="wrap console">
+<main class="wrap">
+<div class="app-window window">
+    <div class="window__bar">
+        <span class="window__app"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</span>
+        <span class="window__title">восемь проектов · localhost:8080</span>
+        <span class="window__controls">
+            <span class="window__btn"><svg><use href="#i-minimize"></use></svg></span>
+            <span class="window__btn"><svg><use href="#i-maximize"></use></svg></span>
+            <span class="window__btn window__btn--close"><svg><use href="#i-close"></use></svg></span>
+        </span>
+    </div>
+    <div class="console">
     <nav class="rail" aria-label="Разделы консоли">
         <button class="rail__item" type="button" data-tab="tasks" aria-selected="true">
             <span class="rail__num">1</span> Задачи
@@ -446,14 +458,14 @@
             </div>
             <div class="game-tiles">
                 <a class="game-tile" href="/game.html">
-                    <b>Платформер</b>
+                    <b><svg class="icon"><use href="#i-gamepad"></use></svg>Платформер</b>
                     <span>Восемь уровней, по одному на проект: соберите навыки, обойдите баги и дойдите до DONE.</span>
-                    <i>открыть →</i>
+                    <i>открыть <svg class="icon"><use href="#i-arrow-right"></use></svg></i>
                 </a>
                 <a class="game-tile" href="/sand.html">
-                    <b>Песочница «Поток»</b>
+                    <b><svg class="icon"><use href="#i-sand"></use></svg>Песочница «Поток»</b>
                     <span>Проведите записи через створ контракта и створ JPA: стены стоят материала, мембрана отбивает 400.</span>
-                    <i>открыть →</i>
+                    <i>открыть <svg class="icon"><use href="#i-arrow-right"></use></svg></i>
                 </a>
             </div>
             <div class="panel">
@@ -469,6 +481,8 @@
             </div>
         </section>
     </div>
+</div>
+</div>
 </main>
 
 <div class="toast" id="toast" aria-live="polite"></div>

@@ -13,7 +13,7 @@ import shutil
 
 STATIC = os.path.join("src", "main", "resources", "static")
 DOCS = "docs"
-ASSETS = ["styles.css", "game.css", "game.js", "sand.css", "sand.js"]
+ASSETS = ["styles.css", "icons.js", "game.css", "game.js", "sand.css", "sand.js"]
 
 OFFLINE_FLAG = '<script>window.EIGHT_OFFLINE = true;</script>\n'
 

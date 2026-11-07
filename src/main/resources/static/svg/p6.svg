@@ -1,70 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270" role="img" aria-label="XML / XSD">
   <title>XML / XSD</title>
   <defs>
-    <pattern id="grid-p6" width="24" height="24" patternUnits="userSpaceOnUse">
-      <path d="M24 0H0V24" fill="none" stroke="rgba(120, 160, 210, 0.10)" stroke-width="1"/>
-    </pattern>
-    <radialGradient id="glow-p6" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="line-p6" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.15"/>
-      <stop offset="50%" stop-color="#22d3ee" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0.15"/>
+    <linearGradient id="bg-p6" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#eef1f5"/>
     </linearGradient>
-    <filter id="blur-p6" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="5"/>
+    <linearGradient id="line-p6" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#038387" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="#038387" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#038387" stop-opacity="0.2"/>
+    </linearGradient>
+    <filter id="sh-p6" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
     </filter>
   </defs>
-  <rect width="480" height="270" fill="#0b1220"/>
-  <rect width="480" height="270" fill="url(#grid-p6)"/>
-  <circle cx="392" cy="64" r="86" fill="url(#glow-p6)">
-    <animate attributeName="r" values="78;92;78" dur="6s" repeatCount="indefinite"/>
-  </circle>
-  <rect x="0.5" y="0.5" width="479" height="269" fill="none" stroke="#22d3ee" stroke-opacity="0.35"/>
-  <text x="22" y="34" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#e6eefc">XML / XSD</text>
-  <text x="22" y="54" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#93a4c0">SchemaFactory</text>
-  <line x1="22" y1="64" x2="458" y2="64" stroke="#22d3ee" stroke-opacity="0.3"/>
-  <rect x="36" y="106" width="68" height="28" rx="6" fill="rgba(18, 27, 43, 0.9)" stroke="#22d3ee" stroke-opacity="0.5">
-    <animate attributeName="stroke-opacity" values="0.2;0.85;0.2" dur="3s" begin="0.0s" repeatCount="indefinite"/>
+  <rect width="480" height="270" fill="url(#bg-p6)"/>
+  <circle cx="404" cy="52" r="92" fill="#038387" fill-opacity="0.05"/>
+  <text x="22" y="34" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#1b1b1b">XML / XSD</text>
+  <text x="22" y="53" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="11" fill="#6b6b6b">SchemaFactory</text>
+  <rect x="22" y="63" width="436" height="1" fill="#ececec"/>
+  <rect x="22" y="63" width="34" height="2" rx="1" fill="#038387" fill-opacity="0.85"/>
+  <line x1="70" y1="120" x2="170" y2="96" stroke="#038387" stroke-opacity="0.35" stroke-width="2"/>
+  <line x1="70" y1="120" x2="170" y2="148" stroke="#038387" stroke-opacity="0.35" stroke-width="2"/>
+  <line x1="170" y1="96" x2="282" y2="96" stroke="#038387" stroke-opacity="0.35" stroke-width="2"/>
+  <line x1="170" y1="148" x2="282" y2="148" stroke="#038387" stroke-opacity="0.35" stroke-width="2"/>
+  <line x1="282" y1="96" x2="390" y2="122" stroke="#038387" stroke-opacity="0.35" stroke-width="2"/>
+  <line x1="282" y1="148" x2="390" y2="122" stroke="#038387" stroke-opacity="0.35" stroke-width="2"/>
+  <rect x="36" y="106" width="68" height="28" rx="6" fill="#ffffff" stroke="#038387" stroke-opacity="0.5">
+    <animate attributeName="stroke-opacity" values="0.15;0.85;0.15" dur="3s" begin="0.0s" repeatCount="indefinite"/>
   </rect>
-  <rect x="136" y="82" width="68" height="28" rx="6" fill="rgba(18, 27, 43, 0.9)" stroke="#22d3ee" stroke-opacity="0.5">
-    <animate attributeName="stroke-opacity" values="0.2;0.85;0.2" dur="3s" begin="0.25s" repeatCount="indefinite"/>
+  <rect x="136" y="82" width="68" height="28" rx="6" fill="#ffffff" stroke="#038387" stroke-opacity="0.5">
+    <animate attributeName="stroke-opacity" values="0.15;0.85;0.15" dur="3s" begin="0.25s" repeatCount="indefinite"/>
   </rect>
-  <rect x="136" y="134" width="68" height="28" rx="6" fill="rgba(18, 27, 43, 0.9)" stroke="#22d3ee" stroke-opacity="0.5">
-    <animate attributeName="stroke-opacity" values="0.2;0.85;0.2" dur="3s" begin="0.5s" repeatCount="indefinite"/>
+  <rect x="136" y="134" width="68" height="28" rx="6" fill="#ffffff" stroke="#038387" stroke-opacity="0.5">
+    <animate attributeName="stroke-opacity" values="0.15;0.85;0.15" dur="3s" begin="0.5s" repeatCount="indefinite"/>
   </rect>
-  <rect x="248" y="82" width="68" height="28" rx="6" fill="rgba(18, 27, 43, 0.9)" stroke="#22d3ee" stroke-opacity="0.5">
-    <animate attributeName="stroke-opacity" values="0.2;0.85;0.2" dur="3s" begin="0.75s" repeatCount="indefinite"/>
+  <rect x="248" y="82" width="68" height="28" rx="6" fill="#ffffff" stroke="#038387" stroke-opacity="0.5">
+    <animate attributeName="stroke-opacity" values="0.15;0.85;0.15" dur="3s" begin="0.75s" repeatCount="indefinite"/>
   </rect>
-  <rect x="248" y="134" width="68" height="28" rx="6" fill="rgba(18, 27, 43, 0.9)" stroke="#22d3ee" stroke-opacity="0.5">
-    <animate attributeName="stroke-opacity" values="0.2;0.85;0.2" dur="3s" begin="1.0s" repeatCount="indefinite"/>
+  <rect x="248" y="134" width="68" height="28" rx="6" fill="#ffffff" stroke="#038387" stroke-opacity="0.5">
+    <animate attributeName="stroke-opacity" values="0.15;0.85;0.15" dur="3s" begin="1.0s" repeatCount="indefinite"/>
   </rect>
-  <rect x="356" y="108" width="68" height="28" rx="6" fill="rgba(18, 27, 43, 0.9)" stroke="#22d3ee" stroke-opacity="0.5">
-    <animate attributeName="stroke-opacity" values="0.2;0.85;0.2" dur="3s" begin="1.25s" repeatCount="indefinite"/>
+  <rect x="356" y="108" width="68" height="28" rx="6" fill="#ffffff" stroke="#038387" stroke-opacity="0.5">
+    <animate attributeName="stroke-opacity" values="0.15;0.85;0.15" dur="3s" begin="1.25s" repeatCount="indefinite"/>
   </rect>
-  <line x1="70" y1="120" x2="170" y2="96" stroke="#22d3ee" stroke-opacity="0.28" stroke-width="2"/>
-  <line x1="70" y1="120" x2="170" y2="148" stroke="#22d3ee" stroke-opacity="0.28" stroke-width="2"/>
-  <line x1="170" y1="96" x2="282" y2="96" stroke="#22d3ee" stroke-opacity="0.28" stroke-width="2"/>
-  <line x1="170" y1="148" x2="282" y2="148" stroke="#22d3ee" stroke-opacity="0.28" stroke-width="2"/>
-  <line x1="282" y1="96" x2="390" y2="122" stroke="#22d3ee" stroke-opacity="0.28" stroke-width="2"/>
-  <line x1="282" y1="148" x2="390" y2="122" stroke="#22d3ee" stroke-opacity="0.28" stroke-width="2"/>
-  <text x="38" y="122" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">invoice</text>
-  <text x="148" y="100" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">party</text>
-  <text x="148" y="152" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">items</text>
-  <text x="258" y="100" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">name/inn</text>
-  <text x="258" y="152" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">price</text>
-  <text x="366" y="126" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="9" fill="#93a4c0">total</text>
-  <path d="M212 216 L232 236 L268 196" fill="none" stroke="#34d399" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="90 90">
+  <text x="40" y="123" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">invoice</text>
+  <text x="148" y="100" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">party</text>
+  <text x="148" y="152" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">items</text>
+  <text x="258" y="100" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">name/inn</text>
+  <text x="256" y="152" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">price</text>
+  <text x="366" y="126" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">total</text>
+  <path d="M206 208 L226 228 L262 188" fill="none" stroke="#107c10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="90 90">
     <animate attributeName="stroke-dashoffset" values="90;0;0;90" keyTimes="0;0.45;0.8;1" dur="4s" repeatCount="indefinite"/>
   </path>
-  <text x="286" y="222" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">schema valid</text>
+  <text x="272" y="218" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="10" font-weight="400" fill="#107c10">schema valid</text>
   <g>
-    <rect x="352" y="196" width="84" height="26" rx="6" fill="none" stroke="#f87171" stroke-opacity="0.7"/>
-    <text x="362" y="214" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="10" fill="#fca5a5">DTD off</text>
-    <line x1="352" y1="200" x2="436" y2="218" stroke="#f87171" stroke-width="2">
-      <animate attributeName="opacity" values="0.1;1;0.1" dur="2.2s" repeatCount="indefinite"/>
+    <rect x="352" y="196" width="92" height="26" rx="6" fill="#fdf3f2" stroke="#c42b1c" stroke-opacity="0.4"/>
+    <text x="362" y="214" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="10" fill="#c42b1c">DTD off</text>
+    <line x1="352" y1="200" x2="444" y2="218" stroke="#c42b1c" stroke-width="2">
+      <animate attributeName="opacity" values="0.15;1;0.15" dur="2.2s" repeatCount="indefinite"/>
     </line>
   </g>
 </svg>

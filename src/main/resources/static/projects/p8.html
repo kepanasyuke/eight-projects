@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WebSocket и машина состояний — проект 8 из восьми</title>
+    <meta name="description" content="Серверная машина состояний поверх WebSocket: приветственный кадр, валидация команд, запрет недопустимых переходов, лимит размера сообщения и освобождение ресурсов при разрыве.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #fb7185">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p8.html" aria-current="page">Проект 8</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 08 из 08</span>
+            <h1>WebSocket и машина состояний</h1>
+            <p class="lead">Серверная машина состояний поверх WebSocket: приветственный кадр, валидация команд, запрет недопустимых переходов, лимит размера сообщения и освобождение ресурсов при разрыве.</p>
+            <div class="tags"><span class="tag">Spring WebSocket</span><span class="tag">Машина состояний</span><span class="tag">Лимиты сообщений</span><span class="tag">ConcurrentWebSocketSessionDecorator</span><span class="tag">Очистка сессий</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p8.gif" alt="Анимация проекта: WebSocket и машина состояний" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Соединение с состоянием</b> — При открытии сервер присылает welcome с текущим состоянием и списком допустимых переходов.</li>
+                <li><b>Переходы проверяются на сервере</b> — Клиент присылает {&quot;command&quot;:&quot;IN_PROGRESS&quot;}, сервер сверяет переход с WorkItemStateMachine и отвечает state либо error.</li>
+                <li><b>Ограничение размера</b> — max-text-message-bytes отклоняет слишком большое сообщение с кодом MESSAGE_TOO_LARGE, размер буфера задан на контейнере.</li>
+                <li><b>Потокобезопасная отправка</b> — Сессия оборачивается в ConcurrentWebSocketSessionDecorator с тайм-аутом отправки.</li>
+                <li><b>Ресурсы освобождаются</b> — afterConnectionClosed и handleTransportError удаляют сессию из карты: утечки сессий нет.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v8/ws/schema</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v8/ws/schema">Вызвать</button>
+            </div></div>
+            
+<div style="margin-top:18px;border-top:1px solid var(--line);padding-top:14px">
+    <h3 style="margin-bottom:10px">WebSocket вживую</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn" type="button" data-ws-connect>Подключиться к /ws/state</button>
+        <button class="btn" type="button" data-ws-command='{"command":"IN_PROGRESS"}'>→ IN_PROGRESS</button>
+        <button class="btn" type="button" data-ws-command='{"command":"BLOCKED"}'>→ BLOCKED</button>
+        <button class="btn" type="button" data-ws-command='{"command":"DONE"}'>→ DONE</button>
+        <button class="btn" type="button" data-ws-command='{"command":"CANCELLED"}'>→ CANCELLED</button>
+        <button class="btn" type="button" data-ws-command='{"command":"NEW"}'>→ NEW (недопустимо)</button>
+    </div>
+    <div class="ws-log" data-ws-log aria-live="polite"></div>
+</div>
+
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p8">Копировать</button>
+                </div>
+                <pre id="code-p8"><code>@Override
+protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+    SessionState state = this.sessions.get(session.getId());
+    if (state == null) {
+        sendError(session, "NOT_REGISTERED", "Соединение не зарегистрировано сервером");
+    } else {
+        processMessage(state, message);
+    }
+}
+
+@Override
+public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    this.sessions.remove(session.getId());
+    LOG.info("WebSocket закрыт: {} ({})", session.getId(), status.getCode());
+}</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Подключитесь, затем отправляйте команды: недопустимый переход вернёт INVALID_TRANSITION, и состояние останется прежним.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p7.html"><small>← проект 07</small><span>Подпись, ключи и сертификаты</span></a>
+        <a href="/game.html" style="margin-left:auto;text-align:right"><small>дальше →</small><span>Игра: восемь уровней</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 08 · WebSocket и машина состояний</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

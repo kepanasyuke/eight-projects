@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>REST API по контракту — проект 1 из восьми</title>
+    <meta name="description" content="CRUD по OpenAPI-контракту: наружу уходят только DTO, вход проверяется Jakarta Validation, а изменяющие запросы защищены ключом идемпотентности.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #38bdf8">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p1.html" aria-current="page">Проект 1</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 01 из 08</span>
+            <h1>REST API по контракту</h1>
+            <p class="lead">CRUD по OpenAPI-контракту: наружу уходят только DTO, вход проверяется Jakarta Validation, а изменяющие запросы защищены ключом идемпотентности.</p>
+            <div class="tags"><span class="tag">Spring MVC</span><span class="tag">Jakarta Validation</span><span class="tag">Idempotency-Key</span><span class="tag">Пагинация</span><span class="tag">Единый формат ошибок</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p1.gif" alt="Анимация проекта: REST API по контракту" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>DTO отделены от сущности</b> — WorkItemRequest и WorkItemResponse описывают контракт, JPA-сущность WorkItem наружу не выходит.</li>
+                <li><b>Валидация на входе</b> — @Valid на теле запроса: длина заголовка, приоритет 1..5, обязательный исполнитель. Дополнительно сервис проверяет допустимость команд.</li>
+                <li><b>Идемпотентное создание</b> — Заголовок Idempotency-Key сохраняет результат операции в таблицу idempotency_record; уникальность ключа держит база, а не приложение.</li>
+                <li><b>Пагинация и фильтрация</b> — PageResponse отдаёт items, page, size и totalElements, фильтр по статусу применяется в запросе.</li>
+                <li><b>Ошибки как данные</b> — ApiError с кодом и деталями, GlobalExceptionHandler переводит исключения в согласованные HTTP-статусы.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v1/work-items?page=0&amp;size=3</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v1/work-items?page=0&amp;size=3">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v1/work-items</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v1/work-items" data-body="{&quot;title&quot;:&quot;Спринт 12&quot;,&quot;description&quot;:&quot;Проверить контракт&quot;,&quot;priority&quot;:2,&quot;assigneeId&quot;:1}" data-headers="Idempotency-Key=demo-1" data-content-type="application/json">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--patch">PATCH</span>
+                <code>/api/v1/work-items/1/status?target=IN_PROGRESS</code>
+                <button class="btn" type="button" data-call data-method="PATCH" data-url="/api/v1/work-items/1/status?target=IN_PROGRESS">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v1/work-items/1/notes</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v1/work-items/1/notes" data-body="{&quot;author&quot;:&quot;Анна Петрова&quot;,&quot;content&quot;:&quot;Согласовано&quot;}" data-content-type="application/json">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p1">Копировать</button>
+                </div>
+                <pre id="code-p1"><code>@PostMapping
+public ResponseEntity&lt;WorkItemResponse&gt; create(@RequestHeader("Idempotency-Key") String idempotencyKey,
+                                               @Valid @RequestBody WorkItemRequest request) {
+    WorkItemResponse created = this.idempotency.execute(idempotencyKey, CREATE_OPERATION,
+            WorkItemResponse.class, () -&gt; this.service.create(request));
+    ResponseEntity&lt;WorkItemResponse&gt; response = ResponseEntity.status(HttpStatus.CREATED).body(created);
+    return response;
+}</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Нажмите «Создать» дважды с одним и тем же ключом: второй вызов вернёт сохранённый ответ и не создаст дубликат. Смените ключ в атрибуте data-headers, чтобы получить новую запись.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/"><small>← назад</small><span>Витрина проектов</span></a>
+        <a href="/projects/p2.html" style="margin-left:auto;text-align:right"><small>проект 02 →</small><span>JPA без N+1</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 01 · REST API по контракту</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

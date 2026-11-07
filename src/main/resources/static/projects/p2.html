@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JPA без N+1 — проект 2 из восьми</title>
+    <meta name="description" content="Одна и та же выборка задач в четырёх вариантах: наивный обход связей, fetch join, EntityGraph и DTO-проекция. Число SQL-запросов измеряется статистикой Hibernate.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #a78bfa">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p2.html" aria-current="page">Проект 2</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 02 из 08</span>
+            <h1>JPA без N+1</h1>
+            <p class="lead">Одна и та же выборка задач в четырёх вариантах: наивный обход связей, fetch join, EntityGraph и DTO-проекция. Число SQL-запросов измеряется статистикой Hibernate.</p>
+            <div class="tags"><span class="tag">Hibernate</span><span class="tag">Статистика запросов</span><span class="tag">fetch join</span><span class="tag">EntityGraph</span><span class="tag">DTO-проекция</span><span class="tag">@Version</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p2.gif" alt="Анимация проекта: JPA без N+1" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Проблема воспроизводится</b> — naive-вариант читает задачи и дёргает assignee и notes в цикле: число запросов растёт вместе с выборкой.</li>
+                <li><b>fetch join и EntityGraph</b> — Связи загружаются одним запросом; для страниц используется EntityGraph, чтобы не ломать пагинацию.</li>
+                <li><b>DTO-проекция</b> — Конструкторное выражение selects только нужные поля и считает notes через size(), без сущностей в контексте.</li>
+                <li><b>Оптимистичный контроль</b> — @Version на сущности: конкурентное обновление возвращает конфликт вместо тихой перезаписи.</li>
+                <li><b>Пессимистичная блокировка</b> — SELECT FOR UPDATE через @Lock(PESSIMISTIC_WRITE) с удержанием на заданное время.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v2/jpa/naive?status=NEW</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v2/jpa/naive?status=NEW">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v2/jpa/fetch-join?status=NEW</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v2/jpa/fetch-join?status=NEW">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v2/jpa/entity-graph?status=NEW</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v2/jpa/entity-graph?status=NEW">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v2/jpa/projection?status=NEW</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v2/jpa/projection?status=NEW">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v2/jpa/optimistic?id=1</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v2/jpa/optimistic?id=1">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v2/jpa/pessimistic?id=1&amp;holdMillis=120</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v2/jpa/pessimistic?id=1&amp;holdMillis=120">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p2">Копировать</button>
+                </div>
+                <pre id="code-p2"><code>@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("select w from WorkItem w where w.id = :id")
+Optional&lt;WorkItem&gt; findByIdForUpdate(@Param("id") Long id);
+
+@Query("select new ru.multitool.eight.p2jpa.WorkItemSummary(w.id, w.title, a.name, size(w.notes), w.status) "
+        + "from WorkItem w join w.assignee a where w.status = :status order by w.id")
+List&lt;WorkItemSummary&gt; summarizeByStatus(@Param("status") WorkItemStatus status);</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Сравните поле queries в ответах naive и projection: один и тот же результат, но разное число обращений к базе.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p1.html"><small>← проект 01</small><span>REST API по контракту</span></a>
+        <a href="/projects/p3.html" style="margin-left:auto;text-align:right"><small>проект 03 →</small><span>Границы транзакций</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 02 · JPA без N+1</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

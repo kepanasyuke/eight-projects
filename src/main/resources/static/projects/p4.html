@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Многопоточность под контролем — проект 4 из восьми</title>
+    <meta name="description" content="Параллельные вызовы, тайм-ауты, потерянные обновления, дедлок и перегрузка пула — каждый сценарий воспроизводится и измеряется, а не описывается словами.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #fbbf24">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p4.html" aria-current="page">Проект 4</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 04 из 08</span>
+            <h1>Многопоточность под контролем</h1>
+            <p class="lead">Параллельные вызовы, тайм-ауты, потерянные обновления, дедлок и перегрузка пула — каждый сценарий воспроизводится и измеряется, а не описывается словами.</p>
+            <div class="tags"><span class="tag">ExecutorService</span><span class="tag">CompletableFuture</span><span class="tag">orTimeout</span><span class="tag">Atomic-классы</span><span class="tag">ReentrantLock</span><span class="tag">AbortPolicy</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p4.gif" alt="Анимация проекта: Многопоточность под контролем" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Пул с ограниченной очередью</b> — ThreadPoolExecutor на 8 потоков и очередь 64; AbortPolicy явно сообщает о перегрузке вместо бесконечного роста очереди.</li>
+                <li><b>Тайм-ауты вместо ожидания</b> — CompletableFuture.orTimeout ограничивает внешний вызов, TimeoutException возвращается клиенту как ошибка.</li>
+                <li><b>Гонка видна в цифрах</b> — Счётчик long под нагрузкой теряет обновления, AtomicLong — нет: разницу показывает тот же прогон.</li>
+                <li><b>Дедлок и его лечение</b> — Немаркированный захват двух ReentrantLock даёт дедлок, упорядоченный захват — нет.</li>
+                <li><b>Честные имена потоков</b> — NamedThreadFactory даёт предсказуемые имена eight-worker-N, по ним читается thread dump.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v4/concurrency/parallel</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v4/concurrency/parallel">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v4/concurrency/timeout</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v4/concurrency/timeout">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v4/concurrency/race?threads=4&amp;iterations=20000</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v4/concurrency/race?threads=4&amp;iterations=20000">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v4/concurrency/deadlock?ordered=false</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v4/concurrency/deadlock?ordered=false">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v4/concurrency/deadlock?ordered=true</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v4/concurrency/deadlock?ordered=true">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v4/concurrency/pool?tasks=100</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v4/concurrency/pool?tasks=100">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p4">Копировать</button>
+                </div>
+                <pre id="code-p4"><code>@Bean(name = "eightExecutor", destroyMethod = "shutdown")
+public ThreadPoolExecutor eightExecutor(@Value("${eight.concurrency.pool-size:8}") int poolSize,
+                                       @Value("${eight.concurrency.queue-capacity:64}") int queueCapacity) {
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            poolSize, poolSize, 60L, TimeUnit.SECONDS,
+            new ArrayBlockingQueue&lt;&gt;(queueCapacity),
+            new NamedThreadFactory("eight-worker-"),
+            new ThreadPoolExecutor.AbortPolicy());
+    executor.allowCoreThreadTimeOut(true);
+    executor.prestartAllCoreThreads();
+    return executor;
+}</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Запрос deadlock выполняется около секунды: сервис ждёт с тайм-аутом и возвращает отчёт, а не подвешивает поток контейнера.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p3.html"><small>← проект 03</small><span>Границы транзакций</span></a>
+        <a href="/projects/p5.html" style="margin-left:auto;text-align:right"><small>проект 05 →</small><span>Брокер, повторы и Outbox</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 04 · Многопоточность под контролем</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

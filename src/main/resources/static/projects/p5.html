@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Брокер, повторы и Outbox — проект 5 из восьми</title>
+    <meta name="description" content="Семантика Kafka и RabbitMQ в одном прогоне: топик, партиции, группы потребителей, оффсеты, ограниченные повторы, DLQ и дедупликация, плюс Transactional Outbox для согласования записи и отправки.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #34d399">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p5.html" aria-current="page">Проект 5</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 05 из 08</span>
+            <h1>Брокер, повторы и Outbox</h1>
+            <p class="lead">Семантика Kafka и RabbitMQ в одном прогоне: топик, партиции, группы потребителей, оффсеты, ограниченные повторы, DLQ и дедупликация, плюс Transactional Outbox для согласования записи и отправки.</p>
+            <div class="tags"><span class="tag">Kafka-семантика</span><span class="tag">ack/nack</span><span class="tag">Retry</span><span class="tag">DLQ</span><span class="tag">Дедупликация</span><span class="tag">Transactional Outbox</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p5.gif" alt="Анимация проекта: Брокер, повторы и Outbox" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Партиции и группы</b> — События раскладываются по партициям, каждый потребитель в группе получает свою долю, оффсеты сдвигаются только после обработки.</li>
+                <li><b>Ограниченные повторы</b> — Неудачная обработка повторяется до настроенного предела, затем сообщение уходит в DLQ, а не крутится бесконечно.</li>
+                <li><b>Дедупликация</b> — Повторная доставка с тем же идентификатором распознаётся и не применяется дважды — at-least-once превращается в эффект ровно одного применения.</li>
+                <li><b>Outbox вместо dual write</b> — Событие пишется в таблицу outbox_message в той же транзакции, что и бизнес-изменение, и публикуется после коммита отдельным публикатором.</li>
+                <li><b>Наблюдаемое состояние</b> — Эндпоинт state показывает оффсеты, размеры очередей и содержимое DLQ после прогона.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v5/bus/scenario?poison=false&amp;events=6</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v5/bus/scenario?poison=false&amp;events=6">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v5/bus/scenario?poison=true&amp;events=6</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v5/bus/scenario?poison=true&amp;events=6">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v5/bus/state</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v5/bus/state">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v5/bus/outbox?payload=invoice-paid</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v5/bus/outbox?payload=invoice-paid">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p5">Копировать</button>
+                </div>
+                <pre id="code-p5"><code>// Transactional Outbox: событие сохраняется в той же транзакции,
+// что и бизнес-изменение, а публикуется после коммита.
+public void markSent() {
+    this.status = Status.SENT;
+    this.sentAt = Instant.now();
+    this.attempts = this.attempts + 1;
+}</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Сравните два прогона: с poison=true сообщение после исчерпания повторов попадает в DLQ, с poison=false — обрабатывается и подтверждается.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p4.html"><small>← проект 04</small><span>Многопоточность под контролем</span></a>
+        <a href="/projects/p6.html" style="margin-left:auto;text-align:right"><small>проект 06 →</small><span>XML, XSD и защита от XXE</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 05 · Брокер, повторы и Outbox</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

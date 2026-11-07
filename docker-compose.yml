@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: eight-projects-postgres
+    environment:
+      POSTGRES_DB: eight
+      POSTGRES_USER: eight
+      POSTGRES_PASSWORD: eight
+    ports:
+      - "5432:5432"
+    volumes:
+      - eight-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eight -d eight"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  eight-pg-data:

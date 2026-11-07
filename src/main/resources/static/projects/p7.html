@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Подпись, ключи и сертификаты — проект 7 из восьми</title>
+    <meta name="description" content="Формирование и проверка подписи через JCA/JCE, паспорт сертификата из PKCS12-хранилища, проверка срока действия и цепочки, демонстрация подмены данных.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #c084fc">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p7.html" aria-current="page">Проект 7</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 07 из 08</span>
+            <h1>Подпись, ключи и сертификаты</h1>
+            <p class="lead">Формирование и проверка подписи через JCA/JCE, паспорт сертификата из PKCS12-хранилища, проверка срока действия и цепочки, демонстрация подмены данных.</p>
+            <div class="tags"><span class="tag">Signature</span><span class="tag">PKCS12 KeyStore</span><span class="tag">X.509</span><span class="tag">Проверка цепочки</span><span class="tag">SHA-256</span><span class="tag">Готово к КриптоПро JCP</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p7.gif" alt="Анимация проекта: Подпись, ключи и сертификаты" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Алгоритм вынесен в конфигурацию</b> — Signature.getInstance берёт имя алгоритма из настроек: подмена на ГОСТ-алгоритм КриптоПро не требует правки кода, только провайдера и имени.</li>
+                <li><b>Ключи из KeyStore</b> — PKCS12-хранилище загружается один раз, приватный ключ и сертификат достаются по alias.</li>
+                <li><b>Проверка подписи с причиной</b> — VerifyReport различает SIGNATURE_INVALID, CERT_EXPIRED, CERT_NOT_YET_VALID и SIGNATURE_MALFORMED — диагностика важнее булева ответа.</li>
+                <li><b>Подмена данных видна</b> — tamper-сценарий подписывает платёж, меняет сумму и показывает, что проверка падает.</li>
+                <li><b>Отпечаток сертификата</b> — SHA-256 от encoded-формы сертификата даёт стабильный идентификатор для логов и сверок.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v7/crypto/certificate</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v7/crypto/certificate">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v7/crypto/chain</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v7/crypto/chain">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v7/crypto/sign</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v7/crypto/sign" data-body="{&quot;payload&quot;:&quot;Платёж на 300 000 рублей&quot;}" data-content-type="application/json">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v7/crypto/tamper?payload=Платёж на 300 000 рублей</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v7/crypto/tamper?payload=Платёж на 300 000 рублей">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p7">Копировать</button>
+                </div>
+                <pre id="code-p7"><code>public SignResult sign(String payload) {
+    byte[] data = payload.getBytes(StandardCharsets.UTF_8);
+    String signatureBase64 = null;
+    try {
+        Signature signature = Signature.getInstance(this.signatureAlgorithm);
+        signature.initSign(privateKey());
+        signature.update(data);
+        byte[] signed = signature.sign();
+        signatureBase64 = Base64.getEncoder().encodeToString(signed);
+    } catch (Exception ex) {
+        throw new ApiException("SIGN_FAILED", "Не удалось сформировать подпись: " + ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new SignResult(this.signatureAlgorithm, signatureBase64, data.length,
+            this.cachedInfo.subject(), Instant.now());
+}</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Демо использует RSA-ключ из ресурсов, чтобы проект запускался без лицензии КриптоПро. Для ГОСТ достаточно подключить провайдера JCP/JCSP и указать его алгоритм в eight.crypto.signature-algorithm.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p6.html"><small>← проект 06</small><span>XML, XSD и защита от XXE</span></a>
+        <a href="/projects/p8.html" style="margin-left:auto;text-align:right"><small>проект 08 →</small><span>WebSocket и машина состояний</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 07 · Подпись, ключи и сертификаты</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

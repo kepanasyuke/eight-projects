@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Границы транзакций — проект 3 из восьми</title>
+    <meta name="description" content="Перевод между счетами в одной транзакции, независимый аудит через REQUIRES_NEW и наглядная демонстрация того, почему self-invocation отключает прокси и аннотацию.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #f472b6">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p3.html" aria-current="page">Проект 3</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 03 из 08</span>
+            <h1>Границы транзакций</h1>
+            <p class="lead">Перевод между счетами в одной транзакции, независимый аудит через REQUIRES_NEW и наглядная демонстрация того, почему self-invocation отключает прокси и аннотацию.</p>
+            <div class="tags"><span class="tag">@Transactional</span><span class="tag">REQUIRES_NEW</span><span class="tag">AOP-прокси</span><span class="tag">Откат</span><span class="tag">readOnly</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p3.gif" alt="Анимация проекта: Границы транзакций" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Одна транзакция на перевод</b> — Списание и зачисление выполняются в REQUIRED-транзакции: при исключении откатываются оба изменения.</li>
+                <li><b>Аудит переживает откат</b> — AuditWriter помечен REQUIRES_NEW и вызывается как отдельный бин, поэтому запись аудита остаётся даже после отката бизнес-операции.</li>
+                <li><b>Self-invocation не работает</b> — Вызов this.writeInNewTransaction() идёт мимо прокси: аннотация игнорируется, и аудит откатывается вместе с транзакцией. Это показано отдельно.</li>
+                <li><b>Read-only для чтения</b> — @Transactional(readOnly = true) на запросах отключает лишний flush и подсказывает базе режим чтения.</li>
+                <li><b>Проверка инварианта в домене</b> — LedgerAccount.withdraw запрещает отрицательный баланс и бросает ApiException до записи в базу.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v3/tx/accounts</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v3/tx/accounts">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v3/tx/transfer</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v3/tx/transfer" data-body="{&quot;sourceCode&quot;:&quot;ACC-001&quot;,&quot;targetCode&quot;:&quot;ACC-002&quot;,&quot;amount&quot;:150.00}" data-content-type="application/json">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v3/tx/transfer-with-audit</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v3/tx/transfer-with-audit" data-body="{&quot;sourceCode&quot;:&quot;ACC-001&quot;,&quot;targetCode&quot;:&quot;ACC-002&quot;,&quot;amount&quot;:999999.00}" data-content-type="application/json">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v3/tx/propagation-demo</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v3/tx/propagation-demo">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v3/tx/audit</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v3/tx/audit">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p3">Копировать</button>
+                </div>
+                <pre id="code-p3"><code>// LedgerService.demoSelfInvocation(): два вызова одного и того же кода
+this.writeInNewTransaction("REQUIRES_NEW", "вызов через this — аннотация игнорируется");
+this.auditWriter.writeInNewTransaction("REQUIRES_NEW", "вызов через бин — независимая транзакция");</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Сначала вызовите transfer (транзакция фиксируется), затем transfer-with-audit с суммой больше баланса: балансы не меняются, а запись аудита остаётся.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p2.html"><small>← проект 02</small><span>JPA без N+1</span></a>
+        <a href="/projects/p4.html" style="margin-left:auto;text-align:right"><small>проект 04 →</small><span>Многопоточность под контролем</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 03 · Границы транзакций</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

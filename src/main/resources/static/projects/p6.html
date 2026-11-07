@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>XML, XSD и защита от XXE — проект 6 из восьми</title>
+    <meta name="description" content="Счёт по схеме с include общей библиотеки типов: сборка через JAXB, валидация через SchemaFactory и разбор, которому запрещены DTD и внешние сущности.">
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body style="--accent: #22d3ee">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Витрина</a>
+            <a href="/index.html#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/projects/p6.html" aria-current="page">Проект 6</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap">
+    <section class="project-hero">
+        <div>
+            <span class="eyebrow">Проект 06 из 08</span>
+            <h1>XML, XSD и защита от XXE</h1>
+            <p class="lead">Счёт по схеме с include общей библиотеки типов: сборка через JAXB, валидация через SchemaFactory и разбор, которому запрещены DTD и внешние сущности.</p>
+            <div class="tags"><span class="tag">JAXB</span><span class="tag">SchemaFactory</span><span class="tag">include схем</span><span class="tag">Пространства имён</span><span class="tag">XXE-защита</span><span class="tag">StAX</span></div>
+        </div>
+        <div class="project-hero__media">
+            <img src="/gifs/p6.gif" alt="Анимация проекта: XML, XSD и защита от XXE" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="columns">
+        <div class="panel reveal">
+            <h3>Что реализовано</h3>
+            <ul class="list">                <li><b>Схема как контракт</b> — invoice.xsd включает common-types.xsd: типы InvoiceNumber, Inn, Money и структуры Party/InvoiceItem описаны один раз и переиспользуются.</li>
+                <li><b>JAXB с явным пространством имён</b> — Все поля модели помечены namespace = urn:eight:invoice, иначе при elementFormDefault=qualified элементы уезжают в пустое пространство и валидация падает.</li>
+                <li><b>Валидация с разбором ошибок</b> — ErrorHandler собирает предупреждения и ошибки с номерами строк, отчёт возвращается клиенту списком.</li>
+                <li><b>Закрытые внешние ресурсы</b> — SchemaFactory: ACCESS_EXTERNAL_DTD пуст, ACCESS_EXTERNAL_SCHEMA ограничен file,jar. XMLInputFactory: SUPPORT_DTD=false, IS_SUPPORTING_EXTERNAL_ENTITIES=false.</li>
+                <li><b>Сборка и разбор в одном месте</b> — build формирует документ и сразу валидирует его, parse возвращает разобранную модель с итогом.</li></ul>
+        </div>
+        <div class="panel reveal">
+            <h3>Живые вызовы</h3>
+            <p style="color:var(--muted);font-size:13.5px;margin:0 0 12px">
+                Кнопки обращаются к запущенному приложению на этом же хосте и показывают реальный ответ.
+            </p>
+            <div class="api-list">            <div class="api-row">
+                <span class="method method--get">GET</span>
+                <code>/api/v6/xml/sample</code>
+                <button class="btn" type="button" data-call data-method="GET" data-url="/api/v6/xml/sample">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v6/xml/validate</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v6/xml/validate" data-body="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;invoice xmlns=&quot;urn:eight:invoice&quot; version=&quot;1&quot;&gt;
+  &lt;number&gt;IN-2026/000142&lt;/number&gt;
+  &lt;issuedAt&gt;2026-11-06&lt;/issuedAt&gt;
+  &lt;seller&gt;
+    &lt;name&gt;ООО «Восемь проектов»&lt;/name&gt;
+    &lt;inn&gt;7701234567&lt;/inn&gt;
+  &lt;/seller&gt;
+  &lt;buyer&gt;
+    &lt;name&gt;АО «Заказчик»&lt;/name&gt;
+    &lt;inn&gt;7709876543&lt;/inn&gt;
+  &lt;/buyer&gt;
+  &lt;items&gt;
+    &lt;item line=&quot;1&quot;&gt;
+      &lt;name&gt;Разработка backend-компонента&lt;/name&gt;
+      &lt;quantity&gt;1&lt;/quantity&gt;
+      &lt;price&gt;180000.00&lt;/price&gt;
+    &lt;/item&gt;
+  &lt;/items&gt;
+  &lt;total&gt;180000.00&lt;/total&gt;
+&lt;/invoice&gt;
+" data-content-type="application/xml">Вызвать</button>
+            </div>
+            <div class="api-row">
+                <span class="method method--post">POST</span>
+                <code>/api/v6/xml/parse</code>
+                <button class="btn" type="button" data-call data-method="POST" data-url="/api/v6/xml/parse" data-body="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;invoice xmlns=&quot;urn:eight:invoice&quot; version=&quot;1&quot;&gt;
+  &lt;number&gt;IN-2026/000142&lt;/number&gt;
+  &lt;issuedAt&gt;2026-11-06&lt;/issuedAt&gt;
+  &lt;seller&gt;
+    &lt;name&gt;ООО «Восемь проектов»&lt;/name&gt;
+    &lt;inn&gt;7701234567&lt;/inn&gt;
+  &lt;/seller&gt;
+  &lt;buyer&gt;
+    &lt;name&gt;АО «Заказчик»&lt;/name&gt;
+    &lt;inn&gt;7709876543&lt;/inn&gt;
+  &lt;/buyer&gt;
+  &lt;items&gt;
+    &lt;item line=&quot;1&quot;&gt;
+      &lt;name&gt;Разработка backend-компонента&lt;/name&gt;
+      &lt;quantity&gt;1&lt;/quantity&gt;
+      &lt;price&gt;180000.00&lt;/price&gt;
+    &lt;/item&gt;
+  &lt;/items&gt;
+  &lt;total&gt;180000.00&lt;/total&gt;
+&lt;/invoice&gt;
+" data-content-type="application/xml">Вызвать</button>
+            </div></div>
+            
+            <div class="result" data-result hidden>
+                <div class="result__status" data-result-status></div>
+                <pre data-result-body></pre>
+                <div class="result__status" style="margin-top:8px">
+                    <span data-result-timer></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="columns" style="margin-top:0">
+            <div class="panel reveal">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px">
+                    <h3 style="margin:0">Фрагмент кода</h3>
+                    <button class="btn" type="button" data-copy="#code-p6">Копировать</button>
+                </div>
+                <pre id="code-p6"><code>private static Schema loadSchema() {
+    Schema schema = null;
+    try {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "file,jar");
+        URL resource = XmlService.class.getResource(XSD_PATH);
+        schema = factory.newSchema(resource);
+    } catch (SAXException ex) {
+        throw new IllegalStateException("Схема " + XSD_PATH + " не загружена", ex);
+    }
+    return schema;
+}</code></pre>
+            </div>
+            <div class="panel reveal prose">
+                <h3>Как читать результат</h3>
+                <p>Отправьте документ с DOCTYPE и внешней сущностью — parse вернёт XML_REJECTED: ни DTD, ни внешние сущности не загружаются.</p>
+                <p>Полный список эндпоинтов проекта доступен на витрине:
+                    <a href="/api/showcase/projects" style="color:var(--accent)">/api/showcase/projects</a>.</p>
+                <p>Проект запускается профилем по умолчанию на H2 в режиме PostgreSQL; профиль
+                    <code>postgres</code> переключает приложение на настоящий PostgreSQL из
+                    <code>docker-compose.yml</code>.</p>
+            </div>
+        </div>
+    </section>
+
+    <nav class="pager" aria-label="Переход между проектами">
+        <a href="/projects/p5.html"><small>← проект 05</small><span>Брокер, повторы и Outbox</span></a>
+        <a href="/projects/p7.html" style="margin-left:auto;text-align:right"><small>проект 07 →</small><span>Подпись, ключи и сертификаты</span></a>
+    </nav>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Проект 06 · XML, XSD и защита от XXE</span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+    </div>
+</footer>
+
+<script src="/assets/project.js" defer></script>
+</body>
+</html>

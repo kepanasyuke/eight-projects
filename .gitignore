@@ -1,0 +1,27 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+*.log
+logs/
+.DS_Store
+Thumbs.db
+
+*.db
+*.mv.db
+*.trace.db
+data/
+
+# сгенерированные артефакты проверки
+/tmp/

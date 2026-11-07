@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:inv="urn:eight:invoice"
+           targetNamespace="urn:eight:invoice"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="InvoiceNumber">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{2}-\d{4}/\d{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Inn">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{10}|\d{12}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Money">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="18"/>
+            <xs:fractionDigits value="2"/>
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="Party">
+        <xs:sequence>
+            <xs:element name="name">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="2"/>
+                        <xs:maxLength value="200"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="inn" type="inv:Inn"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="InvoiceItem">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="quantity" type="xs:positiveInteger"/>
+            <xs:element name="price" type="inv:Money"/>
+        </xs:sequence>
+        <xs:attribute name="line" type="xs:positiveInteger" use="required"/>
+    </xs:complexType>
+
+</xs:schema>

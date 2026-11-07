@@ -267,6 +267,10 @@ kbd {
     flex-wrap: wrap;
 }
 
+.name-form[hidden] {
+    display: none;
+}
+
 .name-form input {
     width: 200px;
     padding: 11px 14px;

@@ -104,10 +104,13 @@ class VitrinaStaticTest {
             "/assets/project.js",
             "/assets/app.js",
             "/assets/game.js",
+            "/assets/sand.css",
+            "/assets/sand.js",
             "/showcase.html",
-            "/game.html"
+            "/game.html",
+            "/sand.html"
     })
-    @DisplayName("ассеты и страница игры доступны")
+    @DisplayName("ассеты и страницы игры доступны")
     void assets(String path) throws Exception {
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(path)).andReturn();
 

@@ -13,7 +13,7 @@ import shutil
 
 STATIC = os.path.join("src", "main", "resources", "static")
 DOCS = "docs"
-ASSETS = ["styles.css", "game.css", "game.js"]
+ASSETS = ["styles.css", "game.css", "game.js", "sand.css", "sand.js"]
 
 OFFLINE_FLAG = '<script>window.EIGHT_OFFLINE = true;</script>\n'
 
@@ -21,6 +21,7 @@ PATH_REPLACEMENTS = [
     ('href="/assets/', 'href="assets/'),
     ('src="/assets/', 'src="assets/'),
     ('href="/game.html"', 'href="game.html"'),
+    ('href="/sand.html"', 'href="sand.html"'),
     ('href="/index.html#projects"', 'href="index.html#projects"'),
     ('href="/"', 'href="index.html"'),
     ('<title>', '<title>'),
@@ -51,6 +52,13 @@ def build_game() -> None:
     write(os.path.join(DOCS, "game.html"), markup)
 
 
+def build_sand() -> None:
+    markup = relativize(read(os.path.join(STATIC, "sand.html")))
+    markup = markup.replace('<script src="assets/sand.js" defer></script>',
+                            OFFLINE_FLAG + '<script src="assets/sand.js" defer></script>')
+    write(os.path.join(DOCS, "sand.html"), markup)
+
+
 def build_assets() -> None:
     target = os.path.join(DOCS, "assets")
     os.makedirs(target, exist_ok=True)
@@ -62,8 +70,9 @@ def main() -> None:
     os.makedirs(DOCS, exist_ok=True)
     build_assets()
     build_game()
+    build_sand()
     write(os.path.join(DOCS, ".nojekyll"), "")
-    print("docs/ собран: game.html, assets/, .nojekyll")
+    print("docs/ собран: game.html, sand.html, assets/, .nojekyll")
 
 
 if __name__ == "__main__":

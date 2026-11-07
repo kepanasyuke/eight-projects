@@ -1,0 +1,107 @@
+.sand-body {
+    --accent: #34d399;
+}
+
+#sand {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 960 / 520;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.sand-tools {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+}
+
+.sand-palette {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sand-swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 13px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: rgba(120, 160, 210, 0.07);
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.sand-swatch:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.sand-swatch.is-active {
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.swatch-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 3px;
+}
+
+.swatch-dot--wall { background: #2a4a74; box-shadow: inset 0 0 0 1px #4b7aa8; }
+.swatch-dot--water { background: #4a6cf0; box-shadow: 0 0 8px rgba(74, 108, 240, 0.6); }
+.swatch-dot--erase { background: transparent; box-shadow: inset 0 0 0 1px var(--muted); }
+
+.sand-brush {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--muted);
+    font-size: 12.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.sand-brush input {
+    width: 110px;
+    accent-color: var(--accent);
+}
+
+.sand-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.sand-hint {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+.dot--data { background: #8bd4ff; box-shadow: 0 0 10px #8bd4ff; }
+.dot--reject { background: #f87171; box-shadow: 0 0 10px #f87171; }
+.dot--narrow { background: #fbbf24; box-shadow: 0 0 10px #fbbf24; }
+.dot--deliver { background: #34d399; box-shadow: 0 0 10px #34d399; }
+
+@media (max-width: 720px) {
+    .sand-actions {
+        margin-left: 0;
+    }
+
+    .sand-tools {
+        gap: 10px;
+    }
+}

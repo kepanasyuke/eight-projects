@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Поток — песочница по восьми проектам</title>
+    <meta name="description" content="Песочница на клетках: песчинки — это записи данных. Проведите поток через створ контракта и створ JPA.">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <link rel="stylesheet" href="/assets/game.css">
+    <link rel="stylesheet" href="/assets/sand.css">
+</head>
+<body class="game-body sand-body">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Поток <span>/ песочница по проектам</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Консоль</a>
+            <a href="/game.html">Платформер</a>
+            <a href="/sand.html" aria-current="page">Поток</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap game-wrap">
+    <div class="game-head">
+        <div>
+            <h1>Поток</h1>
+            <p id="sand-subtitle">Песчинка — это запись. Стена — валидация. Проведите данные до приёмника.</p>
+        </div>
+        <div class="game-hud" aria-live="polite">
+            <div class="hud-item"><span>доставлено</span><b id="hud-delivered">0</b></div>
+            <div class="hud-item"><span>отклонено</span><b id="hud-rejected">0</b></div>
+            <div class="hud-item"><span>запросов</span><b id="hud-queries">0</b></div>
+            <div class="hud-item"><span>материал</span><b id="hud-material">320</b></div>
+            <div class="hud-item"><span>время</span><b id="hud-time">0:00</b></div>
+        </div>
+    </div>
+
+    <div class="game-stage">
+        <canvas id="sand" width="960" height="520" aria-label="Поле песочницы: сверху кран, ниже створ контракта, створ JPA и приёмник"></canvas>
+
+        <div class="game-overlay" id="sand-overlay">
+            <div class="overlay-card">
+                <span class="eyebrow">песочница · одна карта · два створа</span>
+                <h2 id="sand-overlay-title">Проведите поток</h2>
+                <p id="sand-overlay-text">
+                    Сверху сыплются записи. Створ контракта принимает их только в окно — всё, что упадёт на мембрану,
+                    отбивается как 400. Под ним развилка JPA: узкие щели считают отдельный запрос на каждую запись,
+                    широкий жёлоб обходится одним. Стройте стены, чтобы поток шёл по короткому пути.
+                </p>
+                <div class="overlay-actions">
+                    <button class="btn btn--primary" id="sand-overlay-primary" type="button">Открыть кран</button>
+                    <button class="btn btn--ghost" id="sand-overlay-secondary" type="button">Заново</button>
+                </div>
+                <form class="name-form" id="sand-name-form" hidden>
+                    <input id="sand-player" maxlength="20" placeholder="как вас записать" aria-label="Имя для таблицы лидеров">
+                    <button class="btn btn--primary" type="submit">В таблицу</button>
+                </form>
+                <div class="keys">
+                    <span><kbd>ЛКМ</kbd> сыпать материал</span>
+                    <span><kbd>ПКМ</kbd> стирать</span>
+                    <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> выбор</span>
+                    <span><kbd>Пробел</kbd> кран</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sand-tools">
+        <div class="sand-palette" role="group" aria-label="Материал">
+            <button class="sand-swatch is-active" type="button" data-material="wall">
+                <i class="swatch-dot swatch-dot--wall"></i>стена
+            </button>
+            <button class="sand-swatch" type="button" data-material="water">
+                <i class="swatch-dot swatch-dot--water"></i>вода
+            </button>
+            <button class="sand-swatch" type="button" data-material="erase">
+                <i class="swatch-dot swatch-dot--erase"></i>ластик
+            </button>
+        </div>
+        <label class="sand-brush">кисть
+            <input id="sand-brush" type="range" min="1" max="4" step="1" value="2">
+        </label>
+        <div class="sand-actions">
+            <button class="btn btn--ghost" id="sand-tap" type="button">кран: закрыт</button>
+            <button class="btn btn--ghost" id="sand-reset" type="button">Заново</button>
+        </div>
+    </div>
+
+    <div class="game-foot">
+        <div class="game-legend">
+            <span><i class="dot dot--data"></i> песчинка-запись</span>
+            <span><i class="dot dot--reject"></i> мембрана 400</span>
+            <span><i class="dot dot--narrow"></i> узкая щель (N+1)</span>
+            <span><i class="dot dot--deliver"></i> приёмник</span>
+        </div>
+        <p class="sand-hint" id="sand-hint">Стены стоят материала; ластик возвращает его обратно.</p>
+    </div>
+
+    <section class="leaderboard panel">
+        <div class="leaderboard__head">
+            <h3>Таблица лидеров</h3>
+            <button class="btn btn--ghost" id="sand-board-refresh" type="button">Обновить</button>
+        </div>
+        <p class="board__note" id="sand-board-note" hidden></p>
+        <ol class="board" id="sand-board">
+            <li class="board__empty">Загрузка результатов…</li>
+        </ol>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Результат уходит в <code>POST /api/game/scores</code>, офлайн — в браузер</span>
+        <span><a href="/">← вернуться в консоль</a></span>
+    </div>
+</footer>
+
+<script src="/assets/sand.js" defer></script>
+</body>
+</html>

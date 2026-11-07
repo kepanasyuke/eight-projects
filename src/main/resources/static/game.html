@@ -82,6 +82,7 @@
             <h3>Таблица лидеров</h3>
             <button class="btn btn--ghost" id="refresh-board" type="button">Обновить</button>
         </div>
+        <p class="board__note" id="board-note" hidden></p>
         <ol class="board" id="board">
             <li class="board__empty">Загрузка результатов…</li>
         </ol>
@@ -90,8 +91,8 @@
 
 <footer class="footer">
     <div class="wrap footer__inner">
-        <span>Результаты сохраняются в <code>POST /api/game/scores</code>, таблица читается из
-            <code>GET /api/game/leaderboard</code></span>
+        <span>Результаты уходят в <code>POST /api/game/scores</code>; без backend игра работает в
+            офлайн-режиме и хранит их в браузере</span>
         <span><a href="/">← вернуться к витрине</a></span>
     </div>
 </footer>

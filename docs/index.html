@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Восемь проектов — портфолио backend-разработки</title>
+    <meta name="description" content="Восемь учебных backend-проектов на Spring Boot: REST, JPA, транзакции, многопоточность, брокер, XML, подпись, WebSocket. Плюс игра-платформер по этим проектам.">
+    <style>
+        :root {
+            --bg: #070b14;
+            --panel: rgba(9, 15, 27, 0.78);
+            --line: rgba(120, 150, 190, 0.22);
+            --ink: #e8eefc;
+            --muted: #93a3bd;
+            --accent: #7dd3fc;
+            --accent-2: #a78bfa;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: radial-gradient(900px 500px at 12% -10%, rgba(56, 189, 248, 0.16), transparent 70%),
+                        radial-gradient(700px 460px at 92% 4%, rgba(167, 139, 250, 0.15), transparent 72%),
+                        var(--bg);
+            color: var(--ink);
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            line-height: 1.55;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .wrap { width: min(1080px, 92vw); margin: 0 auto; }
+
+        header.top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 22px 0;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-weight: 700; }
+        .brand span.dot {
+            width: 26px; height: 26px; border-radius: 9px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            box-shadow: 0 0 22px rgba(125, 211, 252, 0.4);
+        }
+        .brand small { color: var(--muted); font-weight: 500; }
+
+        .hero { padding: 56px 0 32px; }
+        .hero h1 { margin: 0 0 14px; font-size: clamp(30px, 4.6vw, 50px); line-height: 1.1; letter-spacing: -0.02em; }
+        .hero p { margin: 0; max-width: 62ch; color: var(--muted); font-size: 17px; }
+
+        .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 22px; border-radius: 12px;
+            border: 1px solid var(--line); color: var(--ink);
+            font-weight: 600; font-size: 15px;
+        }
+        .btn:hover { text-decoration: none; border-color: var(--accent); }
+        .btn--primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #0b1a2b;
+            border-color: transparent;
+        }
+
+        figure { margin: 34px 0 0; }
+        figure img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 16px; }
+        figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; }
+
+        section { padding: 34px 0; }
+
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+        .card {
+            padding: 20px; border: 1px solid var(--line); border-radius: 16px;
+            background: var(--panel);
+        }
+        .card h2 { margin: 0 0 8px; font-size: 17px; }
+        .card p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+        .card a { font-size: 14px; font-weight: 600; }
+
+        .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+        .demos img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 12px; background: #0b1220; }
+
+        footer {
+            margin-top: 30px; padding: 26px 0 44px;
+            border-top: 1px solid var(--line);
+            color: var(--muted); font-size: 13px;
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;
+        }
+
+        code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 12.5px; color: #cbd5e1; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header class="top">
+        <div class="brand"><span class="dot" aria-hidden="true"></span>Восемь проектов <small>/ backend-портфолио</small></div>
+        <a href="https://github.com/kepanasyuke/eight-projects">Исходный код на GitHub</a>
+    </header>
+
+    <div class="hero">
+        <h1>Восемь проектов на Spring Boot — от REST-контракта до подписи и WebSocket</h1>
+        <p>
+            Учебный монорепозиторий: восемь законченных backend-тем, живая консоль поверх собственного API
+            и платформер, где каждый уровень — один проект. Здесь, на GitHub Pages, работает статическая
+            версия: игра запускается целиком в браузере, результаты лидерборда хранятся в localStorage.
+        </p>
+        <div class="actions">
+            <a class="btn btn--primary" href="game.html">Играть в «Восемь уровней»</a>
+            <a class="btn" href="https://github.com/kepanasyuke/eight-projects">Код и README</a>
+        </div>
+
+        <figure>
+            <img src="screenshots/console-tasks.png" alt="Консоль проекта: список задач из REST API">
+            <figcaption>Рабочая консоль в приложении: CRUD по <code>/api/v1/work-items</code>, фильтры, пагинация, переходы по машине состояний.</figcaption>
+        </figure>
+    </div>
+
+    <section>
+        <div class="cards">
+            <article class="card">
+                <h2>Живая консоль</h2>
+                <p>Восемь разделов дергают настоящий backend: задачи, JPA-запросы, транзакции с откатом, пул потоков, брокер, XML/XSD, подпись и WebSocket.</p>
+                <a href="https://github.com/kepanasyuke/eight-projects#readme">Как запустить локально →</a>
+            </article>
+            <article class="card">
+                <h2>Игра</h2>
+                <p>Платформер из восьми уровней с таймером, навыками и багами. Собирает очки и пишет результат в лидерборд.</p>
+                <a href="game.html">Открыть игру →</a>
+            </article>
+            <article class="card">
+                <h2>Демо проектов</h2>
+                <p>Самодельные SMIL-анимации по каждой теме: от контракта REST до WebSocket-сообщений. Ни одного стороннего ассета.</p>
+                <a href="https://github.com/kepanasyuke/eight-projects#демо">Смотреть демо →</a>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <div class="demos">
+            <img src="demo/p1.gif" alt="Анимация проекта 1: REST API по контракту">
+            <img src="demo/p3.gif" alt="Анимация проекта 3: транзакции и откат">
+            <img src="demo/p8.gif" alt="Анимация проекта 8: WebSocket">
+        </div>
+    </section>
+
+    <footer>
+        <span>Ниже — статическая копия для GitHub Pages: без backend, лидерборд в браузере.</span>
+        <span><a href="https://github.com/kepanasyuke/eight-projects">github.com/kepanasyuke/eight-projects</a></span>
+    </footer>
+</div>
+</body>
+</html>

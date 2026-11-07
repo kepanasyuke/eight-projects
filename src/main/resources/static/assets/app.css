@@ -175,7 +175,7 @@
 
 .split {
     display: grid;
-    grid-template-columns: minmax(0, 1.75fr) minmax(260px, 1fr);
+    grid-template-columns: minmax(0, 2fr) minmax(220px, 0.85fr);
     gap: 16px;
     align-items: start;
 }
@@ -190,11 +190,11 @@
 .table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 12.5px;
 }
 
 .table th {
-    padding: 9px 10px;
+    padding: 9px 8px;
     border-bottom: 1px solid var(--line);
     color: var(--muted);
     font-weight: 600;
@@ -233,7 +233,7 @@
 
 .cell-title {
     display: block;
-    max-width: 240px;
+    max-width: 190px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -242,11 +242,11 @@
 .status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 2px 9px;
+    gap: 5px;
+    padding: 2px 7px;
     border: 1px solid var(--line);
     border-radius: 999px;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     white-space: nowrap;

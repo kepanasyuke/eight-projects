@@ -39,6 +39,7 @@
     const refreshBoard = document.getElementById("refresh-board");
 
     const STORAGE_KEY = "eight-projects-game";
+    const LOCAL_BOARD_KEY = "eight-projects-leaderboard";
 
     const state = {
         levelIndex: 0,
@@ -701,28 +702,19 @@
             }
             button.disabled = true;
             button.textContent = "Сохраняю…";
-            try {
-                await fetch("/api/game/scores", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        player,
-                        level: LEVELS.length,
-                        score: state.score,
-                        seconds: Math.round(state.time),
-                    }),
-                });
-                store.write({ player });
-                button.textContent = "Сохранено";
-                loadLeaderboard();
-            } catch (error) {
-                button.textContent = "Не сохранилось";
-            } finally {
-                window.setTimeout(() => {
-                    button.disabled = false;
-                    button.textContent = "Сохранить результат";
-                }, 1600);
-            }
+            const target = await saveScore({
+                player,
+                level: LEVELS.length,
+                score: state.score,
+                seconds: Math.round(state.time),
+            });
+            store.write({ player });
+            button.textContent = target === "server" ? "Сохранено" : "Сохранено локально";
+            loadLeaderboard();
+            window.setTimeout(() => {
+                button.disabled = false;
+                button.textContent = "Сохранить результат";
+            }, 1600);
         });
 
         showOverlay({
@@ -775,9 +767,13 @@
         if (!board) {
             return;
         }
-        try {
-            const response = await fetch("/api/game/leaderboard?limit=10");
-            const scores = await response.json();
+        const note = document.getElementById("board-note");
+        const render = (scores, source) => {
+            if (note) {
+                note.hidden = source === "server";
+                note.textContent = "офлайн-режим: результаты хранятся в этом браузере";
+            }
+            board.dataset.source = source;
             if (!Array.isArray(scores) || scores.length === 0) {
                 board.innerHTML = '<li class="board__empty">Пока пусто — пройдите игру и оставьте результат.</li>';
                 return;
@@ -791,8 +787,58 @@
                     <span class="board__meta">${score.score} очк · ${formatTime(score.seconds)}</span>
                 </li>`;
             }).join("");
+        };
+        try {
+            if (window.EIGHT_OFFLINE) {
+                throw new Error("offline build");
+            }
+            const response = await fetch("/api/game/leaderboard?limit=10");
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+            render(await response.json(), "server");
         } catch (error) {
-            board.innerHTML = '<li class="board__empty">Не удалось загрузить таблицу лидеров.</li>';
+            render(readLocalBoard(), "local");
+        }
+    };
+
+    const readLocalBoard = () => {
+        try {
+            const parsed = JSON.parse(window.localStorage.getItem(LOCAL_BOARD_KEY) || "[]");
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (error) {
+            return [];
+        }
+    };
+
+    const writeLocalScore = (entry) => {
+        try {
+            const scores = [entry, ...readLocalBoard()]
+                .sort((left, right) => right.score - left.score)
+                .slice(0, 20);
+            window.localStorage.setItem(LOCAL_BOARD_KEY, JSON.stringify(scores));
+        } catch (error) {
+            /* приватный режим — просто не сохраняем */
+        }
+    };
+
+    const saveScore = async (entry) => {
+        try {
+            if (window.EIGHT_OFFLINE) {
+                throw new Error("offline build");
+            }
+            const response = await fetch("/api/game/scores", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(entry),
+            });
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+            return "server";
+        } catch (error) {
+            writeLocalScore({ ...entry, createdAt: new Date().toISOString() });
+            return "local";
         }
     };
 

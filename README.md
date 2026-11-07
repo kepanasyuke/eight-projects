@@ -10,6 +10,10 @@ WebSocket с машиной состояний.
 Вся графика в интерфейсе нарисована вручную: анимированные SVG лежат в
 `src/main/resources/static/svg/`, GIF-ролики для README собраны из их кадров. Ни одной стоковой картинки.
 
+Живая демо-версия: **[kepanasyuke.github.io/eight-projects](https://kepanasyuke.github.io/eight-projects/)** —
+статическая сборка для GitHub Pages. Backend там нет, поэтому игра работает офлайн, а лидерборд хранится
+в `localStorage` браузера.
+
 ## Быстрый старт
 
 ```bash
@@ -73,6 +77,14 @@ docker compose up -d          # postgres:16-alpine, база eight
 Игровой модуль: `/api/game/levels`, `POST /api/game/scores`, `GET /api/game/leaderboard`,
 `GET /api/game/stats`.
 
+## Скриншоты
+
+| Консоль: задачи | Консоль: транзакции |
+| --- | --- |
+| ![Консоль: список задач](docs/screenshots/console-tasks.png) | ![Консоль: транзакции](docs/screenshots/console-tx.png) |
+
+![Игра «Восемь уровней»](docs/screenshots/game.png)
+
 ## Демо
 
 Анимации выше — это те же SVG, что показывает витрина; GIF собраны из их кадров.
@@ -108,7 +120,9 @@ src/main/resources
 └── static/          витрина, страницы проектов, игра, ассеты, SVG
 
 docs/demo/           GIF-ролики, собранные из кадров SVG
-tools/               генераторы SVG, GIF и страниц
+docs/screenshots/    скриншоты консоли и игры для README
+docs/                статическая сборка для GitHub Pages: лендинг и игра
+tools/               генераторы SVG, GIF, страниц и сборка docs/
 ```
 
 Генераторы идемпотентны и лежат в репозитории:
@@ -117,6 +131,7 @@ tools/               генераторы SVG, GIF и страниц
 python tools/make_svgs.py        # 9 анимированных SVG (SMIL) в static/svg
 python tools/make_demo_gifs.py   # GIF для README из кадров SVG (нужен Chrome или Edge)
 python tools/make_pages.py       # HTML страниц проектов из общего словаря метаданных
+python tools/build_pages.py      # docs/: игра с относительными путями и офлайн-лидербордом
 ```
 
 ## Тесты

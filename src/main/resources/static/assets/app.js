@@ -1355,6 +1355,10 @@
             }
             badge.classList.remove('is-down');
             badge.replaceChildren(document.createTextNode('сервер: '), el('b', { text: 'без backend' }));
+            const hint = $('.rail__hint');
+            if (hint) {
+                hint.textContent = 'Ответы записаны с живого backend: H2 в режиме PostgreSQL, миграции Flyway. Действия меняют только копию в браузере.';
+            }
             return;
         }
         try {

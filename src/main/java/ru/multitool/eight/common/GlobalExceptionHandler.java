@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
@@ -87,6 +88,16 @@ public class GlobalExceptionHandler {
         ResponseEntity<ApiError> response = ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ApiError.of("DATA_INTEGRITY_VIOLATION", "Операция нарушает ограничения базы данных",
                         request.getRequestURI()));
+        return response;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException ex,
+                                                       HttpServletRequest request) {
+        String value = ex.getValue() == null ? "null" : String.valueOf(ex.getValue());
+        ResponseEntity<ApiError> response = ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiError.of("INVALID_PARAMETER",
+                        "Параметр " + ex.getName() + " не принимает значение " + value, request.getRequestURI()));
         return response;
     }
 

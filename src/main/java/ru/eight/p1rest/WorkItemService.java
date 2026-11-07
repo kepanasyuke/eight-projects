@@ -1,5 +1,7 @@
 package ru.eight.p1rest;
 
+import java.time.Instant;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,7 @@ import ru.eight.domain.AssigneeRepository;
 import ru.eight.domain.WorkItem;
 import ru.eight.domain.WorkItemRepository;
 import ru.eight.domain.WorkItemStatus;
+import ru.eight.domain.WorkNote;
 
 /**
  * Сервис CRUD для рабочей задачи: валидация контракта, пагинация, смена статуса.
@@ -87,6 +90,15 @@ public class WorkItemService {
         return response;
     }
 
+    @Transactional(readOnly = true)
+    public List<NoteView> notes(Long id) {
+        WorkItem item = loadItem(id);
+        List<NoteView> response = item.getNotes().stream()
+                .map(NoteView::from)
+                .toList();
+        return response;
+    }
+
     @Transactional
     public void delete(Long id) {
         WorkItem item = loadItem(id);
@@ -103,5 +115,13 @@ public class WorkItemService {
         Assignee assignee = this.assignees.findById(id)
                 .orElseThrow(() -> ApiException.notFound("Исполнитель " + id + " не найден"));
         return assignee;
+    }
+
+    public record NoteView(Long id, String author, String content, Instant createdAt) {
+
+        public static NoteView from(WorkNote note) {
+            NoteView view = new NoteView(note.getId(), note.getAuthor(), note.getContent(), note.getCreatedAt());
+            return view;
+        }
     }
 }

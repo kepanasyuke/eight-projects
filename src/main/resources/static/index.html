@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Восемь проектов — витрина бэкенда на Java 17 и Spring Boot</title>
-    <meta name="description" content="Восемь учебно-боевых backend-проектов на Java 17 и Spring Boot: REST, JPA, транзакции, многопоточность, брокер сообщений, XML/XSD, подпись JCA и WebSocket, плюс платформер из восьми уровней.">
+    <title>Восемь проектов — рабочая консоль</title>
+    <meta name="description" content="Рабочая консоль восьми backend-проектов на Java 17 и Spring Boot: задачи, JPA-отчёты, переводы, пул потоков, брокер с DLQ, XML/XSD, подпись и WebSocket.">
     <link rel="stylesheet" href="/assets/styles.css">
+    <link rel="stylesheet" href="/assets/app.css">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2338bdf8'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%2306101f' font-family='monospace'%3E8%3C/text%3E%3C/svg%3E">
 </head>
 <body>
@@ -15,92 +16,451 @@
     <div class="wrap topbar__inner">
         <a class="brand" href="/">
             <span class="brand__mark" aria-hidden="true"></span>
-            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+            <span class="brand__name">Восемь проектов <span>/ консоль</span></span>
         </a>
         <nav class="nav" aria-label="Основная навигация">
-            <a href="/" aria-current="page">Витрина</a>
-            <a href="#projects">Проекты</a>
+            <a href="/" aria-current="page">Консоль</a>
+            <a href="/showcase.html">Витрина</a>
             <a href="/game.html">Игра</a>
+            <a href="/projects/p1.html">Документация</a>
             <a href="/actuator/health">Health</a>
         </nav>
+        <span class="health" id="healthBadge" title="Состояние приложения">сервер: <b>…</b></span>
     </div>
 </header>
 
-<main>
-    <section class="wrap hero">
-        <div>
-            <span class="eyebrow">backend-портфолио · запускается локально</span>
-            <h1>Восемь проектов, которые <em>отвечают на запросы</em> прямо сейчас</h1>
-            <p>
-                Каждый блок — рабочий код под задачу из вакансии Middle Java Developer: контракт REST,
-                устранение N+1, границы транзакций, многопоточность, брокер с outbox и DLQ, XML/XSD с защитой
-                от XXE, подпись и сертификаты, WebSocket с машиной состояний. Ниже — живая витрина и игра,
-                где восемь уровней соответствуют восьми проектам.
-            </p>
-            <div class="cta">
-                <a class="btn btn--primary" href="#projects">Смотреть проекты</a>
-                <a class="btn btn--ghost" href="/game.html">Играть в платформер</a>
-            </div>
-            <div class="stats" data-stats>
-                <div class="stat"><b>8</b><span>проектов в витрине</span></div>
-                <div class="stat"><b>8</b><span>уровней в игре</span></div>
-            </div>
-        </div>
-        <div class="hero__stage">
-            <img src="/svg/hero.svg" alt="Анимация: восемь проектов на орбите" width="480" height="270">
-        </div>
-    </section>
+<main class="wrap console">
+    <nav class="rail" aria-label="Разделы консоли">
+        <button class="rail__item" type="button" data-tab="tasks" aria-selected="true">
+            <span class="rail__num">1</span> Задачи
+        </button>
+        <button class="rail__item" type="button" data-tab="jpa">
+            <span class="rail__num">2</span> JPA-запросы
+        </button>
+        <button class="rail__item" type="button" data-tab="tx">
+            <span class="rail__num">3</span> Транзакции
+        </button>
+        <button class="rail__item" type="button" data-tab="conc">
+            <span class="rail__num">4</span> Потоки
+        </button>
+        <button class="rail__item" type="button" data-tab="bus">
+            <span class="rail__num">5</span> Брокер
+        </button>
+        <button class="rail__item" type="button" data-tab="xml">
+            <span class="rail__num">6</span> XML и XSD
+        </button>
+        <button class="rail__item" type="button" data-tab="crypto">
+            <span class="rail__num">7</span> Подпись
+        </button>
+        <button class="rail__item" type="button" data-tab="ws">
+            <span class="rail__num">8</span> WebSocket
+        </button>
+        <button class="rail__item" type="button" data-tab="game">
+            <span class="rail__num">★</span> Игра
+        </button>
+        <p class="rail__hint">Все действия идут в реальный backend на этом же порту: H2 в режиме PostgreSQL, миграции Flyway.</p>
+    </nav>
 
-    <section class="wrap section" id="projects">
-        <div class="section__head">
-            <div>
-                <h2>Витрина проектов</h2>
-                <p>У каждого проекта своя страница: задача, ключевые решения, живой вызов API и код.</p>
+    <div class="workspace">
+        <section class="pane" data-pane="tasks">
+            <div class="pane__head">
+                <div>
+                    <h1>Задачи</h1>
+                    <p>Живой CRUD по контракту <code>/api/v1/work-items</code>: фильтр по статусу, пагинация, идемпотентное создание, переходы по машине состояний.</p>
+                </div>
+                <button class="btn btn--primary" type="button" id="taskCreateToggle">Новая задача</button>
             </div>
-            <a class="btn btn--ghost" href="/api/showcase/projects">JSON витрины</a>
-        </div>
-        <div class="cards" data-projects aria-live="polite"></div>
-    </section>
 
-    <section class="wrap section">
-        <div class="section__head">
-            <div>
-                <h2>Что внутри</h2>
-                <p>Стек и практики, которые проверяются в коде, а не в резюме.</p>
+            <form class="toolbar" id="taskForm" hidden>
+                <label class="field field--wide">Заголовок
+                    <input class="input" id="taskTitle" name="title" required minlength="3" maxlength="120" placeholder="Например, добавить фильтр по исполнителю">
+                </label>
+                <label class="field field--wide">Описание
+                    <input class="input" id="taskDescription" name="description" maxlength="2000" placeholder="Необязательно">
+                </label>
+                <label class="field">Приоритет
+                    <select class="select" id="taskPriority">
+                        <option value="1">1 — низкий</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3 — обычный</option>
+                        <option value="4">4</option>
+                        <option value="5">5 — высокий</option>
+                    </select>
+                </label>
+                <label class="field">Исполнитель
+                    <select class="select" id="taskAssignee"></select>
+                </label>
+                <div class="actions">
+                    <button class="btn btn--primary" type="submit">Создать</button>
+                    <button class="btn btn--ghost" type="button" id="taskCancel">Отмена</button>
+                </div>
+            </form>
+
+            <div class="toolbar">
+                <label class="field">Статус
+                    <select class="select" id="taskStatus">
+                        <option value="">все</option>
+                        <option value="NEW">новая</option>
+                        <option value="IN_PROGRESS">в работе</option>
+                        <option value="BLOCKED">заблокирована</option>
+                        <option value="DONE">готова</option>
+                        <option value="CANCELLED">отменена</option>
+                    </select>
+                </label>
+                <label class="field">На странице
+                    <select class="select" id="taskSize">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </label>
+                <button class="btn btn--ghost" type="button" id="taskReload">Обновить</button>
+                <span class="grow"></span>
+                <span class="health" id="taskSummary">загрузка…</span>
             </div>
-        </div>
-        <div class="cards">
-            <article class="panel reveal">
-                <h3>Надёжность данных</h3>
-                <p>Flyway-миграции с CHECK-ограничениями, оптимистичные блокировки <code>@Version</code>,
-                    пессимистичный <code>SELECT FOR UPDATE</code>, идемпотентность по ключу операции.</p>
-            </article>
-            <article class="panel reveal">
-                <h3>Асинхронность без сюрпризов</h3>
-                <p>Ограниченный пул потоков, <code>CompletableFuture</code> с тайм-аутами, честная демонстрация
-                    потерянных обновлений и дедлока с упорядочиванием блокировок.</p>
-            </article>
-            <article class="panel reveal">
-                <h3>Интеграции</h3>
-                <p>Transactional Outbox, повторы с DLQ и дедупликацией, JAXB и валидация по XSD,
-                    ГОСТ-совместимая подпись через JCA с готовностью к КриптоПро JCP.</p>
-            </article>
-            <article class="panel reveal">
-                <h3>Проверяемость</h3>
-                <p>JUnit 5 и MockMvc, H2 в режиме PostgreSQL и профиль на реальном PostgreSQL в Docker,
-                    smoke-тест витрины и игры.</p>
-            </article>
-        </div>
-    </section>
+
+            <div class="split">
+                <div class="table-wrap">
+                    <table class="table" aria-label="Список задач">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Заголовок</th>
+                            <th>Статус</th>
+                            <th>Приоритет</th>
+                            <th>Исполнитель</th>
+                            <th>Заметки</th>
+                        </tr>
+                        </thead>
+                        <tbody id="taskRows"></tbody>
+                    </table>
+                    <div class="pager-bar">
+                        <span id="taskPageInfo">—</span>
+                        <span class="actions">
+                            <button class="btn btn--ghost btn--small" type="button" id="taskPrev">Назад</button>
+                            <button class="btn btn--ghost btn--small" type="button" id="taskNext">Вперёд</button>
+                        </span>
+                    </div>
+                </div>
+
+                <aside class="panel drawer" id="taskDetail" aria-live="polite">
+                    <p class="drawer__empty">Выберите задачу в таблице, чтобы открыть карточку: описание, заметки, смена статуса.</p>
+                </aside>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="jpa" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>JPA-запросы</h2>
+                    <p>Один и тот же список задач, четыре способа загрузки связей. Сравните число SQL-запросов и время.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label class="field">Статус
+                    <select class="select" id="jpaStatus">
+                        <option value="NEW">новая</option>
+                        <option value="IN_PROGRESS">в работе</option>
+                        <option value="BLOCKED">заблокирована</option>
+                        <option value="DONE">готова</option>
+                        <option value="CANCELLED">отменена</option>
+                    </select>
+                </label>
+                <div class="actions">
+                    <button class="btn btn--ghost" type="button" data-jpa-mode="naive">naive (N+1)</button>
+                    <button class="btn btn--ghost" type="button" data-jpa-mode="fetch-join">fetch join</button>
+                    <button class="btn btn--ghost" type="button" data-jpa-mode="entity-graph">EntityGraph</button>
+                    <button class="btn btn--ghost" type="button" data-jpa-mode="projection">DTO-проекция</button>
+                </div>
+                <span class="grow"></span>
+                <label class="field">ID задачи
+                    <input class="input" id="jpaId" type="number" min="1" value="1" style="width:90px">
+                </label>
+                <div class="actions">
+                    <button class="btn btn--ghost" type="button" id="jpaOptimistic">Оптимистичная блокировка</button>
+                    <button class="btn btn--ghost" type="button" id="jpaPessimistic">SELECT FOR UPDATE</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="metrics" id="jpaMetrics"></div>
+                <div class="result" id="jpaResult"></div>
+                <table class="table" aria-label="Выборка задач">
+                    <thead>
+                    <tr><th>ID</th><th>Заголовок</th><th>Исполнитель</th><th>Заметки</th></tr>
+                    </thead>
+                    <tbody id="jpaRows"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="tx" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>Транзакции</h2>
+                    <p>Перевод между счетами: одна транзакция, откат при ошибке и аудит в <code>REQUIRES_NEW</code>, который переживает откат.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label class="field">Списать со счёта
+                    <select class="select" id="txSource"></select>
+                </label>
+                <label class="field">Зачислить на счёт
+                    <select class="select" id="txTarget"></select>
+                </label>
+                <label class="field">Сумма
+                    <input class="input" id="txAmount" type="number" min="0.01" step="0.01" value="100" style="width:120px">
+                </label>
+                <div class="actions">
+                    <button class="btn btn--primary" type="button" id="txTransfer">Перевести</button>
+                    <button class="btn btn--ghost" type="button" id="txTransferAudit">Откат с аудитом</button>
+                    <button class="btn btn--ghost" type="button" id="txPropagation">Демо propagation</button>
+                    <button class="btn btn--ghost" type="button" id="txReload">Обновить</button>
+                </div>
+            </div>
+            <div class="panel">
+                <h3>Счета</h3>
+                <div class="metrics" id="txAccounts"></div>
+                <div class="result" id="txResult"></div>
+            </div>
+            <div class="split">
+                <div class="panel">
+                    <h3>Проводки</h3>
+                    <table class="table" aria-label="Проводки">
+                        <thead><tr><th>ID</th><th>Откуда</th><th>Куда</th><th>Сумма</th><th>Когда</th></tr></thead>
+                        <tbody id="txEntriesRows"></tbody>
+                    </table>
+                </div>
+                <div class="panel">
+                    <h3>Аудит</h3>
+                    <ul class="note-list" id="txAuditRows"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="conc" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>Многопоточность</h2>
+                    <p>Ограниченный пул, тайм-ауты, потерянные обновления и дедлок, который лечится порядком блокировок.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label class="field">Потоки
+                    <input class="input" id="concThreads" type="number" min="1" max="32" value="4" style="width:80px">
+                </label>
+                <label class="field">Итерации
+                    <input class="input" id="concIterations" type="number" min="100" max="200000" value="20000" style="width:110px">
+                </label>
+                <label class="field">Задач в пул
+                    <input class="input" id="concTasks" type="number" min="1" max="500" value="100" style="width:90px">
+                </label>
+                <label class="field">Порядок блокировок
+                    <select class="select" id="concOrdered">
+                        <option value="false">встречный (дедлок)</option>
+                        <option value="true">упорядоченный</option>
+                    </select>
+                </label>
+                <div class="actions">
+                    <button class="btn btn--ghost" type="button" data-conc="parallel">Параллельно vs последовательно</button>
+                    <button class="btn btn--ghost" type="button" data-conc="timeout">Тайм-аут</button>
+                    <button class="btn btn--primary" type="button" data-conc="race">Гонка счётчиков</button>
+                    <button class="btn btn--ghost" type="button" data-conc="deadlock">Дедлок</button>
+                    <button class="btn btn--ghost" type="button" data-conc="pool">Перегрузка пула</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="metrics" id="concMetrics"></div>
+                <div class="result" id="concResult"></div>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="bus" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>Брокер и Outbox</h2>
+                    <p>Семантика Kafka в памяти: партиции, группы, повторы, дедупликация, DLQ и отправка после коммита.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label class="field">Отравленное сообщение
+                    <select class="select" id="busPoison">
+                        <option value="false">нет</option>
+                        <option value="true">да (уйдёт в DLQ)</option>
+                    </select>
+                </label>
+                <label class="field">Payload для outbox
+                    <input class="input" id="busPayload" placeholder="work-item-42" style="min-width:180px">
+                </label>
+                <div class="actions">
+                    <button class="btn btn--primary" type="button" id="busScenario">Прогнать сценарий</button>
+                    <button class="btn btn--ghost" type="button" id="busState">Состояние брокера</button>
+                    <button class="btn btn--ghost" type="button" id="busOutbox">Записать в outbox</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="metrics" id="busMetrics"></div>
+                <div class="result" id="busResult"></div>
+            </div>
+            <div class="split">
+                <div class="panel">
+                    <h3>Партиции</h3>
+                    <table class="table" aria-label="Партиции">
+                        <thead><tr><th>Партиция</th><th>Сообщений</th></tr></thead>
+                        <tbody id="busPartitions"></tbody>
+                    </table>
+                </div>
+                <div class="panel">
+                    <h3>События</h3>
+                    <div class="log" id="busEvents"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="xml" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>XML и XSD</h2>
+                    <p>Валидация по схеме, разбор JAXB и сборка счёта. DOCTYPE и внешние сущности отключены — попробуйте прислать XXE-документ.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <button class="btn btn--ghost" type="button" id="xmlSample">Загрузить образец</button>
+                <button class="btn btn--primary" type="button" id="xmlValidate">Проверить по XSD</button>
+                <button class="btn btn--ghost" type="button" id="xmlParse">Разобрать JAXB</button>
+                <button class="btn btn--ghost" type="button" id="xmlXxe">Подставить XXE</button>
+            </div>
+            <div class="split">
+                <div class="panel">
+                    <h3>Документ</h3>
+                    <textarea class="textarea" id="xmlText" spellcheck="false"></textarea>
+                </div>
+                <div class="panel">
+                    <h3>Результат</h3>
+                    <div class="result" id="xmlResult"></div>
+                </div>
+            </div>
+            <details class="panel">
+                <summary>Собрать счёт из черновика</summary>
+                <form class="form-grid" id="xmlBuildForm" style="margin-top:12px">
+                    <label class="field">Номер
+                        <input class="input" name="number" value="INV-2026-001" required>
+                    </label>
+                    <label class="field">Дата
+                        <input class="input" name="issuedAt" type="date" value="2026-02-01" required>
+                    </label>
+                    <label class="field">Продавец
+                        <input class="input" name="sellerName" value="ООО Вектор" required>
+                    </label>
+                    <label class="field">ИНН продавца
+                        <input class="input" name="sellerInn" value="7701234567" required>
+                    </label>
+                    <label class="field">Покупатель
+                        <input class="input" name="buyerName" value="ООО Полюс" required>
+                    </label>
+                    <label class="field">ИНН покупателя
+                        <input class="input" name="buyerInn" value="7809876543" required>
+                    </label>
+                    <label class="field">Позиция
+                        <input class="input" name="itemName" value="Консультация" required>
+                    </label>
+                    <label class="field">Количество
+                        <input class="input" name="quantity" type="number" min="1" value="2" required>
+                    </label>
+                    <label class="field">Цена
+                        <input class="input" name="price" type="number" min="0.01" step="0.01" value="1500" required>
+                    </label>
+                    <div class="actions">
+                        <button class="btn btn--primary" type="submit">Собрать XML</button>
+                    </div>
+                </form>
+            </details>
+        </section>
+
+        <section class="pane" data-pane="crypto" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>Подпись и сертификаты</h2>
+                    <p>Подпись через JCA, проверка сертификата и демонстрация подмены полезной нагрузки.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label class="field grow">Полезная нагрузка
+                    <input class="input" id="cryptoPayload" value="Платёж на 300 000 рублей">
+                </label>
+                <div class="actions">
+                    <button class="btn btn--primary" type="button" id="cryptoSign">Подписать</button>
+                    <button class="btn btn--ghost" type="button" id="cryptoVerify">Проверить подпись</button>
+                    <button class="btn btn--ghost" type="button" id="cryptoTamper">Подмена</button>
+                    <button class="btn btn--ghost" type="button" id="cryptoCert">Сертификат</button>
+                </div>
+            </div>
+            <div class="split">
+                <div class="panel">
+                    <h3>Результат</h3>
+                    <div class="result" id="cryptoResult"></div>
+                </div>
+                <div class="panel">
+                    <h3>Сертификат и цепочка</h3>
+                    <dl class="kv" id="cryptoCertBox"><dt>статус</dt><dd>нажмите «Сертификат»</dd></dl>
+                </div>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="ws" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>WebSocket</h2>
+                    <p>Машина состояний поверх <code>ws://…/ws/state</code>: сервер сам проверяет допустимость перехода и ведёт историю.</p>
+                </div>
+            </div>
+            <div class="toolbar">
+                <div class="actions">
+                    <button class="btn btn--primary" type="button" id="wsConnect">Подключиться</button>
+                    <button class="btn btn--ghost" type="button" id="wsDisconnect">Отключиться</button>
+                </div>
+                <label class="field grow">Заметка к переходу
+                    <input class="input" id="wsNote" placeholder="комментарий попадёт в историю">
+                </label>
+            </div>
+            <div class="split">
+                <div class="panel">
+                    <h3>Доступные переходы</h3>
+                    <div class="chips" id="wsCommands"><span class="drawer__empty">подключитесь, чтобы увидеть допустимые команды</span></div>
+                    <div class="result" id="wsStateBox"></div>
+                </div>
+                <div class="panel">
+                    <h3>Журнал кадров</h3>
+                    <div class="log" id="wsLog"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pane" data-pane="game" hidden>
+            <div class="pane__head">
+                <div>
+                    <h2>Игра</h2>
+                    <p>Платформер из восьми уровней: каждый уровень соответствует одному backend-проекту.</p>
+                </div>
+                <a class="btn btn--primary" href="/game.html">Открыть игру</a>
+            </div>
+            <div class="panel">
+                <div class="metrics" id="gameMetrics"></div>
+            </div>
+            <div class="panel">
+                <h3>Лидерборд</h3>
+                <table class="table" aria-label="Лидерборд">
+                    <thead><tr><th>Игрок</th><th>Уровень</th><th>Очки</th><th>Время</th></tr></thead>
+                    <tbody id="gameRows"></tbody>
+                </table>
+                <button class="btn btn--ghost btn--small" type="button" id="gameReload">Обновить</button>
+            </div>
+        </section>
+    </div>
 </main>
 
-<footer class="footer">
-    <div class="wrap footer__inner">
-        <span>Восемь проектов · Java 17, Spring Boot 3.3, PostgreSQL, Kafka-семантика, WebSocket</span>
-        <span>Запуск: <code>./mvnw spring-boot:run</code> → <code>http://localhost:8080</code></span>
-    </div>
-</footer>
+<div class="toast" id="toast" aria-live="polite"></div>
 
-<script src="/assets/showcase.js" defer></script>
+<script src="/assets/app.js" defer></script>
 </body>
 </html>

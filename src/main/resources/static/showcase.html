@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Восемь проектов — витрина бэкенда на Java 17 и Spring Boot</title>
+    <meta name="description" content="Восемь учебно-боевых backend-проектов на Java 17 и Spring Boot: REST, JPA, транзакции, многопоточность, брокер сообщений, XML/XSD, подпись JCA и WebSocket, плюс платформер из восьми уровней.">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2338bdf8'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%2306101f' font-family='monospace'%3E8%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="/showcase.html">
+            <span class="brand__mark" aria-hidden="true"></span>
+            <span class="brand__name">Восемь проектов <span>/ Java 17 · Spring Boot</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="/">Консоль</a>
+            <a href="/showcase.html" aria-current="page">Витрина</a>
+            <a href="#projects">Проекты</a>
+            <a href="/game.html">Игра</a>
+            <a href="/actuator/health">Health</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="wrap hero">
+        <div>
+            <span class="eyebrow">backend-портфолио · запускается локально</span>
+            <h1>Восемь проектов, которые <em>отвечают на запросы</em> прямо сейчас</h1>
+            <p>
+                Каждый блок — рабочий код под задачу из вакансии Middle Java Developer: контракт REST,
+                устранение N+1, границы транзакций, многопоточность, брокер с outbox и DLQ, XML/XSD с защитой
+                от XXE, подпись и сертификаты, WebSocket с машиной состояний. Ниже — живая витрина и игра,
+                где восемь уровней соответствуют восьми проектам.
+            </p>
+            <div class="cta">
+                <a class="btn btn--primary" href="#projects">Смотреть проекты</a>
+                <a class="btn btn--ghost" href="/game.html">Играть в платформер</a>
+            </div>
+            <div class="stats" data-stats>
+                <div class="stat"><b>8</b><span>проектов в витрине</span></div>
+                <div class="stat"><b>8</b><span>уровней в игре</span></div>
+            </div>
+        </div>
+        <div class="hero__stage">
+            <img src="/svg/hero.svg" alt="Анимация: восемь проектов на орбите" width="480" height="270">
+        </div>
+    </section>
+
+    <section class="wrap section" id="projects">
+        <div class="section__head">
+            <div>
+                <h2>Витрина проектов</h2>
+                <p>У каждого проекта своя страница: задача, ключевые решения, живой вызов API и код.</p>
+            </div>
+            <a class="btn btn--ghost" href="/api/showcase/projects">JSON витрины</a>
+        </div>
+        <div class="cards" data-projects aria-live="polite"></div>
+    </section>
+
+    <section class="wrap section">
+        <div class="section__head">
+            <div>
+                <h2>Что внутри</h2>
+                <p>Стек и практики, которые проверяются в коде, а не в резюме.</p>
+            </div>
+        </div>
+        <div class="cards">
+            <article class="panel reveal">
+                <h3>Надёжность данных</h3>
+                <p>Flyway-миграции с CHECK-ограничениями, оптимистичные блокировки <code>@Version</code>,
+                    пессимистичный <code>SELECT FOR UPDATE</code>, идемпотентность по ключу операции.</p>
+            </article>
+            <article class="panel reveal">
+                <h3>Асинхронность без сюрпризов</h3>
+                <p>Ограниченный пул потоков, <code>CompletableFuture</code> с тайм-аутами, честная демонстрация
+                    потерянных обновлений и дедлока с упорядочиванием блокировок.</p>
+            </article>
+            <article class="panel reveal">
+                <h3>Интеграции</h3>
+                <p>Transactional Outbox, повторы с DLQ и дедупликацией, JAXB и валидация по XSD,
+                    ГОСТ-совместимая подпись через JCA с готовностью к КриптоПро JCP.</p>
+            </article>
+            <article class="panel reveal">
+                <h3>Проверяемость</h3>
+                <p>JUnit 5 и MockMvc, H2 в режиме PostgreSQL и профиль на реальном PostgreSQL в Docker,
+                    smoke-тест витрины и игры.</p>
+            </article>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="wrap footer__inner">
+        <span>Восемь проектов · Java 17, Spring Boot 3.3, PostgreSQL, Kafka-семантика, WebSocket</span>
+        <span>Запуск: <code>./mvnw spring-boot:run</code> → <code>http://localhost:8080</code></span>
+    </div>
+</footer>
+
+<script src="/assets/showcase.js" defer></script>
+</body>
+</html>

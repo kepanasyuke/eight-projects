@@ -424,4 +424,49 @@ class RestContractMatrixTest {
         assertThat(item.has("version")).isTrue();
         assertThat(item.has("createdAt")).isTrue();
     }
+
+    @Test
+    @DisplayName("справочник исполнителей отдаёт id, имя и почту")
+    void assigneesDirectory() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/api/v1/assignees")).andReturn();
+
+        JsonNode payload = this.objectMapper.readTree(
+                result.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8));
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        assertThat(payload.isArray()).isTrue();
+        assertThat(payload.size()).isGreaterThanOrEqualTo(3);
+        assertThat(payload.get(0).has("id")).isTrue();
+        assertThat(payload.get(0).get("name").asText()).isNotBlank();
+        assertThat(payload.get(0).get("email").asText()).contains("@");
+    }
+
+    @Test
+    @DisplayName("заметки задачи читаются списком после добавления")
+    void notesListed() throws Exception {
+        long id = createId("Задача с заметкой " + UUID.randomUUID());
+
+        this.mockMvc.perform(post("/api/v1/work-items/{id}/notes", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"author\":\"Консоль\",\"content\":\"проверка списка заметок\"}"))
+                .andReturn();
+
+        MvcResult result = this.mockMvc.perform(get("/api/v1/work-items/{id}/notes", id)).andReturn();
+        JsonNode payload = this.objectMapper.readTree(
+                result.getResponse().getContentAsString(java.nio.charset.StandardCharsets.UTF_8));
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        assertThat(payload.size()).isEqualTo(1);
+        assertThat(payload.get(0).get("author").asText()).isEqualTo("Консоль");
+        assertThat(payload.get(0).get("content").asText()).isEqualTo("проверка списка заметок");
+    }
+
+    @Test
+    @DisplayName("заметки отсутствующей задачи дают 404")
+    void notesOfMissingTask() throws Exception {
+        MvcResult result = this.mockMvc.perform(get("/api/v1/work-items/{id}/notes", 999_999L)).andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(404);
+        assertThat(this.objectMapper.readTree(result.getResponse().getContentAsString()).get("code").asText())
+                .isEqualTo("NOT_FOUND");
+    }
 }

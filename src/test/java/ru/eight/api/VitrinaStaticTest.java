@@ -37,7 +37,7 @@ class VitrinaStaticTest {
     private org.springframework.boot.test.web.client.TestRestTemplate restTemplate;
 
     @Test
-    @DisplayName("главная страница отдаётся с витриной")
+    @DisplayName("главная страница отдаётся как рабочая консоль")
     void indexPage() throws Exception {
         MvcResult root = this.mockMvc.perform(MockMvcRequestBuilders.get("/")).andReturn();
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/index.html")).andReturn();
@@ -45,7 +45,17 @@ class VitrinaStaticTest {
         String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(root.getResponse().getStatus()).isEqualTo(200);
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
-        assertThat(html).contains("Восемь проектов").contains("data-projects");
+        assertThat(html).contains("Восемь проектов").contains("data-pane=\"tasks\"").contains("/assets/app.js");
+    }
+
+    @Test
+    @DisplayName("витрина остаётся отдельной страницей")
+    void showcasePage() throws Exception {
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/showcase.html")).andReturn();
+
+        String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertThat(result.getResponse().getStatus()).isEqualTo(200);
+        assertThat(html).contains("data-projects").contains("/svg/hero.svg");
     }
 
     @ParameterizedTest
@@ -88,10 +98,13 @@ class VitrinaStaticTest {
     @ParameterizedTest
     @ValueSource(strings = {
             "/assets/styles.css",
+            "/assets/app.css",
             "/assets/game.css",
             "/assets/showcase.js",
             "/assets/project.js",
+            "/assets/app.js",
             "/assets/game.js",
+            "/showcase.html",
             "/game.html"
     })
     @DisplayName("ассеты и страница игры доступны")

@@ -29,8 +29,8 @@ import ru.eight.common.ApiException;
 import ru.eight.p6xml.model.InvoiceXml;
 
 /**
- * РџСЂРѕРµРєС‚ 6. XML/XSD: СЃС…РµРјР° СЃ include, РІР°Р»РёРґР°С†РёСЏ С‡РµСЂРµР· JAXP, JAXB-СЂР°Р·Р±РѕСЂ,
- * Р·Р°С‰РёС‚Р° РѕС‚ XXE Рё РІРЅРµС€РЅРёС… СЃСѓС‰РЅРѕСЃС‚РµР№.
+ * Проект 6. XML/XSD: схема с include, валидация через JAXP, JAXB-разбор,
+ * защита от XXE и внешних сущностей.
  */
 @Service
 public class XmlService {
@@ -56,23 +56,23 @@ public class XmlService {
             validator.setErrorHandler(collector);
             validator.validate(new javax.xml.transform.stream.StreamSource(new StringReader(xml)));
         } catch (SAXException ex) {
-            errors.add("XML РЅРµ СЂР°Р·РѕР±СЂР°РЅ: " + ex.getMessage());
+            errors.add("XML не разобран: " + ex.getMessage());
         } catch (java.io.IOException ex) {
-            errors.add("РћС€РёР±РєР° С‡С‚РµРЅРёСЏ: " + ex.getMessage());
+            errors.add("Ошибка чтения: " + ex.getMessage());
         }
         ValidationReport report = new ValidationReport(errors.isEmpty(), List.copyOf(errors), xml.length(),
-                "Р’Р°Р»РёРґР°С†РёСЏ РїРѕ XSD СЃ РѕРіСЂР°РЅРёС‡РµРЅРёРµРј РІРЅРµС€РЅРёС… СЃС…РµРј Рё DTD");
+                "Валидация по XSD с ограничением внешних схем и DTD");
         return report;
     }
 
     public ParseResult parse(String xml) {
         ValidationReport validation = validate(xml);
         ParsedInvoice invoice = null;
-        String message = "Р”РѕРєСѓРјРµРЅС‚ СЂР°Р·РѕР±СЂР°РЅ";
+        String message = "Документ разобран";
         if (validation.valid()) {
             invoice = readInvoice(xml);
         } else {
-            message = "Р”РѕРєСѓРјРµРЅС‚ РЅРµ РїСЂРѕС€С‘Р» РІР°Р»РёРґР°С†РёСЋ, СЂР°Р·Р±РѕСЂ РѕСЃС‚Р°РЅРѕРІР»РµРЅ";
+            message = "Документ не прошёл валидацию, разбор остановлен";
         }
         ParseResult result = new ParseResult(validation.valid(), validation.errors(), invoice, message);
         return result;
@@ -104,13 +104,13 @@ public class XmlService {
         InvoiceDraft draft = new InvoiceDraft(
                 "IN-2026/000142",
                 "2026-11-06",
-                "РћРћРћ В«Р’РѕСЃРµРјСЊ РїСЂРѕРµРєС‚РѕРІВ»",
+                "ООО «Восемь проектов»",
                 "7701234567",
-                "РђРћ В«Р—Р°РєР°Р·С‡РёРєВ»",
+                "АО «Заказчик»",
                 "7709876543",
                 List.of(
-                        new ItemDraft("Р Р°Р·СЂР°Р±РѕС‚РєР° backend-РєРѕРјРїРѕРЅРµРЅС‚Р°", 1, new BigDecimal("180000.00")),
-                        new ItemDraft("РРЅС‚РµРіСЂР°С†РёРѕРЅРЅС‹Рµ С‚РµСЃС‚С‹", 3, new BigDecimal("24000.00"))
+                        new ItemDraft("Разработка backend-компонента", 1, new BigDecimal("180000.00")),
+                        new ItemDraft("Интеграционные тесты", 3, new BigDecimal("24000.00"))
                 )
         );
         String xml = build(draft);
@@ -129,12 +129,12 @@ public class XmlService {
             Object value = unmarshaller.unmarshal(reader);
             parsed = toParsed((InvoiceXml) value);
         } catch (XMLStreamException ex) {
-            LOG.warn("Р Р°Р·Р±РѕСЂ XML РѕС‚РєР»РѕРЅС‘РЅ: {}", ex.getMessage());
+            LOG.warn("Разбор XML отклонён: {}", ex.getMessage());
             throw new ApiException("XML_REJECTED",
-                    "Р Р°Р·Р±РѕСЂ РѕС‚РєР»РѕРЅС‘РЅ: DTD Рё РІРЅРµС€РЅРёРµ СЃСѓС‰РЅРѕСЃС‚Рё Р·Р°РїСЂРµС‰РµРЅС‹ (" + ex.getMessage() + ")",
+                    "Разбор отклонён: DTD и внешние сущности запрещены (" + ex.getMessage() + ")",
                     HttpStatus.BAD_REQUEST);
         } catch (JAXBException ex) {
-            throw new ApiException("XML_UNMARSHAL_FAILED", "РќРµ СѓРґР°Р»РѕСЃСЊ СЂР°Р·РѕР±СЂР°С‚СЊ РґРѕРєСѓРјРµРЅС‚: " + ex.getMessage(),
+            throw new ApiException("XML_UNMARSHAL_FAILED", "Не удалось разобрать документ: " + ex.getMessage(),
                     HttpStatus.BAD_REQUEST);
         }
         return parsed;
@@ -150,7 +150,7 @@ public class XmlService {
             marshaller.marshal(invoice, writer);
             xml = writer.toString();
         } catch (JAXBException ex) {
-            throw new ApiException("XML_MARSHAL_FAILED", "РќРµ СѓРґР°Р»РѕСЃСЊ СЃС„РѕСЂРјРёСЂРѕРІР°С‚СЊ XML: " + ex.getMessage(),
+            throw new ApiException("XML_MARSHAL_FAILED", "Не удалось сформировать XML: " + ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return xml;
@@ -181,7 +181,7 @@ public class XmlService {
         try {
             calendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(value);
         } catch (Exception ex) {
-            throw ApiException.badRequest("INVALID_DATE", "Р”Р°С‚Р° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РІ С„РѕСЂРјР°С‚Рµ YYYY-MM-DD", List.of());
+            throw ApiException.badRequest("INVALID_DATE", "Дата должна быть в формате YYYY-MM-DD", List.of());
         }
         return calendar;
     }
@@ -190,7 +190,7 @@ public class XmlService {
         Schema schema = null;
         try (java.io.InputStream stream = XmlService.class.getResourceAsStream(XSD_PATH)) {
             if (stream == null) {
-                throw new IllegalStateException("РќРµ РЅР°Р№РґРµРЅР° СЃС…РµРјР° " + XSD_PATH);
+                throw new IllegalStateException("Не найдена схема " + XSD_PATH);
             }
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -201,14 +201,14 @@ public class XmlService {
             source.setSystemId(XSD_PATH);
             schema = factory.newSchema(source);
         } catch (SAXException | java.io.IOException ex) {
-            throw new IllegalStateException("РЎС…РµРјР° " + XSD_PATH + " РЅРµ Р·Р°РіСЂСѓР¶РµРЅР°", ex);
+            throw new IllegalStateException("Схема " + XSD_PATH + " не загружена", ex);
         }
         return schema;
     }
 
     /**
-     * Р Р°Р·СЂРµС€Р°РµС‚ include/import СЃС…РµРј РёР· classpath. РќСѓР¶РµРЅ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ РІ РёСЃРїРѕР»РЅСЏРµРјРѕРј jar
-     * СЂРµСЃСѓСЂСЃ Р»РµР¶РёС‚ РїРѕ Р°РґСЂРµСЃСѓ РІРёРґР° jar:nested:вЂ¦, РєРѕС‚РѕСЂС‹Р№ РїР°СЂСЃРµСЂ СЃС…РµРј РѕС‚РєСЂС‹С‚СЊ РЅРµ РјРѕР¶РµС‚.
+     * Разрешает include/import схем из classpath. Нужен потому, что в исполняемом jar
+     * ресурс лежит по адресу вида jar:nested:вЂ¦, который парсер схем открыть не может.
      */
     private static final class ClasspathSchemaResolver implements javax.xml.transform.URIResolver,
             org.w3c.dom.ls.LSResourceResolver {
@@ -260,7 +260,7 @@ public class XmlService {
 
         @Override
         public void setCharacterStream(java.io.Reader characterStream) {
-            // СЃС…РµРјР° С‡РёС‚Р°РµС‚СЃСЏ РїРѕС‚РѕРєРѕРј Р±Р°Р№С‚
+            // схема читается потоком байт
         }
 
         @Override
@@ -270,7 +270,7 @@ public class XmlService {
 
         @Override
         public void setByteStream(java.io.InputStream byteStream) {
-            // РїРѕС‚РѕРє Р·Р°РґР°РЅ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ
+            // поток задан в конструкторе
         }
 
         @Override
@@ -290,7 +290,7 @@ public class XmlService {
 
         @Override
         public void setSystemId(String systemId) {
-            // РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РґР°РЅ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ
+            // идентификатор задан в конструкторе
         }
 
         @Override
@@ -300,7 +300,7 @@ public class XmlService {
 
         @Override
         public void setPublicId(String publicId) {
-            // РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РґР°РЅ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ
+            // идентификатор задан в конструкторе
         }
 
         @Override
@@ -310,7 +310,7 @@ public class XmlService {
 
         @Override
         public void setBaseURI(String baseUri) {
-            // Р±Р°Р·РѕРІС‹Р№ Р°РґСЂРµСЃ Р·Р°РґР°РЅ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ
+            // базовый адрес задан в конструкторе
         }
 
         @Override
@@ -320,7 +320,7 @@ public class XmlService {
 
         @Override
         public void setEncoding(String encoding) {
-            // РєРѕРґРёСЂРѕРІРєР° СЃС…РµРј С„РёРєСЃРёСЂРѕРІР°РЅР°
+            // кодировка схем фиксирована
         }
 
         @Override
@@ -330,7 +330,7 @@ public class XmlService {
 
         @Override
         public void setCertifiedText(boolean certifiedText) {
-            // РїСЂРѕРІРµСЂРєР° РїРѕРґРїРёСЃРё СЃС…РµРјС‹ РЅРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ
+            // проверка подписи схемы не используется
         }
     }
 
@@ -339,7 +339,7 @@ public class XmlService {
         try {
             context = JAXBContext.newInstance(InvoiceXml.class);
         } catch (JAXBException ex) {
-            throw new IllegalStateException("JAXB-РєРѕРЅС‚РµРєСЃС‚ РЅРµ СЃРѕР·РґР°РЅ", ex);
+            throw new IllegalStateException("JAXB-контекст не создан", ex);
         }
         return context;
     }
@@ -354,17 +354,17 @@ public class XmlService {
 
         @Override
         public void warning(SAXParseException ex) {
-            this.errors.add("СЃС‚СЂРѕРєР° " + ex.getLineNumber() + ": " + ex.getMessage());
+            this.errors.add("строка " + ex.getLineNumber() + ": " + ex.getMessage());
         }
 
         @Override
         public void error(SAXParseException ex) {
-            this.errors.add("СЃС‚СЂРѕРєР° " + ex.getLineNumber() + ": " + ex.getMessage());
+            this.errors.add("строка " + ex.getLineNumber() + ": " + ex.getMessage());
         }
 
         @Override
         public void fatalError(SAXParseException ex) {
-            this.errors.add("СЃС‚СЂРѕРєР° " + ex.getLineNumber() + ": " + ex.getMessage());
+            this.errors.add("строка " + ex.getLineNumber() + ": " + ex.getMessage());
         }
     }
 

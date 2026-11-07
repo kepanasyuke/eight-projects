@@ -1,6 +1,7 @@
 package ru.eight.p1rest;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,6 +74,12 @@ public class WorkItemController {
     @PostMapping("/{id}/notes")
     public WorkItemResponse addNote(@PathVariable Long id, @Valid @RequestBody NoteRequest request) {
         WorkItemResponse response = this.service.addNote(id, request);
+        return response;
+    }
+
+    @GetMapping("/{id}/notes")
+    public List<WorkItemService.NoteView> notes(@PathVariable Long id) {
+        List<WorkItemService.NoteView> response = this.service.notes(id);
         return response;
     }
 

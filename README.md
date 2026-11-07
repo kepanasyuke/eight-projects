@@ -100,11 +100,11 @@ docker compose up -d          # postgres:16-alpine, база eight
 
 | Консоль: задачи | Консоль: транзакции |
 | --- | --- |
-| ![Консоль: список задач](docs/screenshots/console-tasks.png) | ![Консоль: транзакции](docs/screenshots/console-tx.png) |
+| ![Консоль: список задач](docs/screenshots/console-tasks.png?v=2) | ![Консоль: транзакции](docs/screenshots/console-tx.png?v=2) |
 
-![Игра «Восемь уровней»](docs/screenshots/game.png)
+![Игра «Восемь уровней»](docs/screenshots/game.png?v=2)
 
-![Песочница «Поток»](docs/screenshots/sand.png)
+![Песочница «Поток»](docs/screenshots/sand.png?v=2)
 
 ## Демо
 

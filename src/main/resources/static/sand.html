@@ -20,6 +20,8 @@
         </a>
         <nav class="nav" aria-label="Основная навигация">
             <a href="/">Консоль</a>
+            <a href="/showcase.html">Витрина</a>
+            <a href="/showcase.html#projects">Проекты</a>
             <a href="/game.html">Платформер</a>
             <a href="/sand.html" aria-current="page">Поток</a>
         </nav>
@@ -33,26 +35,29 @@
             <p id="sand-subtitle">Песчинка — это запись. Стена — валидация. Проведите данные до приёмника.</p>
         </div>
         <div class="game-hud" aria-live="polite">
+            <div class="hud-item"><span>створ</span><b id="hud-level">1 / 8</b></div>
             <div class="hud-item"><span>доставлено</span><b id="hud-delivered">0</b></div>
             <div class="hud-item"><span>отклонено</span><b id="hud-rejected">0</b></div>
             <div class="hud-item"><span>запросов</span><b id="hud-queries">0</b></div>
-            <div class="hud-item"><span>материал</span><b id="hud-material">320</b></div>
+            <div class="hud-item hud-item--material"><span>материал</span><b id="hud-material">600</b>
+                <div class="hud-bar" aria-hidden="true"><i id="hud-material-bar"></i></div>
+            </div>
             <div class="hud-item"><span>время</span><b id="hud-time">0:00</b></div>
         </div>
     </div>
 
     <div class="game-stage">
         <canvas id="sand" width="960" height="520" aria-label="Поле песочницы: сверху кран, ниже створ контракта, створ JPA и приёмник"></canvas>
+        <span class="spend" id="sand-spend" hidden></span>
 
         <div class="game-overlay" id="sand-overlay">
             <div class="overlay-card">
-                <span class="eyebrow">песочница · одна карта · два створа</span>
+                <span class="eyebrow">песочница · восемь створов</span>
                 <h2 id="sand-overlay-title">Проведите поток</h2>
                 <p id="sand-overlay-text">
-                    Сверху сыплются записи. Створ контракта принимает их только в окно — всё, что упадёт на мембрану,
-                    отбивается как 400. Под ним развилка JPA: узкие щели считают отдельный запрос на каждую запись,
-                    широкий жёлоб обходится одним. Стройте стены, чтобы поток шёл по короткому пути.
+                    Восемь створов — восемь проектов. Выберите створ, читайте его правило и проводите записи до приёмника.
                 </p>
+                <div class="levels" id="sand-levels" role="group" aria-label="Выбор створа"></div>
                 <div class="overlay-actions">
                     <button class="btn btn--primary" id="sand-overlay-primary" type="button">Открыть кран</button>
                     <button class="btn btn--ghost" id="sand-overlay-secondary" type="button">Заново</button>

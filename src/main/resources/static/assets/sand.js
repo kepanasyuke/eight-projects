@@ -20,24 +20,93 @@
     const GATE2_Y = 48;
     const SINK_Y = 66;
     const FLOOR_Y = 74;
-    const CLOSED_Y = 78;
-    const SPOUT_X0 = 40;
-    const SPOUT_X1 = 150;
-    const WINDOW_X0 = 60;
-    const WINDOW_X1 = 120;
-    const CHUTE_X0 = 100;
-    const CHUTE_X1 = 120;
-    const SLIT_ZONE_X1 = 97;
-    const SLIT_X0 = 61;
-    const SINK_X0 = 50;
-    const SINK_X1 = 135;
-    const SLIT_COUNT = 6;
-    const SLIT_STEP = 6;
+    const BAND_Y = 80;
+
     const SLIT_HOLD = 18;
-    const MATERIAL_LIMIT = 320;
-    const TARGET_DELIVERED = 60;
+    const MATERIAL_LIMIT = 600;
     const LOCAL_BOARD_KEY = "eight-projects-leaderboard";
     const LOCAL_PLAYER_KEY = "eight-sand-player";
+
+    const LEVELS = [
+        {
+            name: "Контракт",
+            project: "REST",
+            rule: "окно узкое, остальное — мембрана 400",
+            window: [76, 112],
+            spouts: [{ x0: 40, x1: 150, rate: 0.42 }],
+            sink: [60, 140],
+            target: 40
+        },
+        {
+            name: "JPA",
+            project: "JPA",
+            rule: "слева щели по запросу, справа жёлоб",
+            window: [60, 120],
+            gate2: { slits: [61, 6, 6], chute: [100, 120] },
+            spouts: [{ x0: 40, x1: 150, rate: 0.42 }],
+            sink: [50, 135],
+            target: 40
+        },
+        {
+            name: "Транзакции",
+            project: "TX",
+            rule: "партия из пяти: одно 400 откатывает всю пятёрку",
+            window: [70, 118],
+            batch: 5,
+            spouts: [{ x0: 40, x1: 150, rate: 0.42 }],
+            sink: [60, 140],
+            target: 40
+        },
+        {
+            name: "Потоки",
+            project: "CONC",
+            rule: "три крана и пул на 120 записей: переполнение теряет записи",
+            window: [60, 160],
+            fieldLimit: 120,
+            spouts: [{ x0: 30, x1: 70, rate: 0.3 }, { x0: 80, x1: 120, rate: 0.3 }, { x0: 130, x1: 170, rate: 0.3 }],
+            sink: [55, 165],
+            target: 45
+        },
+        {
+            name: "Брокер",
+            project: "BUS",
+            rule: "отбитые не исчезают — падают в карман DLQ справа",
+            window: [60, 110],
+            dlq: [152, 184],
+            spouts: [{ x0: 40, x1: 150, rate: 0.42 }],
+            sink: [50, 140],
+            target: 35
+        },
+        {
+            name: "XML и XSD",
+            project: "XML",
+            rule: "сито по форме: три щели по одной клетке",
+            sieve: [70, 88, 106],
+            spouts: [{ x0: 40, x1: 150, rate: 0.42 }],
+            sink: [55, 145],
+            target: 25
+        },
+        {
+            name: "Подпись",
+            project: "CRYPTO",
+            rule: "без подписи водой запись не принимается",
+            window: [60, 120],
+            signature: true,
+            spouts: [{ x0: 40, x1: 150, rate: 0.42 }],
+            sink: [50, 140],
+            target: 25
+        },
+        {
+            name: "WebSocket",
+            project: "WS",
+            rule: "окно едет по карте — ловите такт",
+            window: [52, 96],
+            moving: 60,
+            spouts: [{ x0: 20, x1: 170, rate: 0.42 }],
+            sink: [40, 160],
+            target: 35
+        }
+    ];
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = VIEW_W * dpr;
@@ -53,6 +122,7 @@
     const grid = new Uint8Array(GW * GH);
     const owner = new Uint8Array(GW * GH);
     const hold = new Int16Array(GW * GH);
+    const signed = new Uint8Array(GW * GH);
 
     const COLORS = {
         [SAND]: [139, 212, 255],
@@ -63,17 +133,21 @@
         [SINK]: [29, 122, 85]
     };
 
+    const hudLevel = document.getElementById("hud-level");
     const hudDelivered = document.getElementById("hud-delivered");
     const hudRejected = document.getElementById("hud-rejected");
     const hudQueries = document.getElementById("hud-queries");
     const hudMaterial = document.getElementById("hud-material");
+    const hudMaterialBar = document.getElementById("hud-material-bar");
     const hudTime = document.getElementById("hud-time");
+    const spendBadge = document.getElementById("sand-spend");
     const overlay = document.getElementById("sand-overlay");
     const overlayEyebrow = document.getElementById("sand-overlay-title").previousElementSibling;
     const overlayTitle = document.getElementById("sand-overlay-title");
     const overlayText = document.getElementById("sand-overlay-text");
     const overlayPrimary = document.getElementById("sand-overlay-primary");
     const overlaySecondary = document.getElementById("sand-overlay-secondary");
+    const levelsBox = document.getElementById("sand-levels");
     const nameForm = document.getElementById("sand-name-form");
     const playerInput = document.getElementById("sand-player");
     const tapButton = document.getElementById("sand-tap");
@@ -89,6 +163,7 @@
         material: MATERIAL_LIMIT,
         tool: "wall",
         brush: 2,
+        level: 0,
         tapOpen: false,
         running: false,
         startedAt: 0,
@@ -96,11 +171,15 @@
         delivered: 0,
         rejected: 0,
         queries: 0,
+        lost: 0,
+        rollbacks: 0,
+        batchProgress: 0,
         tick: 0,
         painting: false,
         sent: false
     };
 
+    const level = () => LEVELS[state.level];
     const cellIndex = (x, y) => y * GW + x;
     const isEmpty = (kind) => kind === EMPTY;
     const isGrain = (kind) => kind === SAND || kind === WATER;
@@ -115,27 +194,76 @@
                 grid[i] = kind;
                 owner[i] = 0;
                 hold[i] = 0;
+                signed[i] = 0;
             }
         }
     };
 
-    const buildMap = () => {
+    const windowSpan = () => {
+        const config = level();
+        if (!config.window) {
+            return [0, -1];
+        }
+        const width = config.window[1] - config.window[0];
+        if (!config.moving) {
+            return config.window;
+        }
+        const offset = Math.round(Math.sin(state.tick / 90) * config.moving);
+        const start = Math.max(6, Math.min(GW - 10 - width, config.window[0] + offset));
+        return [start, start + width];
+    };
+
+    const setGateCell = (i, kind) => {
+        if (grid[i] === SAND || grid[i] === WATER) {
+            return;
+        }
+        grid[i] = kind;
+        owner[i] = 0;
+        hold[i] = 0;
+        signed[i] = 0;
+    };
+
+    const drawGateRow = () => {
+        const config = level();
+        const span = windowSpan();
+        const holes = config.sieve || null;
+        for (let row = 0; row < 2; row++) {
+            for (let x = 3; x < GW - 3; x++) {
+                const i = cellIndex(x, GATE1_Y + row);
+                let kind = MEMBRANE;
+                if (holes) {
+                    const inHole = holes.indexOf(x) >= 0 || holes.indexOf(x - 1) >= 0;
+                    kind = inHole ? EMPTY : MEMBRANE;
+                } else if (x >= span[0] && x <= span[1]) {
+                    kind = EMPTY;
+                }
+                setGateCell(i, kind);
+            }
+        }
+    };
+
+    const buildLevel = () => {
+        const config = level();
         grid.fill(EMPTY);
         owner.fill(0);
         hold.fill(0);
+        signed.fill(0);
         fillRect(0, 0, GW, 3, WALL);
-        fillRect(SPOUT_X0, 0, SPOUT_X1 - SPOUT_X0 + 1, 3, EMPTY);
+        config.spouts.forEach((spout) => fillRect(spout.x0, 0, spout.x1 - spout.x0 + 1, 3, EMPTY));
         fillRect(0, 0, 3, FLOOR_Y, WALL);
         fillRect(GW - 3, 0, 3, FLOOR_Y, WALL);
         fillRect(0, FLOOR_Y, GW, 4, WALL);
-        fillRect(3, GATE1_Y, GW - 6, 2, MEMBRANE);
-        fillRect(WINDOW_X0, GATE1_Y, WINDOW_X1 - WINDOW_X0 + 1, 2, EMPTY);
-        fillRect(3, GATE2_Y, SLIT_ZONE_X1 - 2, 2, WALL);
-        fillRect(CHUTE_X1 + 1, GATE2_Y, GW - 3 - (CHUTE_X1 + 1), 2, WALL);
-        for (let slit = 0; slit < SLIT_COUNT; slit++) {
-            fillRect(SLIT_X0 + slit * SLIT_STEP, GATE2_Y, 1, 2, SLIT);
+        drawGateRow();
+        if (config.gate2) {
+            const [slitStart, slitStep, slitCount] = config.gate2.slits;
+            const [chuteX0, chuteX1] = config.gate2.chute;
+            fillRect(3, GATE2_Y, chuteX0 - 4, 2, WALL);
+            fillRect(chuteX1 + 1, GATE2_Y, GW - 3 - (chuteX1 + 1), 2, WALL);
+            for (let slit = 0; slit < slitCount; slit++) {
+                fillRect(slitStart + slit * slitStep, GATE2_Y, 1, 2, SLIT);
+            }
         }
-        fillRect(SINK_X0, SINK_Y, SINK_X1 - SINK_X0 + 1, 3, SINK);
+        fillRect(config.sink[0], SINK_Y, config.sink[1] - config.sink[0] + 1, 3, SINK);
     };
 
     const swapCells = (a, b) => {
@@ -148,15 +276,50 @@
         const wait = hold[a];
         hold[a] = hold[b];
         hold[b] = wait;
+        const mark = signed[a];
+        signed[a] = signed[b];
+        signed[b] = mark;
     };
 
     const clearCell = (i) => {
         grid[i] = EMPTY;
         owner[i] = 0;
         hold[i] = 0;
+        signed[i] = 0;
     };
 
     const canTake = (i) => isEmpty(grid[i]) || grid[i] === WATER;
+
+    const parkInDlq = () => {
+        const pocket = level().dlq;
+        if (!pocket) {
+            return;
+        }
+        const x = pocket[0] + Math.floor(Math.random() * (pocket[1] - pocket[0]));
+        const i = cellIndex(x, FLOOR_Y - 1);
+        if (isEmpty(grid[i])) {
+            grid[i] = SAND;
+            owner[i] = 0;
+            signed[i] = 0;
+        }
+    };
+
+    const onReject = () => {
+        state.rejected += 1;
+        if (level().batch) {
+            if (state.batchProgress > 0) {
+                state.rollbacks += 1;
+            }
+            state.batchProgress = 0;
+        }
+    };
+
+    const onDeliver = () => {
+        state.delivered += 1;
+        if (level().batch) {
+            state.batchProgress = (state.batchProgress + 1) % level().batch;
+        }
+    };
 
     const moveSand = (x, y, i) => {
         if (hold[i] > 0) {
@@ -166,12 +329,17 @@
         const down = i + GW;
         const below = grid[down];
         if (below === MEMBRANE) {
-            state.rejected += 1;
+            onReject();
+            parkInDlq();
             clearCell(i);
             return;
         }
         if (below === SINK) {
-            state.delivered += 1;
+            if (level().signature && signed[i] === 0) {
+                onReject();
+            } else {
+                onDeliver();
+            }
             clearCell(i);
             return;
         }
@@ -181,7 +349,11 @@
             return;
         }
         if (canTake(down)) {
+            const wet = grid[down] === WATER;
             swapCells(i, down);
+            if (wet) {
+                signed[down] = 1;
+            }
             return;
         }
         const first = Math.random() < 0.5 ? -1 : 1;
@@ -219,7 +391,20 @@
         }
     };
 
+    const grainCount = () => {
+        let total = 0;
+        for (let i = 0; i < grid.length; i++) {
+            if (grid[i] === SAND) {
+                total += 1;
+            }
+        }
+        return total;
+    };
+
     const step = () => {
+        if (level().moving) {
+            drawGateRow();
+        }
         for (let y = GH - 2; y >= 1; y--) {
             const forward = (y + state.tick) % 2 === 0;
             for (let n = 0; n < GW - 2; n++) {
@@ -235,21 +420,34 @@
     };
 
     const spawn = () => {
-        if (!state.tapOpen || Math.random() > 0.42) {
+        if (!state.tapOpen) {
             return;
         }
-        const x = SPOUT_X0 + Math.floor(Math.random() * (SPOUT_X1 - SPOUT_X0 + 1));
-        const i = cellIndex(x, 3);
-        if (isEmpty(grid[i])) {
-            grid[i] = SAND;
-            owner[i] = 0;
+        const config = level();
+        if (config.fieldLimit && grainCount() > config.fieldLimit) {
+            state.lost += 1;
+            return;
         }
+        config.spouts.forEach((spout) => {
+            if (Math.random() > spout.rate) {
+                return;
+            }
+            const x = spout.x0 + Math.floor(Math.random() * (spout.x1 - spout.x0 + 1));
+            const i = cellIndex(x, 3);
+            if (isEmpty(grid[i])) {
+                grid[i] = SAND;
+                owner[i] = 0;
+                signed[i] = 0;
+            }
+        });
     };
 
     const paint = (gx, gy, hardErase) => {
         const erase = hardErase || state.tool === "erase";
         const kind = state.tool === "water" ? WATER : WALL;
         const radius = state.brush;
+        let spent = 0;
+        let returned = 0;
         for (let dy = -radius; dy <= radius; dy++) {
             for (let dx = -radius; dx <= radius; dx++) {
                 const x = gx + dx;
@@ -263,6 +461,7 @@
                     if (owner[i] === 1) {
                         state.material = Math.min(MATERIAL_LIMIT, state.material + 1);
                         clearCell(i);
+                        returned += 1;
                     }
                     continue;
                 }
@@ -273,8 +472,10 @@
                 owner[i] = 1;
                 state.material -= 1;
                 hold[i] = 0;
+                spent += 1;
             }
         }
+        return { spent: spent, returned: returned };
     };
 
     const pointToCell = (event) => {
@@ -284,10 +485,32 @@
         return { x: gx, y: gy };
     };
 
+    const showSpend = (event, spent, returned) => {
+        const delta = spent > 0 ? spent : returned;
+        if (delta <= 0) {
+            return;
+        }
+        const host = canvas.parentElement.getBoundingClientRect();
+        spendBadge.textContent = (spent > 0 ? "−" : "+") + delta;
+        spendBadge.classList.toggle("spend--gain", spent === 0);
+        spendBadge.style.left = (event.clientX - host.left) + "px";
+        spendBadge.style.top = (event.clientY - host.top) + "px";
+        spendBadge.hidden = false;
+        spendBadge.style.animation = "none";
+        spendBadge.offsetWidth;
+        spendBadge.style.animation = "";
+        if (state.material <= 0) {
+            hint.textContent = "Материал кончился: ластик забирает свои стены и возвращает клетки.";
+        }
+    };
+
     const handlePaint = (event) => {
         const point = pointToCell(event);
         const erase = event.button === 2 || (event.buttons & 2) === 2;
-        paint(point.x, point.y, erase);
+        const result = paint(point.x, point.y, erase);
+        if (result.spent > 0 || result.returned > 0) {
+            showSpend(event, result.spent, result.returned);
+        }
         updateHud();
     };
 
@@ -346,30 +569,53 @@
     };
 
     const drawLabels = () => {
+        const config = level();
         ctx.textBaseline = "alphabetic";
         ctx.font = "600 10px Consolas, monospace";
-        ctx.fillStyle = "rgba(147, 164, 192, 0.75)";
-        ctx.fillText("КРАН", SPOUT_X0 * CELL, 3 * CELL - 12);
-        ctx.fillText("СТВОР 1 · КОНТРАКТ — окно принимает, мембрана отбивает 400", 14, GATE1_Y * CELL - 9);
-        ctx.fillText("СТВОР 2 · JPA — слева узкие щели (по запросу на запись), справа широкий жёлоб", 14, GATE2_Y * CELL - 9);
-        ctx.fillStyle = "rgba(52, 211, 153, 0.85)";
-        ctx.fillText("ПРИЁМНИК " + state.delivered, SINK_X0 * CELL, SINK_Y * CELL - 9);
+        ctx.fillStyle = "rgba(147, 164, 192, 0.78)";
+        ctx.fillText("КРАН", config.spouts[0].x0 * CELL, 3 * CELL - 12);
+        ctx.fillStyle = "rgba(147, 164, 192, 0.9)";
+        ctx.fillText("СТВОР " + (state.level + 1) + " · " + config.name.toUpperCase() + " — " + config.rule,
+            14, GATE1_Y * CELL - 9);
+        if (config.gate2) {
+            ctx.fillStyle = "rgba(147, 164, 192, 0.78)";
+            ctx.fillText("РАЗВИЛКА · слева щели (запрос на запись), справа жёлоб", 14, GATE2_Y * CELL - 9);
+        }
+        ctx.fillStyle = "rgba(52, 211, 153, 0.9)";
+        ctx.fillText("ПРИЁМНИК " + state.delivered + " / " + config.target,
+            config.sink[0] * CELL, SINK_Y * CELL - 9);
 
-        const closedTop = CLOSED_Y * CELL;
-        ctx.fillStyle = "rgba(9, 15, 27, 0.96)";
-        ctx.fillRect(0, closedTop, VIEW_W, VIEW_H - closedTop);
+        const bandTop = BAND_Y * CELL;
+        ctx.fillStyle = "rgba(9, 15, 27, 0.94)";
+        ctx.fillRect(0, bandTop, VIEW_W, VIEW_H - bandTop);
         ctx.strokeStyle = "rgba(120, 150, 190, 0.18)";
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(0, closedTop + 0.5);
-        ctx.lineTo(VIEW_W, closedTop + 0.5);
+        ctx.moveTo(0, bandTop + 0.5);
+        ctx.lineTo(VIEW_W, bandTop + 0.5);
         ctx.stroke();
-        ctx.fillStyle = "rgba(147, 164, 192, 0.7)";
         ctx.font = "600 11px Consolas, monospace";
-        ctx.fillText("СТВОРЫ 3–8 ЗАКРЫТЫ", 14, closedTop + 30);
+        ctx.fillStyle = "rgba(230, 238, 252, 0.82)";
+        ctx.fillText("СТВОР " + (state.level + 1) + " ИЗ 8 · " + config.project, 14, bandTop + 24);
         ctx.font = "500 10px Consolas, monospace";
-        ctx.fillText("транзакции · потоки · брокер · XML · подпись · WebSocket — в прототипе открыты два створа",
-            14, closedTop + 50);
+        ctx.fillStyle = "rgba(147, 164, 192, 0.72)";
+        ctx.fillText(config.rule, 14, bandTop + 42);
+        const extra = [];
+        if (config.batch) {
+            extra.push("партия " + state.batchProgress + "/" + config.batch + " · откатов " + state.rollbacks);
+        }
+        if (config.fieldLimit) {
+            extra.push("в поле " + grainCount() + " / " + config.fieldLimit + " · потеряно " + state.lost);
+        }
+        if (config.dlq) {
+            extra.push("DLQ справа");
+        }
+        if (config.signature) {
+            extra.push("подпись: проведите запись через воду");
+        }
+        if (extra.length > 0) {
+            ctx.fillText(extra.join(" · "), 14, bandTop + 58);
+        }
     };
 
     const formatTime = (totalSeconds) => {
@@ -378,17 +624,24 @@
         return minutes + ":" + String(seconds).padStart(2, "0");
     };
 
-    const score = () => Math.max(0, state.delivered * 10 - state.rejected * 2 - state.queries);
+    const score = () => Math.max(0, state.delivered * 10 - state.rejected * 2 - state.queries
+        - state.rollbacks * 25 - state.lost * 5);
 
     const updateHud = () => {
+        hudLevel.textContent = (state.level + 1) + " / 8";
         hudDelivered.textContent = String(state.delivered);
         hudRejected.textContent = String(state.rejected);
         hudQueries.textContent = String(state.queries);
         hudMaterial.textContent = String(state.material);
         hudTime.textContent = formatTime(state.seconds);
+        hudMaterialBar.style.width = ((state.material / MATERIAL_LIMIT) * 100).toFixed(1) + "%";
+        hudMaterialBar.classList.toggle("is-empty", state.material <= 0);
         tapButton.textContent = state.tapOpen ? "кран: открыт" : "кран: закрыт";
         tapButton.classList.toggle("btn--primary", state.tapOpen);
         tapButton.classList.toggle("btn--ghost", !state.tapOpen);
+        Array.from(levelsBox.children).forEach((chip, index) => {
+            chip.classList.toggle("is-active", index === state.level);
+        });
     };
 
     const setMaterial = (name) => {
@@ -407,12 +660,14 @@
         overlaySecondary.textContent = config.secondary || "";
         overlaySecondary.hidden = !config.secondary;
         overlaySecondary.onclick = config.onSecondary || null;
+        levelsBox.hidden = !config.showLevels;
         nameForm.hidden = !config.showName;
         overlay.hidden = false;
     };
 
     const reset = () => {
-        buildMap();
+        const config = level();
+        buildLevel();
         state.material = MATERIAL_LIMIT;
         state.tapOpen = false;
         state.running = false;
@@ -421,19 +676,22 @@
         state.delivered = 0;
         state.rejected = 0;
         state.queries = 0;
+        state.lost = 0;
+        state.rollbacks = 0;
+        state.batchProgress = 0;
         state.tick = 0;
         state.sent = false;
-        hint.textContent = "Стены стоят материала; ластик возвращает его обратно.";
+        hint.textContent = "Стены и вода стоят материала (600 клеток на забег); ластик возвращает клетки за свои постройки.";
         setOverlay({
-            eyebrow: "песочница · одна карта · два створа",
-            title: "Проведите поток",
-            text: "Сверху сыплются записи. Створ контракта принимает их только в окно — всё, что упадёт на мембрану, "
-                + "отбивается как 400. Под ним развилка JPA: узкие щели считают отдельный запрос на каждую запись, "
-                + "широкий жёлоб обходится одним. Стройте стены, чтобы поток шёл по короткому пути.",
+            eyebrow: "песочница · восемь створов",
+            title: "Створ " + (state.level + 1) + " · " + config.name,
+            text: "Правило: " + config.rule + ". Песчинка — запись, стена — валидация. "
+                + "Доведите " + config.target + " записей до приёмника.",
             primary: "Открыть кран",
             onPrimary: start,
             secondary: "Заново",
-            onSecondary: reset
+            onSecondary: reset,
+            showLevels: true
         });
         updateHud();
     };
@@ -447,13 +705,14 @@
     };
 
     const finish = () => {
+        const config = level();
         state.running = false;
         state.tapOpen = false;
         state.seconds = Math.max(1, Math.round((Date.now() - state.startedAt) / 1000));
         updateHud();
         setOverlay({
-            eyebrow: "прототип · створы 1–2",
-            title: "Поток дошёл до приёмника",
+            eyebrow: "створ " + (state.level + 1) + " из 8 · " + config.project,
+            title: "Створ пройден",
             text: "Доставлено " + state.delivered + " записей, отклонено " + state.rejected
                 + ", лишних запросов " + state.queries + ". Очки: " + score() + ". Оставьте результат в таблице.",
             primary: "Заново",
@@ -461,6 +720,11 @@
             showName: true
         });
         playerInput.value = readPlayer();
+    };
+
+    const selectLevel = (index) => {
+        state.level = index;
+        reset();
     };
 
     const readPlayer = () => {
@@ -501,14 +765,14 @@
         boardNote.hidden = source === "server";
         boardNote.textContent = "офлайн-режим: результаты хранятся в этом браузере";
         if (!Array.isArray(scores) || scores.length === 0) {
-            board.innerHTML = '<li class="board__empty">Пока пусто — доведите поток и оставьте результат.</li>';
+            board.innerHTML = '<li class="board__empty">Пока пусто — пройдите створ и оставьте результат.</li>';
             return;
         }
         board.innerHTML = scores.map((entry, index) => `
             <li class="${index === 0 ? "is-top" : ""}">
                 <span class="board__rank">${index + 1}.</span>
                 <span class="board__player">${escapeHtml(entry.player)}</span>
-                <span class="board__meta board__meta--level" style="color:#34d399">поток · ${entry.level} створа</span>
+                <span class="board__meta board__meta--level" style="color:#34d399">створ ${entry.level}</span>
                 <span class="board__meta">${entry.score} очк · ${formatTime(entry.seconds)}</span>
             </li>`).join("");
     };
@@ -565,14 +829,24 @@
         } catch (error) {
             /* приватный режим — просто не запоминаем имя */
         }
-        const entry = { player: player, level: 2, score: score(), seconds: state.seconds };
+        const entry = { player: player, level: state.level + 1, score: score(), seconds: state.seconds };
         const source = await saveScore(entry);
         nameForm.hidden = true;
         overlayText.textContent = source === "server"
             ? "Результат записан: " + entry.score + " очков за " + formatTime(entry.seconds) + "."
             : "Сервер недоступен — результат сохранён в браузере.";
-        hint.textContent = "Стены стоят материала; ластик возвращает его обратно.";
+        hint.textContent = "Стены и вода стоят материала (600 клеток на забег); ластик возвращает клетки за свои постройки.";
         await loadLeaderboard();
+    });
+
+    LEVELS.forEach((config, index) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "level-chip";
+        chip.dataset.level = String(index);
+        chip.innerHTML = '<b>' + (index + 1) + '</b><span>' + config.name + '</span>';
+        chip.addEventListener("click", () => selectLevel(index));
+        levelsBox.appendChild(chip);
     });
 
     swatches.forEach((button) => {
@@ -621,7 +895,7 @@
                 state.seconds = Math.floor((Date.now() - state.startedAt) / 1000);
             }
             updateHud();
-            if (state.delivered >= TARGET_DELIVERED) {
+            if (state.delivered >= level().target) {
                 finish();
             }
         }

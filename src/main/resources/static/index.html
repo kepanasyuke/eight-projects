@@ -21,9 +21,9 @@
         <nav class="nav" aria-label="Основная навигация">
             <a href="/" aria-current="page">Консоль</a>
             <a href="/showcase.html">Витрина</a>
-            <a href="/game.html">Игра</a>
-            <a href="/projects/p1.html">Документация</a>
-            <a href="/actuator/health">Health</a>
+            <a href="/showcase.html#projects">Проекты</a>
+            <a href="/game.html">Платформер</a>
+            <a href="/sand.html">Поток</a>
         </nav>
         <span class="health" id="healthBadge" title="Состояние приложения">сервер: <b>…</b></span>
     </div>
@@ -440,11 +440,21 @@
             <div class="pane__head">
                 <div>
                     <h2>Игра</h2>
-                    <p>Платформер из восьми уровней: каждый уровень соответствует одному backend-проекту.
-                        Рядом — песочница «Поток»: песчинка там это запись, стена — валидация.</p>
+                    <p>Две игры на одном backend: платформер по уровням и песочница «Поток», где песчинка — запись,
+                        стена — валидация, а лидерборд общий.</p>
                 </div>
-                <a class="btn btn--primary" href="/game.html">Открыть игру</a>
-                <a class="btn btn--ghost" href="/sand.html">Поток</a>
+            </div>
+            <div class="game-tiles">
+                <a class="game-tile" href="/game.html">
+                    <b>Платформер</b>
+                    <span>Восемь уровней, по одному на проект: соберите навыки, обойдите баги и дойдите до DONE.</span>
+                    <i>открыть →</i>
+                </a>
+                <a class="game-tile" href="/sand.html">
+                    <b>Песочница «Поток»</b>
+                    <span>Проведите записи через створ контракта и створ JPA: стены стоят материала, мембрана отбивает 400.</span>
+                    <i>открыть →</i>
+                </a>
             </div>
             <div class="panel">
                 <div class="metrics" id="gameMetrics"></div>

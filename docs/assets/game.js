@@ -14,14 +14,14 @@
     ctx.scale(dpr, dpr);
 
     const LEVELS = [
-        { id: 1, key: "p1", title: "Контракт", project: "REST API по контракту", accent: "#38bdf8", hint: "DTO, валидация, 201 Created", orbs: 6, enemySpeed: 1 },
-        { id: 2, key: "p2", title: "N+1", project: "JPA и Hibernate", accent: "#a78bfa", hint: "fetch join вместо ленивых связей", orbs: 7, enemySpeed: 1 },
-        { id: 3, key: "p3", title: "Границы", project: "Транзакции", accent: "#f472b6", hint: "откат не должен уносить аудит", orbs: 7, enemySpeed: 2 },
-        { id: 4, key: "p4", title: "Гонка", project: "Многопоточность", accent: "#fbbf24", hint: "Atomic спасает счётчик от потерь", orbs: 8, enemySpeed: 2 },
-        { id: 5, key: "p5", title: "Очередь", project: "Брокер и Outbox", accent: "#34d399", hint: "не дай событиям уйти в DLQ", orbs: 8, enemySpeed: 3 },
-        { id: 6, key: "p6", title: "Схема", project: "XML и XSD", accent: "#22d3ee", hint: "DTD и внешние сущности закрыты", orbs: 9, enemySpeed: 3 },
-        { id: 7, key: "p7", title: "Подпись", project: "КриптоПро и JCA", accent: "#c084fc", hint: "сертификат проверяем по цепочке", orbs: 9, enemySpeed: 4 },
-        { id: 8, key: "p8", title: "Состояние", project: "WebSocket и машина состояний", accent: "#fb7185", hint: "до DONE только легальными переходами", orbs: 10, enemySpeed: 4 },
+        { id: 1, key: "p1", title: "Контракт", project: "REST API по контракту", accent: "#2f7ae5", hint: "DTO, валидация, 201 Created", orbs: 6, enemySpeed: 1 },
+        { id: 2, key: "p2", title: "N+1", project: "JPA и Hibernate", accent: "#7c5cf0", hint: "fetch join вместо ленивых связей", orbs: 7, enemySpeed: 1 },
+        { id: 3, key: "p3", title: "Границы", project: "Транзакции", accent: "#e0578f", hint: "откат не должен уносить аудит", orbs: 7, enemySpeed: 2 },
+        { id: 4, key: "p4", title: "Гонка", project: "Многопоточность", accent: "#e79a1e", hint: "Atomic спасает счётчик от потерь", orbs: 8, enemySpeed: 2 },
+        { id: 5, key: "p5", title: "Очередь", project: "Брокер и Outbox", accent: "#22b573", hint: "не дай событиям уйти в DLQ", orbs: 8, enemySpeed: 3 },
+        { id: 6, key: "p6", title: "Схема", project: "XML и XSD", accent: "#1aa6b8", hint: "DTD и внешние сущности закрыты", orbs: 9, enemySpeed: 3 },
+        { id: 7, key: "p7", title: "Подпись", project: "КриптоПро и JCA", accent: "#9a5cf0", hint: "сертификат проверяем по цепочке", orbs: 9, enemySpeed: 4 },
+        { id: 8, key: "p8", title: "Состояние", project: "WebSocket и машина состояний", accent: "#e2554f", hint: "до DONE только легальными переходами", orbs: 10, enemySpeed: 4 },
     ];
 
     const hudLevel = document.getElementById("hud-level");
@@ -406,16 +406,48 @@
         ctx.closePath();
     };
 
+    const INK = "#16202c";
+    const SKY_TOP = "#e6f0ff";
+    const SKY_BOTTOM = "#fbfdff";
+
+    const tint = (hex, amount) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        const lift = (value) => Math.round(value + (255 - value) * amount);
+        return `rgb(${lift(r)}, ${lift(g)}, ${lift(b)})`;
+    };
+
+    const hardShadow = (x, y, w, h, radius) => {
+        ctx.fillStyle = "rgba(22, 32, 44, 0.14)";
+        roundRect(x + 4, y + 5, w, h, radius);
+        ctx.fill();
+    };
+
+    const outline = (lineWidth = 3) => {
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = lineWidth;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+    };
+
     const draw = () => {
         const level = state.level;
         const player = state.player;
         const accent = level ? level.def.accent : "#38bdf8";
 
         const gradient = ctx.createLinearGradient(0, 0, 0, VIEW_H);
-        gradient.addColorStop(0, "#081020");
-        gradient.addColorStop(0.55, "#0a1526");
-        gradient.addColorStop(1, "#060b16");
+        gradient.addColorStop(0, SKY_TOP);
+        gradient.addColorStop(0.7, "#f3f8ff");
+        gradient.addColorStop(1, SKY_BOTTOM);
         ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+
+        const wash = ctx.createRadialGradient(VIEW_W * 0.78, 40, 30, VIEW_W * 0.78, 40, 420);
+        wash.addColorStop(0, tint(accent, 0.55));
+        wash.addColorStop(1, "rgba(255, 255, 255, 0)");
+        ctx.fillStyle = wash;
         ctx.fillRect(0, 0, VIEW_W, VIEW_H);
 
         if (!level) {
@@ -429,11 +461,11 @@
 
         level.stars.forEach((star) => {
             const sx = star.x - state.camera * star.depth;
-            if (sx > -10 && sx < VIEW_W + 10) {
-                ctx.globalAlpha = star.a;
-                ctx.fillStyle = "#cbd9ee";
+            if (sx > -40 && sx < VIEW_W + 40) {
+                ctx.globalAlpha = Math.min(0.55, star.a);
+                ctx.fillStyle = tint(accent, 0.35);
                 ctx.beginPath();
-                ctx.arc(sx, star.y, star.r, 0, Math.PI * 2);
+                ctx.arc(sx, star.y, star.r * 2.4, 0, Math.PI * 2);
                 ctx.fill();
             }
         });
@@ -447,60 +479,76 @@
                 return;
             }
             if (solid.kind === "ground") {
-                ctx.fillStyle = "rgba(14, 24, 40, 0.98)";
-                roundRect(solid.x, solid.y, solid.w, solid.h, 8);
+                hardShadow(solid.x, solid.y, solid.w, solid.h, 10);
+                ctx.fillStyle = tint(accent, 0.72);
+                roundRect(solid.x, solid.y, solid.w, solid.h, 10);
                 ctx.fill();
+                ctx.strokeStyle = INK;
+                ctx.lineWidth = 3;
+                ctx.lineJoin = "round";
+                ctx.stroke();
+                ctx.save();
+                roundRect(solid.x, solid.y, solid.w, solid.h, 10);
+                ctx.clip();
                 ctx.fillStyle = accent;
-                ctx.globalAlpha = 0.5;
-                ctx.fillRect(solid.x, solid.y, solid.w, 3);
-                ctx.globalAlpha = 1;
-                ctx.strokeStyle = "rgba(120, 160, 210, 0.12)";
-                ctx.lineWidth = 1;
-                for (let gx = solid.x + 14; gx < solid.x + solid.w; gx += 26) {
+                ctx.fillRect(solid.x, solid.y, solid.w, 12);
+                ctx.strokeStyle = "rgba(22, 32, 44, 0.18)";
+                ctx.lineWidth = 2;
+                for (let gx = solid.x + 16; gx < solid.x + solid.w; gx += 28) {
                     ctx.beginPath();
-                    ctx.moveTo(gx, solid.y + 8);
-                    ctx.lineTo(gx + 12, solid.y + solid.h - 8);
+                    ctx.moveTo(gx, solid.y + 12);
+                    ctx.lineTo(gx - 10, solid.y + solid.h);
                     ctx.stroke();
                 }
+                ctx.restore();
+                ctx.strokeStyle = INK;
+                ctx.lineWidth = 3;
+                roundRect(solid.x, solid.y, solid.w, solid.h, 10);
+                ctx.stroke();
             } else {
-                ctx.fillStyle = "rgba(20, 32, 52, 0.98)";
-                roundRect(solid.x, solid.y, solid.w, solid.h, 6);
+                hardShadow(solid.x, solid.y, solid.w, solid.h, 8);
+                ctx.fillStyle = tint(accent, 0.5);
+                roundRect(solid.x, solid.y, solid.w, solid.h, 8);
                 ctx.fill();
-                ctx.fillStyle = accent;
-                ctx.globalAlpha = 0.65;
-                ctx.fillRect(solid.x + 4, solid.y, solid.w - 8, 3);
-                ctx.globalAlpha = 1;
+                ctx.fillStyle = "#ffffff";
+                roundRect(solid.x + 5, solid.y + 4, solid.w - 10, 4, 2);
+                ctx.fill();
+                outline(3);
             }
         });
 
         const goal = level.goal;
         const open = state.collected >= level.required;
-        const pulse = 1 + Math.sin(state.time * 4) * 0.06;
+        const pulse = 1 + Math.sin(state.time * 4) * 0.05;
         ctx.save();
         ctx.translate(goal.x + goal.w / 2, goal.y + goal.h / 2);
         ctx.scale(pulse, pulse);
-        ctx.globalAlpha = open ? 0.95 : 0.35;
-        const halo = ctx.createRadialGradient(0, 0, 4, 0, 0, 62);
-        halo.addColorStop(0, open ? "rgba(52, 211, 153, 0.85)" : "rgba(120, 160, 210, 0.4)");
-        halo.addColorStop(1, "rgba(0, 0, 0, 0)");
-        ctx.fillStyle = halo;
+        ctx.fillStyle = open ? tint(accent, 0.55) : "rgba(22, 32, 44, 0.06)";
         ctx.beginPath();
-        ctx.arc(0, 0, 62, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, 74, 82, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.strokeStyle = open ? "#34d399" : "#64748b";
-        ctx.lineWidth = 3;
-        for (let ring = 0; ring < 3; ring += 1) {
-            ctx.beginPath();
-            ctx.ellipse(0, 0, 18 + ring * 6, 34 + ring * 5, 0, 0, Math.PI * 2);
-            ctx.globalAlpha = open ? 0.8 - ring * 0.2 : 0.4 - ring * 0.1;
-            ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = open ? "#a7f3d0" : "#94a3b8";
-        ctx.font = "600 12px 'Cascadia Code', monospace";
+        ctx.restore();
+
+        ctx.save();
+        ctx.translate(goal.x, goal.y);
+        hardShadow(0, 0, goal.w, goal.h, 12);
+        ctx.fillStyle = open ? tint(accent, 0.45) : "#e7edf6";
+        roundRect(0, 0, goal.w, goal.h, 12);
+        ctx.fill();
+        outline(3);
+        ctx.fillStyle = "#ffffff";
+        roundRect(9, 12, goal.w - 18, goal.h - 24, 7);
+        ctx.fill();
+        outline(2);
+        ctx.fillStyle = open ? accent : "rgba(22, 32, 44, 0.24)";
+        ctx.beginPath();
+        ctx.arc(goal.w / 2, goal.h / 2, open ? 12 : 8, 0, Math.PI * 2);
+        ctx.fill();
+        outline(2.5);
+        ctx.fillStyle = open ? INK : "rgba(22, 32, 44, 0.55)";
+        ctx.font = "700 10px 'Cascadia Code', monospace";
         ctx.textAlign = "center";
-        ctx.fillText(open ? "DONE" : "закрыто", 0, 4);
+        ctx.fillText(open ? "DONE" : "LOCK", goal.w / 2, goal.h + 18);
         ctx.restore();
 
         level.orbs.forEach((orb) => {
@@ -510,21 +558,23 @@
             const bob = Math.sin(orb.phase) * 4;
             ctx.save();
             ctx.translate(orb.x, orb.y + bob);
-            const glow = ctx.createRadialGradient(0, 0, 1, 0, 0, 22);
-            glow.addColorStop(0, "rgba(125, 211, 252, 0.9)");
-            glow.addColorStop(1, "rgba(125, 211, 252, 0)");
-            ctx.fillStyle = glow;
+            ctx.fillStyle = "rgba(22, 32, 44, 0.10)";
             ctx.beginPath();
-            ctx.arc(0, 0, 22, 0, Math.PI * 2);
+            ctx.ellipse(2, 16, 11, 4, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "#e0f2fe";
+            ctx.fillStyle = "#ffd23f";
             ctx.beginPath();
-            ctx.arc(0, 0, 5.2, 0, Math.PI * 2);
+            ctx.arc(0, 0, 11, 0, Math.PI * 2);
             ctx.fill();
-            ctx.strokeStyle = "rgba(125, 211, 252, 0.75)";
-            ctx.lineWidth = 1.6;
+            outline(2.5);
+            ctx.fillStyle = "#fff3bf";
             ctx.beginPath();
-            ctx.arc(0, 0, 11, orb.phase, orb.phase + Math.PI * 1.3);
+            ctx.arc(-3, -3.5, 3.4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "rgba(22, 32, 44, 0.5)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(0, 0, 5.4, orb.phase, orb.phase + Math.PI * 1.2);
             ctx.stroke();
             ctx.restore();
         });
@@ -533,26 +583,40 @@
             const hover = Math.sin(enemy.phase) * 3;
             ctx.save();
             ctx.translate(enemy.x, enemy.y + hover);
-            ctx.fillStyle = "rgba(248, 113, 113, 0.16)";
-            roundRect(-4, -4, enemy.w + 8, enemy.h + 8, 8);
+            ctx.fillStyle = "rgba(22, 32, 44, 0.10)";
+            ctx.beginPath();
+            ctx.ellipse(enemy.w / 2, enemy.h + 6, enemy.w / 2.2, 3.4, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "#ef4444";
-            roundRect(0, 0, enemy.w, enemy.h, 7);
+            ctx.fillStyle = "#ff7a7a";
+            roundRect(0, 2, enemy.w, enemy.h - 4, 9);
             ctx.fill();
-            ctx.strokeStyle = "#fee2e2";
-            ctx.lineWidth = 2;
+            outline(2.5);
+            ctx.strokeStyle = INK;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(enemy.w / 2 - 5, 3);
+            ctx.lineTo(enemy.w / 2 - 9, -7);
+            ctx.moveTo(enemy.w / 2 + 5, 3);
+            ctx.lineTo(enemy.w / 2 + 9, -7);
+            ctx.stroke();
+            ctx.fillStyle = INK;
+            ctx.beginPath();
+            ctx.arc(enemy.w / 2 - 9, -7, 2, 0, Math.PI * 2);
+            ctx.arc(enemy.w / 2 + 9, -7, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#ffffff";
             [-6, 6].forEach((offset) => {
                 ctx.beginPath();
-                ctx.moveTo(enemy.w / 2 + offset - 3, 8);
-                ctx.lineTo(enemy.w / 2 + offset + 3, 14);
-                ctx.moveTo(enemy.w / 2 + offset + 3, 8);
-                ctx.lineTo(enemy.w / 2 + offset - 3, 14);
-                ctx.stroke();
+                ctx.arc(enemy.w / 2 + offset, enemy.h / 2, 4, 0, Math.PI * 2);
+                ctx.fill();
             });
-            ctx.beginPath();
-            ctx.moveTo(enemy.w / 2, 0);
-            ctx.lineTo(enemy.w / 2 + Math.sin(enemy.phase) * 4, -7);
-            ctx.stroke();
+            outline(2);
+            ctx.fillStyle = INK;
+            [-6, 6].forEach((offset) => {
+                ctx.beginPath();
+                ctx.arc(enemy.w / 2 + offset + enemy.dir * 1.4, enemy.h / 2, 1.7, 0, Math.PI * 2);
+                ctx.fill();
+            });
             ctx.restore();
         });
 
@@ -562,25 +626,31 @@
             ctx.globalAlpha = blink ? 0.45 : 1;
             const bob = player.onGround && Math.abs(player.vx) < 0.2 ? Math.sin(state.time * 3) * 1.2 : 0;
             ctx.translate(player.x, player.y + bob);
-            const bodyGlow = ctx.createRadialGradient(11, 16, 2, 11, 16, 26);
-            bodyGlow.addColorStop(0, "rgba(56, 189, 248, 0.35)");
-            bodyGlow.addColorStop(1, "rgba(56, 189, 248, 0)");
-            ctx.fillStyle = bodyGlow;
-            ctx.fillRect(-16, -10, 56, 56);
-            ctx.fillStyle = accent;
-            roundRect(0, 2, player.w, player.h - 2, 6);
+            ctx.fillStyle = "rgba(22, 32, 44, 0.12)";
+            ctx.beginPath();
+            ctx.ellipse(player.w / 2, player.h + 5, player.w / 1.7, 3.6, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillStyle = "rgba(6, 16, 31, 0.85)";
-            roundRect(3, 8, player.w - 6, 9, 4);
-            ctx.fill();
-            ctx.fillStyle = "#04121f";
-            const eyeShift = player.face > 0 ? 3 : -1;
-            ctx.fillRect(7 + eyeShift, 11, 3, 3);
-            ctx.fillRect(13 + eyeShift, 11, 3, 3);
             const legSwing = Math.sin(player.walk) * 3;
-            ctx.fillStyle = "rgba(56, 189, 248, 0.65)";
-            ctx.fillRect(3, player.h - 3 + Math.max(0, legSwing), 5, 5);
-            ctx.fillRect(14, player.h - 3 + Math.max(0, -legSwing), 5, 5);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(2, player.h - 4 + Math.max(0, legSwing), 7, 6);
+            ctx.fillRect(player.w - 9, player.h - 4 + Math.max(0, -legSwing), 7, 6);
+            outline(2.5);
+            ctx.fillStyle = accent;
+            roundRect(0, 0, player.w, player.h - 3, 7);
+            ctx.fill();
+            outline(3);
+            ctx.fillStyle = "#ffffff";
+            roundRect(3.5, 6, player.w - 7, 10, 4);
+            ctx.fill();
+            outline(2);
+            ctx.fillStyle = INK;
+            const eyeShift = player.face > 0 ? 2 : 0;
+            ctx.beginPath();
+            ctx.arc(7 + eyeShift, 11, 1.9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(14 + eyeShift, 11, 1.9, 0, Math.PI * 2);
+            ctx.fill();
             ctx.restore();
         }
 
@@ -594,55 +664,70 @@
         ctx.globalAlpha = 1;
         ctx.restore();
 
-        ctx.fillStyle = "rgba(6, 12, 22, 0.55)";
+        hardShadow(18, 16, 320, 58, 12);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.94)";
         roundRect(18, 16, 320, 58, 12);
         ctx.fill();
-        ctx.fillStyle = "rgba(230, 238, 252, 0.95)";
-        ctx.font = "600 14px Inter, 'Segoe UI', sans-serif";
+        outline(3);
+        ctx.fillStyle = accent;
+        roundRect(28, 30, 6, 30, 3);
+        ctx.fill();
+        outline(2.5);
+        ctx.fillStyle = INK;
+        ctx.font = "700 14px Inter, 'Segoe UI', sans-serif";
         ctx.textAlign = "left";
-        ctx.fillText(`Уровень ${level.def.id} · ${level.def.title}`, 32, 40);
-        ctx.fillStyle = "rgba(147, 164, 192, 0.95)";
+        ctx.fillText(`Уровень ${level.def.id} · ${level.def.title}`, 44, 40);
+        ctx.fillStyle = "rgba(22, 32, 44, 0.62)";
         ctx.font = "12px 'Cascadia Code', monospace";
-        ctx.fillText(level.def.hint, 32, 60);
+        ctx.fillText(level.def.hint, 44, 60);
 
         const progress = Math.min(1, (state.camera + VIEW_W / 2) / level.width);
-        ctx.fillStyle = "rgba(120, 160, 210, 0.2)";
-        roundRect(VIEW_W - 236, 30, 210, 6, 3);
+        ctx.fillStyle = "#ffffff";
+        roundRect(VIEW_W - 238, 28, 214, 12, 6);
         ctx.fill();
-        ctx.fillStyle = accent;
-        roundRect(VIEW_W - 236, 30, 210 * progress, 6, 3);
-        ctx.fill();
+        outline(2.5);
+        if (progress > 0.01) {
+            ctx.fillStyle = accent;
+            roundRect(VIEW_W - 235, 31, 208 * progress, 6, 3);
+            ctx.fill();
+        }
 
         if (state.banner > 0) {
             const alpha = Math.min(1, state.banner);
             ctx.globalAlpha = alpha;
-            ctx.fillStyle = "rgba(4, 9, 18, 0.72)";
-            roundRect(VIEW_W / 2 - 230, 300, 460, 74, 14);
+            hardShadow(VIEW_W / 2 - 230, 300, 460, 74, 16);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.96)";
+            roundRect(VIEW_W / 2 - 230, 300, 460, 74, 16);
             ctx.fill();
-            ctx.fillStyle = accent;
+            outline(3);
+            ctx.fillStyle = tint(accent, 0.35);
+            roundRect(VIEW_W / 2 - 214, 316, 6, 42, 3);
+            ctx.fill();
+            outline(2.5);
+            ctx.fillStyle = INK;
             ctx.font = "700 22px Inter, 'Segoe UI', sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText(level.def.project, VIEW_W / 2, 332);
-            ctx.fillStyle = "rgba(147, 164, 192, 0.95)";
+            ctx.fillText(level.def.project, VIEW_W / 2, 334);
+            ctx.fillStyle = "rgba(22, 32, 44, 0.62)";
             ctx.font = "13px 'Cascadia Code', monospace";
-            ctx.fillText(`соберите ${level.required} из ${level.def.orbs} навыков`, VIEW_W / 2, 356);
+            ctx.fillText(`соберите ${level.required} из ${level.def.orbs} навыков`, VIEW_W / 2, 358);
             ctx.globalAlpha = 1;
         }
 
         if (state.paused) {
-            ctx.fillStyle = "rgba(4, 9, 18, 0.65)";
+            ctx.fillStyle = "rgba(240, 245, 252, 0.82)";
             ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-            ctx.fillStyle = "#e6eefc";
+            ctx.fillStyle = INK;
             ctx.font = "700 26px Inter, 'Segoe UI', sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("Пауза", VIEW_W / 2, VIEW_H / 2);
             ctx.font = "13px 'Cascadia Code', monospace";
-            ctx.fillStyle = "rgba(147, 164, 192, 0.95)";
+            ctx.fillStyle = "rgba(22, 32, 44, 0.62)";
             ctx.fillText("P — продолжить, R — начать уровень заново", VIEW_W / 2, VIEW_H / 2 + 28);
         }
 
         if (state.flash > 0) {
-            ctx.fillStyle = `rgba(248, 113, 113, ${state.flash * 0.35})`;
+            ctx.fillStyle = `rgba(255, 122, 122, ${state.flash * 0.38})`;
             ctx.fillRect(0, 0, VIEW_W, VIEW_H);
         }
 

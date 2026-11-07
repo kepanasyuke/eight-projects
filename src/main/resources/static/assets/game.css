@@ -63,16 +63,16 @@
     position: relative;
     overflow: hidden;
     border-top: 1px solid var(--border);
-    background: #0f1724;
-    color: #eef2f7;
-    --bg: #0f1724;
-    --text: #eef2f7;
-    --muted: #9fb0c6;
-    --line: rgba(238, 242, 247, 0.16);
-    --line-strong: rgba(238, 242, 247, 0.34);
-    --panel: rgba(238, 242, 247, 0.07);
-    --accent: #4cc2ff;
-    --accent-soft: rgba(76, 194, 255, 0.16);
+    background: #e8f0ff;
+    color: #16202c;
+    --bg: #e8f0ff;
+    --text: #16202c;
+    --muted: #5b6472;
+    --line: rgba(22, 32, 44, 0.14);
+    --line-strong: rgba(22, 32, 44, 0.28);
+    --panel: rgba(255, 255, 255, 0.88);
+    --accent: #0067c0;
+    --accent-soft: rgba(0, 103, 192, 0.12);
 }
 
 #game {
@@ -89,7 +89,7 @@
     display: grid;
     place-items: center;
     padding: 20px;
-    background: linear-gradient(180deg, rgba(12, 18, 28, 0.72), rgba(12, 18, 28, 0.9));
+    background: linear-gradient(180deg, rgba(240, 245, 252, 0.7), rgba(232, 240, 255, 0.94));
     transition: opacity 0.2s ease, visibility 0.2s ease;
 }
 
@@ -100,11 +100,12 @@
 .overlay-card {
     width: min(520px, 100%);
     padding: 24px 26px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 2px solid #16202c;
     border-radius: var(--radius);
-    background: rgba(18, 26, 38, 0.92);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+    background: #ffffff;
+    box-shadow: 6px 7px 0 rgba(22, 32, 44, 0.16), 0 18px 44px rgba(22, 32, 44, 0.14);
     text-align: center;
+    color: #16202c;
 }
 
 .overlay-card h2 {
@@ -123,9 +124,9 @@
 }
 
 .overlay-card .eyebrow {
-    border-color: rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--muted);
+    border-color: rgba(22, 32, 44, 0.24);
+    background: #f2f6fd;
+    color: #5b6472;
 }
 
 .overlay-card .eyebrow::before {
@@ -140,24 +141,24 @@
 }
 
 .overlay-actions .btn {
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text);
-    box-shadow: none;
+    border: 2px solid #16202c;
+    background: #ffffff;
+    color: #16202c;
+    box-shadow: 3px 3px 0 rgba(22, 32, 44, 0.16);
 }
 
 .overlay-actions .btn:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: #f2f6fd;
 }
 
 .overlay-actions .btn--primary {
-    border-color: #4cc2ff;
-    background: #0f7fd4;
+    border-color: #16202c;
+    background: #0067c0;
     color: #ffffff;
 }
 
 .overlay-actions .btn--primary:hover {
-    background: #0b6cba;
+    background: #0b5599;
 }
 
 .keys {
@@ -175,12 +176,13 @@ kbd {
     min-width: 22px;
     padding: 1px 6px;
     margin-right: 4px;
-    border: 1px solid var(--line-strong);
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--text);
+    border: 1.5px solid rgba(22, 32, 44, 0.34);
+    border-radius: 4px;
+    background: #ffffff;
+    color: #16202c;
     font-family: var(--mono);
     font-size: 11px;
+    box-shadow: 0 2px 0 rgba(22, 32, 44, 0.18);
 }
 
 .game-foot {
@@ -235,9 +237,9 @@ kbd {
     display: inline-block;
 }
 
-.dot--orb { background: #4cc2ff; }
-.dot--bug { background: #e2685f; }
-.dot--goal { background: #4ea86b; }
+.dot--orb { background: #ffd23f; }
+.dot--bug { background: #ff7a7a; }
+.dot--goal { background: #22b573; }
 
 .leaderboard {
     margin-top: 20px;
@@ -342,10 +344,10 @@ kbd {
     width: 210px;
     min-height: 32px;
     padding: 4px 10px;
-    border: 1px solid var(--line-strong);
+    border: 1.5px solid rgba(22, 32, 44, 0.3);
     border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text);
+    background: #ffffff;
+    color: #16202c;
     font: inherit;
     font-size: 13.5px;
 }

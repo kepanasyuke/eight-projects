@@ -125,12 +125,12 @@
     const signed = new Uint8Array(GW * GH);
 
     const COLORS = {
-        [SAND]: [139, 212, 255],
-        [WATER]: [74, 108, 240],
-        [WALL]: [42, 74, 116],
-        [MEMBRANE]: [122, 43, 57],
-        [SLIT]: [107, 90, 31],
-        [SINK]: [29, 122, 85]
+        [SAND]: [143, 202, 255],
+        [WATER]: [47, 122, 229],
+        [WALL]: [22, 32, 44],
+        [MEMBRANE]: [226, 87, 143],
+        [SLIT]: [230, 158, 32],
+        [SINK]: [34, 181, 115]
     };
 
     const hudLevel = document.getElementById("hud-level");
@@ -548,9 +548,9 @@
                 const kind = grid[i];
                 const offset = i * 4;
                 if (kind === EMPTY) {
-                    data[offset] = 8;
-                    data[offset + 1] = 13;
-                    data[offset + 2] = 24;
+                    data[offset] = 238;
+                    data[offset + 1] = 244;
+                    data[offset + 2] = 252;
                     data[offset + 3] = 255;
                     continue;
                 }
@@ -572,34 +572,34 @@
         const config = level();
         ctx.textBaseline = "alphabetic";
         ctx.font = "600 10px Consolas, monospace";
-        ctx.fillStyle = "rgba(147, 164, 192, 0.78)";
-        ctx.fillText("КРАН", config.spouts[0].x0 * CELL, 3 * CELL - 12);
-        ctx.fillStyle = "rgba(147, 164, 192, 0.9)";
+        ctx.fillStyle = "rgba(22, 32, 44, 0.6)";
+        ctx.fillText("КРАН", config.spouts[0].x0 * CELL, 3 * CELL + 10);
+        ctx.fillStyle = "rgba(22, 32, 44, 0.78)";
         ctx.fillText("СТВОР " + (state.level + 1) + " · " + config.name.toUpperCase() + " — " + config.rule,
             14, GATE1_Y * CELL - 9);
         if (config.gate2) {
-            ctx.fillStyle = "rgba(147, 164, 192, 0.78)";
+            ctx.fillStyle = "rgba(22, 32, 44, 0.6)";
             ctx.fillText("РАЗВИЛКА · слева щели (запрос на запись), справа жёлоб", 14, GATE2_Y * CELL - 9);
         }
-        ctx.fillStyle = "rgba(52, 211, 153, 0.9)";
+        ctx.fillStyle = "#22b573";
         ctx.fillText("ПРИЁМНИК " + state.delivered + " / " + config.target,
             config.sink[0] * CELL, SINK_Y * CELL - 9);
 
         const bandTop = BAND_Y * CELL;
-        ctx.fillStyle = "rgba(9, 15, 27, 0.94)";
+        ctx.fillStyle = "#f6f9fe";
         ctx.fillRect(0, bandTop, VIEW_W, VIEW_H - bandTop);
-        ctx.strokeStyle = "rgba(120, 150, 190, 0.18)";
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#16202c";
+        ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(0, bandTop + 0.5);
-        ctx.lineTo(VIEW_W, bandTop + 0.5);
+        ctx.moveTo(0, bandTop + 1);
+        ctx.lineTo(VIEW_W, bandTop + 1);
         ctx.stroke();
         ctx.font = "600 11px Consolas, monospace";
-        ctx.fillStyle = "rgba(230, 238, 252, 0.82)";
-        ctx.fillText("СТВОР " + (state.level + 1) + " ИЗ 8 · " + config.project, 14, bandTop + 24);
+        ctx.fillStyle = "#16202c";
+        ctx.fillText("СТВОР " + (state.level + 1) + " ИЗ 8 · " + config.project, 14, bandTop + 34);
         ctx.font = "500 10px Consolas, monospace";
-        ctx.fillStyle = "rgba(147, 164, 192, 0.72)";
-        ctx.fillText(config.rule, 14, bandTop + 42);
+        ctx.fillStyle = "rgba(22, 32, 44, 0.62)";
+        ctx.fillText(config.rule, 14, bandTop + 54);
         const extra = [];
         if (config.batch) {
             extra.push("партия " + state.batchProgress + "/" + config.batch + " · откатов " + state.rollbacks);
@@ -614,7 +614,7 @@
             extra.push("подпись: проведите запись через воду");
         }
         if (extra.length > 0) {
-            ctx.fillText(extra.join(" · "), 14, bandTop + 58);
+            ctx.fillText(extra.join(" · "), 14, bandTop + 74);
         }
     };
 

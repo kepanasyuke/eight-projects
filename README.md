@@ -11,7 +11,7 @@ WebSocket с машиной состояний.
 `src/main/resources/static/svg/`, GIF-ролики для README собраны из их кадров. Ни одной стоковой картинки.
 
 Живая демо-версия: **[kepanasyuke.github.io/eight-projects](https://kepanasyuke.github.io/eight-projects/)** —
-статическая сборка для GitHub Pages. Backend там нет, поэтому игра работает офлайн, а лидерборд хранится
+статическая сборка для GitHub Pages. Backend там нет, поэтому обе игры работают офлайн, а лидерборд хранится
 в `localStorage` браузера.
 
 ## Быстрый старт
@@ -120,11 +120,11 @@ src/main/resources
 ├── db/migration/    Flyway: схема, демо-данные, правка ограничений
 ├── xsd/             invoice.xsd + common-types.xsd
 ├── crypto/          демо-хранилище PKCS12
-└── static/          витрина, страницы проектов, игра, ассеты, SVG
+└── static/          витрина, страницы проектов, платформер и песочница «Поток», ассеты, SVG
 
 docs/demo/           GIF-ролики, собранные из кадров SVG
-docs/screenshots/    скриншоты консоли и игры для README
-docs/                статическая сборка для GitHub Pages: лендинг и игра
+docs/screenshots/    скриншоты консоли, платформера и песочницы для README
+docs/                статическая сборка для GitHub Pages: лендинг и обе игры
 tools/               генераторы SVG, GIF, страниц и сборка docs/
 ```
 
@@ -134,7 +134,7 @@ tools/               генераторы SVG, GIF, страниц и сборк
 python tools/make_svgs.py        # 9 анимированных SVG (SMIL) в static/svg
 python tools/make_demo_gifs.py   # GIF для README из кадров SVG (нужен Chrome или Edge)
 python tools/make_pages.py       # HTML страниц проектов из общего словаря метаданных
-python tools/build_pages.py      # docs/: игра с относительными путями и офлайн-лидербордом
+python tools/build_pages.py      # docs/: платформер и «Поток» с относительными путями и офлайн-лидербордом
 ```
 
 ## Тесты

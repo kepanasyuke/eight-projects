@@ -419,7 +419,7 @@ TEMPLATE = """<!DOCTYPE html>
         <nav class="nav" aria-label="Основная навигация">
             <a href="/">Витрина</a>
             <a href="/index.html#projects">Проекты</a>
-            <a href="/game.html">Игра</a>
+            <a href="/logic.html">Логика</a>
             <a href="/projects/%%KEY%%.html" aria-current="page">Проект %%NUM%%</a>
         </nav>
     </div>
@@ -489,7 +489,7 @@ TEMPLATE = """<!DOCTYPE html>
 <footer class="footer">
     <div class="wrap footer__inner">
         <span>Проект 0%%NUM%% · %%TITLE%%</span>
-        <span><a href="/">← все восемь проектов</a> · <a href="/game.html">игра</a></span>
+        <span><a href="/">← все восемь проектов</a> · <a href="/logic.html">логика</a></span>
     </div>
 </footer>
 
@@ -548,8 +548,8 @@ def render_pager(index: int) -> str:
         parts.append(f'<a href="/projects/{nxt["key"]}.html" style="margin-left:auto;text-align:right">'
                      f'<small>проект 0{nxt["num"]} →</small><span>{nxt["title"]}</span></a>')
     else:
-        parts.append('<a href="/game.html" style="margin-left:auto;text-align:right">'
-                     '<small>дальше →</small><span>Игра: восемь уровней</span></a>')
+        parts.append('<a href="/logic.html" style="margin-left:auto;text-align:right">'
+                     '<small>дальше →</small><span>Логика: четыре мини-игры</span></a>')
     return "\n        ".join(parts)
 
 

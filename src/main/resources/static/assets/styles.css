@@ -375,15 +375,15 @@ textarea:focus-visible {
 }
 
 .btn--ghost {
-    border-color: transparent;
-    background: transparent;
-    box-shadow: none;
-    color: var(--muted);
+    border-color: var(--border-strong);
+    background: var(--surface);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+    color: var(--text-2);
 }
 
 .btn--ghost:hover {
-    border-color: transparent;
-    background: rgba(0, 0, 0, 0.05);
+    border-color: #b8b8b8;
+    background: #f5f5f5;
     color: var(--text);
 }
 

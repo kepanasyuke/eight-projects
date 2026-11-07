@@ -2,6 +2,58 @@
     display: none !important;
 }
 
+.game-wrap {
+    padding: 20px 0 10px;
+}
+
+.game-head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.game-head h1 {
+    margin: 0 0 4px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(24px, 2.6vw, 32px);
+    letter-spacing: -0.015em;
+}
+
+.game-head p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.game-hud {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.hud-item {
+    min-width: 88px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+}
+
+.hud-item span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.hud-item b {
+    font-family: var(--mono);
+    font-size: 14px;
+}
+
 .logic-body {
     --ink: #16202c;
     --ink-soft: rgba(22, 32, 44, 0.6);
@@ -112,9 +164,9 @@
 }
 
 .lg-stickers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, 30px);
+    gap: 8px;
     margin-top: 12px;
 }
 
@@ -590,6 +642,67 @@
     }
     75% {
         transform: translateX(5px);
+    }
+}
+
+.lg-hero {
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, #eef4ff, #ffffff);
+    box-shadow: 4px 4px 0 rgba(22, 32, 44, 0.16);
+    overflow: hidden;
+}
+
+.lg-hero svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 128px;
+}
+
+.hud-item b {
+    display: inline-block;
+}
+
+.hud-item.is-pop b {
+    animation: lg-pop 0.34s ease;
+}
+
+.lg-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    z-index: 40;
+    padding: 10px 20px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 4px 4px 0 var(--ink);
+    color: var(--text);
+    font-size: 13.5px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translate(-50%, 14px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.lg-toast.is-on {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+@keyframes lg-pop {
+    0% {
+        transform: scale(1);
+    }
+    48% {
+        transform: scale(1.38);
+        color: #e79a1e;
+    }
+    100% {
+        transform: scale(1);
     }
 }
 

@@ -7,10 +7,9 @@
     <meta name="description" content="Четыре логические мини-игры по backend-коду: соберите программу из блоков, настройте щиток вентилей, найдите баг в коде и расставьте работы по зависимостям.">
     <link rel="stylesheet" href="assets/styles.css">
     <script src="assets/icons.js" defer></script>
-    <link rel="stylesheet" href="assets/game.css">
     <link rel="stylesheet" href="assets/logic.css">
 </head>
-<body class="game-body logic-body">
+<body class="logic-body">
 <div class="grid-bg" aria-hidden="true"></div>
 
 <header class="topbar">
@@ -24,7 +23,6 @@
             <a href="showcase.html"><svg class="icon"><use href="#i-window"></use></svg>Витрина</a>
             <a href="showcase.html"><svg class="icon"><use href="#i-folder"></use></svg>Проекты</a>
             <a href="logic.html" aria-current="page"><svg class="icon"><use href="#i-code"></use></svg>Логика</a>
-            <a href="sand.html"><svg class="icon"><use href="#i-sand"></use></svg>Поток</a>
         </nav>
     </div>
 </header>
@@ -79,6 +77,7 @@
             </aside>
 
             <section class="lg-stage">
+                <div class="lg-hero" id="hero" aria-hidden="true"></div>
                 <div class="lg-task">
                     <span class="lg-task__eyebrow" id="task-eyebrow">задача 1</span>
                     <h2 id="task-title">Сборочный цех</h2>
@@ -103,11 +102,11 @@
                 </div>
 
                 <div class="lg-feedback" id="feedback" aria-live="polite"></div>
+                <div class="lg-toast" id="toast" role="status" hidden></div>
             </section>
         </div>
     </div>
 
-    <p class="lg-note">Хотите старую игру — <a href="game.html">платформер «Восемь уровней»</a>. Поток данных — в разделе <a href="sand.html">«Поток»</a>.</p>
 </main>
 
 <script src="assets/logic.js" defer></script>

@@ -1,8 +1,8 @@
 """Сборка статической площадки для GitHub Pages.
 
-Копирует игру и её ассеты из src/main/resources/static в docs/, переписывает
-абсолютные пути на относительные и включает офлайн-режим лидерборда, потому что
-на Pages нет backend. Лендинг docs/index.html пишется вручную и не трогается.
+Копирует «Логику» и общие ассеты из src/main/resources/static в docs/, переписывает абсолютные
+пути на относительные. Лендинг docs/index.html и витрина docs/showcase.html пишутся вручную
+и не трогаются.
 Запуск: python tools/build_pages.py
 """
 
@@ -13,9 +13,7 @@ import shutil
 
 STATIC = os.path.join("src", "main", "resources", "static")
 DOCS = "docs"
-ASSETS = ["styles.css", "icons.js", "game.css", "game.js", "logic.css", "logic.js", "sand.css", "sand.js"]
-
-OFFLINE_FLAG = '<script>window.EIGHT_OFFLINE = true;</script>\n'
+ASSETS = ["styles.css", "icons.js", "logic.css", "logic.js"]
 
 PATH_REPLACEMENTS = [
     ('<a href="/"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>',
@@ -24,13 +22,10 @@ PATH_REPLACEMENTS = [
     ('src="/assets/', 'src="assets/'),
     ('href="/showcase.html#projects"', 'href="showcase.html"'),
     ('href="/showcase.html"', 'href="showcase.html"'),
-    ('href="/game.html"', 'href="game.html"'),
     ('href="/logic.html"', 'href="logic.html"'),
-    ('href="/sand.html"', 'href="sand.html"'),
     ('href="/index.html#projects"', 'href="index.html#projects"'),
     ('href="/"', 'href="index.html"'),
     ('href="/projects/', 'href="showcase.html"'),
-    ('<title>', '<title>'),
 ]
 
 
@@ -51,20 +46,6 @@ def relativize(markup: str) -> str:
     return result
 
 
-def build_game() -> None:
-    markup = relativize(read(os.path.join(STATIC, "game.html")))
-    markup = markup.replace('<script src="assets/game.js" defer></script>',
-                            OFFLINE_FLAG + '<script src="assets/game.js" defer></script>')
-    write(os.path.join(DOCS, "game.html"), markup)
-
-
-def build_sand() -> None:
-    markup = relativize(read(os.path.join(STATIC, "sand.html")))
-    markup = markup.replace('<script src="assets/sand.js" defer></script>',
-                            OFFLINE_FLAG + '<script src="assets/sand.js" defer></script>')
-    write(os.path.join(DOCS, "sand.html"), markup)
-
-
 def build_logic() -> None:
     markup = relativize(read(os.path.join(STATIC, "logic.html")))
     write(os.path.join(DOCS, "logic.html"), markup)
@@ -80,11 +61,9 @@ def build_assets() -> None:
 def main() -> None:
     os.makedirs(DOCS, exist_ok=True)
     build_assets()
-    build_game()
-    build_sand()
     build_logic()
     write(os.path.join(DOCS, ".nojekyll"), "")
-    print("docs/ собран: game.html, sand.html, assets/, .nojekyll")
+    print("docs/ ready: logic.html, assets/, .nojekyll")
 
 
 if __name__ == "__main__":

@@ -68,7 +68,7 @@ const loadStats = async () => {
     statsHost.innerHTML = [
         statBlock("8", "проектов в витрине"),
         statBlock(workItems, "задач в PostgreSQL/H2"),
-        statBlock("8", "уровней в игре"),
+        statBlock("4", "мини-игры в «Логике»"),
         statBlock(leaders, "результатов в таблице лидеров"),
     ].join("");
 };

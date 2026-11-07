@@ -8,6 +8,64 @@
     const XP_PER_SOLVE = 10;
     const XP_PER_LEVEL = 50;
 
+    const HERO = {
+        steps: `<svg viewBox="0 0 360 128" fill="none" aria-hidden="true">
+            <rect x="12" y="94" width="336" height="16" rx="8" fill="#dfe8f8" stroke="#16202c" stroke-width="3"/>
+            <circle cx="32" cy="102" r="5" fill="#ffffff" stroke="#16202c" stroke-width="3"/>
+            <circle cx="328" cy="102" r="5" fill="#ffffff" stroke="#16202c" stroke-width="3"/>
+            <rect x="34" y="40" width="58" height="42" rx="10" fill="#2f7ae5" stroke="#16202c" stroke-width="3"/>
+            <rect x="38" y="44" width="58" height="42" rx="10" fill="#16202c" opacity="0.16"/>
+            <rect x="34" y="40" width="58" height="42" rx="10" fill="#2f7ae5" stroke="#16202c" stroke-width="3"/>
+            <text x="63" y="68" text-anchor="middle" font-family="Cascadia Code, Consolas, monospace" font-size="18" font-weight="700" fill="#ffffff">+2</text>
+            <rect x="116" y="40" width="58" height="42" rx="10" fill="#7c5cf0" stroke="#16202c" stroke-width="3"/>
+            <text x="145" y="68" text-anchor="middle" font-family="Cascadia Code, Consolas, monospace" font-size="18" font-weight="700" fill="#ffffff">×2</text>
+            <rect x="198" y="40" width="58" height="42" rx="10" fill="#e0578f" stroke="#16202c" stroke-width="3"/>
+            <text x="227" y="68" text-anchor="middle" font-family="Cascadia Code, Consolas, monospace" font-size="18" font-weight="700" fill="#ffffff">−1</text>
+            <path d="M262 61h26" stroke="#16202c" stroke-width="3" stroke-linecap="round"/>
+            <path d="M282 53l9 8-9 8" stroke="#16202c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="316" cy="61" r="19" fill="#e9f8ec" stroke="#16202c" stroke-width="3"/>
+            <circle cx="316" cy="61" r="19" fill="none" stroke="#22b573" stroke-width="8" stroke-dasharray="60 120">
+                <animate attributeName="stroke-dashoffset" values="0;-120" dur="2.4s" repeatCount="indefinite"/>
+            </circle>
+        </svg>`,
+        gates: `<svg viewBox="0 0 360 128" fill="none" aria-hidden="true">
+            <path d="M40 44h44M40 88h44M84 66h40" stroke="#16202c" stroke-width="3" stroke-linecap="round"/>
+            <rect x="30" y="34" width="18" height="20" rx="4" fill="#ffffff" stroke="#16202c" stroke-width="3"/>
+            <rect x="30" y="78" width="18" height="20" rx="4" fill="#ffffff" stroke="#16202c" stroke-width="3"/>
+            <text x="39" y="49" text-anchor="middle" font-family="Cascadia Code, Consolas, monospace" font-size="12" font-weight="700" fill="#16202c">A</text>
+            <text x="39" y="93" text-anchor="middle" font-family="Cascadia Code, Consolas, monospace" font-size="12" font-weight="700" fill="#16202c">B</text>
+            <rect x="124" y="46" width="66" height="40" rx="12" fill="#2f7ae5" stroke="#16202c" stroke-width="3"/>
+            <text x="157" y="72" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="16" font-weight="700" fill="#ffffff">И</text>
+            <path d="M190 66h34" stroke="#16202c" stroke-width="3" stroke-linecap="round"/>
+            <path d="M224 66h34" stroke="#16202c" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 8">
+                <animate attributeName="stroke-dashoffset" values="0;-28" dur="1s" repeatCount="indefinite"/>
+            </path>
+            <rect x="258" y="46" width="66" height="40" rx="12" fill="#7c5cf0" stroke="#16202c" stroke-width="3"/>
+            <text x="291" y="72" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="700" fill="#ffffff">XOR</text>
+            <circle cx="222" cy="66" r="6" fill="#e79a1e" stroke="#16202c" stroke-width="3"/>
+        </svg>`,
+        bug: `<svg viewBox="0 0 360 128" fill="none" aria-hidden="true">
+            <rect x="26" y="20" width="196" height="92" rx="12" fill="#101823" stroke="#16202c" stroke-width="3"/>
+            <rect x="40" y="38" width="120" height="9" rx="4" fill="#2f7ae5"/>
+            <rect x="40" y="57" width="150" height="9" rx="4" fill="#e6eefc" opacity="0.75"/>
+            <rect x="40" y="76" width="96" height="9" rx="4" fill="#e0578f"/>
+            <rect x="40" y="92" width="130" height="9" rx="4" fill="#e6eefc" opacity="0.4"/>
+            <circle cx="262" cy="62" r="34" fill="#ffffff" stroke="#16202c" stroke-width="3"/>
+            <circle cx="262" cy="62" r="24" fill="#eef4ff" stroke="#16202c" stroke-width="2"/>
+            <path d="M286 86l22 22" stroke="#16202c" stroke-width="8" stroke-linecap="round"/>
+            <ellipse cx="262" cy="64" rx="9" ry="11" fill="#e2554f" stroke="#16202c" stroke-width="2.5"/>
+            <path d="M253 56l-7-6M271 56l7-6M262 64v10" stroke="#16202c" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>`,
+        plan: `<svg viewBox="0 0 360 128" fill="none" aria-hidden="true">
+            <rect x="30" y="26" width="118" height="18" rx="9" fill="#2f7ae5" stroke="#16202c" stroke-width="3"/>
+            <rect x="88" y="55" width="132" height="18" rx="9" fill="#7c5cf0" stroke="#16202c" stroke-width="3"/>
+            <rect x="150" y="84" width="150" height="18" rx="9" fill="#22b573" stroke="#16202c" stroke-width="3"/>
+            <path d="M52 44v28M100 44v28M170 55v29M200 55v29M220 84v0" stroke="#16202c" stroke-width="2" stroke-dasharray="4 5"/>
+            <circle cx="316" cy="42" r="17" fill="#ffffff" stroke="#16202c" stroke-width="3"/>
+            <path d="M316 32v10l7 5" stroke="#16202c" stroke-width="3" stroke-linecap="round"/>
+        </svg>`
+    };
+
     const el = (tag, cls, text) => {
         const node = document.createElement(tag);
         if (cls) {
@@ -84,6 +142,32 @@
         }
     }
 
+    function drawHero() {
+        const host = document.getElementById("hero");
+        host.innerHTML = HERO[round.mode] || "";
+    }
+
+    function toast(text) {
+        const node = document.getElementById("toast");
+        node.textContent = text;
+        node.hidden = false;
+        node.classList.remove("is-on");
+        void node.offsetWidth;
+        node.classList.add("is-on");
+        window.clearTimeout(toast.timer);
+        toast.timer = window.setTimeout(() => {
+            node.hidden = true;
+            node.classList.remove("is-on");
+        }, 2600);
+    }
+
+    function popStars() {
+        const node = document.getElementById("hud-stars").parentElement;
+        node.classList.remove("is-pop");
+        void node.offsetWidth;
+        node.classList.add("is-pop");
+    }
+
     function updateHud() {
         const level = levelOf(state.xp);
         const inLevel = state.xp % XP_PER_LEVEL;
@@ -124,6 +208,7 @@
     }
 
     function solvedRound() {
+        const levelBefore = levelOf(state.xp);
         streak += 1;
         state.streak = streak;
         state.solved += 1;
@@ -134,6 +219,13 @@
         unlocked.forEach((name) => state.stickers.push(name));
         saveState();
         updateHud();
+        popStars();
+        const levelAfter = levelOf(state.xp);
+        if (levelAfter > levelBefore) {
+            toast(`Уровень ${levelAfter} — есть!`);
+        } else if (unlocked.length) {
+            toast(`Наклейка «${unlocked[0]}»`);
+        }
         const board = document.getElementById("board");
         board.classList.add("is-done");
         document.getElementById("check").disabled = true;
@@ -178,6 +270,7 @@
         document.getElementById("check").hidden = Boolean(round.auto);
         document.getElementById("next").hidden = true;
         feedback("", round.tip || "");
+        drawHero();
         if (round.mode === "steps") {
             drawSteps(board);
         }

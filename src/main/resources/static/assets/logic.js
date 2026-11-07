@@ -573,10 +573,10 @@
     function drawGates(board) {
         const wire = el("div", "lg-chain");
         wire.appendChild(el("span", "lg-chip", "A"));
-        wire.appendChild(el("span", "lg-op", round.picked[0] ? round.picked[0].label : "?"));
+        wire.appendChild(el("span", round.picked[0] ? "lg-op" : "lg-op lg-op--empty", round.picked[0] ? round.picked[0].label : "?"));
         wire.appendChild(el("span", "lg-chip", "B"));
         wire.appendChild(el("span", "lg-arrow", "→"));
-        wire.appendChild(el("span", "lg-op", round.picked[1] ? round.picked[1].label : "?"));
+        wire.appendChild(el("span", round.picked[1] ? "lg-op" : "lg-op lg-op--empty", round.picked[1] ? round.picked[1].label : "?"));
         wire.appendChild(el("span", "lg-arrow", "→"));
         wire.appendChild(el("span", "lg-chip lg-chip--goal", "OUT"));
         board.appendChild(wire);

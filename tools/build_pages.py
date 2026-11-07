@@ -13,7 +13,7 @@ import shutil
 
 STATIC = os.path.join("src", "main", "resources", "static")
 DOCS = "docs"
-ASSETS = ["styles.css", "icons.js", "logic.css", "logic.js"]
+ASSETS = ["styles.css", "icons.js", "logic.css", "logic.js", "app.css", "app.js", "demo-data.js"]
 
 PATH_REPLACEMENTS = [
     ('<a href="/"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>',
@@ -26,6 +26,17 @@ PATH_REPLACEMENTS = [
     ('href="/index.html#projects"', 'href="index.html#projects"'),
     ('href="/"', 'href="index.html"'),
     ('href="/projects/', 'href="showcase.html"'),
+    ('<a class="brand" href="index.html">', '<a class="brand" href="index.html">'),
+]
+
+CONSOLE_REPLACEMENTS = [
+    ('<a href="index.html" aria-current="page">', '<a href="console.html" aria-current="page">'),
+    ('<span class="window__title">восемь проектов · localhost:8080</span>',
+     '<span class="window__title">восемь проектов · записанные ответы API</span>'),
+    ('<script src="assets/app.js" defer></script>',
+     '<script src="assets/demo-data.js" defer></script>\n<script src="assets/app.js" defer></script>'),
+    ('<span class="brand__name">Восемь проектов <span>/ консоль</span></span>',
+     '<span class="brand__name">Восемь проектов <span>/ консоль без backend</span></span>'),
 ]
 
 
@@ -51,6 +62,13 @@ def build_logic() -> None:
     write(os.path.join(DOCS, "logic.html"), markup)
 
 
+def build_console() -> None:
+    markup = relativize(read(os.path.join(STATIC, "index.html")))
+    for source, target in CONSOLE_REPLACEMENTS:
+        markup = markup.replace(source, target, 1)
+    write(os.path.join(DOCS, "console.html"), markup)
+
+
 def build_assets() -> None:
     target = os.path.join(DOCS, "assets")
     os.makedirs(target, exist_ok=True)
@@ -62,8 +80,9 @@ def main() -> None:
     os.makedirs(DOCS, exist_ok=True)
     build_assets()
     build_logic()
+    build_console()
     write(os.path.join(DOCS, ".nojekyll"), "")
-    print("docs/ ready: logic.html, assets/, .nojekyll")
+    print("docs/ ready: logic.html, console.html, assets/, .nojekyll")
 
 
 if __name__ == "__main__":

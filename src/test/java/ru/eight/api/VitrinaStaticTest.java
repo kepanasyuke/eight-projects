@@ -99,18 +99,18 @@ class VitrinaStaticTest {
     @ValueSource(strings = {
             "/assets/styles.css",
             "/assets/app.css",
-            "/assets/game.css",
+            "/assets/icons.js",
+            "/assets/logic.css",
+            "/assets/logic.js",
+            "/assets/demo-data.js",
             "/assets/showcase.js",
             "/assets/project.js",
             "/assets/app.js",
-            "/assets/game.js",
-            "/assets/sand.css",
-            "/assets/sand.js",
             "/showcase.html",
-            "/game.html",
-            "/sand.html"
+            "/logic.html",
+            "/index.html"
     })
-    @DisplayName("ассеты и страницы игры доступны")
+    @DisplayName("ассеты и страницы консоли и игры доступны")
     void assets(String path) throws Exception {
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get(path)).andReturn();
 

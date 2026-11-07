@@ -39,6 +39,9 @@
     }
 
     async function call(method, url, options = {}) {
+        if (window.EIGHT_DEMO) {
+            return demoCall(method, url, options);
+        }
         const headers = Object.assign({}, options.headers);
         const init = { method, headers };
         if (options.json !== undefined) {
@@ -69,6 +72,253 @@
             } catch (error) {
                 toast(error.message || 'Запрос не выполнен', 'err');
             }
+        };
+    }
+
+    /* ---------- демо-режим ---------- */
+
+    const DEMO = window.EIGHT_DEMO || null;
+    const DEMO_DELAY = 90;
+    const DEMO_STATE = {
+        tasks: null,
+        notes: {},
+        accounts: [],
+        entries: [],
+        audit: [],
+        socketState: null,
+        socketHistory: []
+    };
+
+    function demoClone(value) {
+        return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+    }
+
+    function demoSleep() {
+        return new Promise(function (resolve) {
+            setTimeout(resolve, DEMO_DELAY);
+        });
+    }
+
+    function demoTasks() {
+        if (!DEMO_STATE.tasks) {
+            DEMO_STATE.tasks = demoClone(DEMO.routes['GET /api/v1/work-items'].items) || [];
+            DEMO_STATE.accounts = demoClone(DEMO.routes['GET /api/v3/tx/accounts']) || [];
+            DEMO_STATE.entries = demoClone(DEMO.routes['GET /api/v3/tx/entries']) || [];
+            DEMO_STATE.audit = demoClone(DEMO.routes['GET /api/v3/tx/audit']) || [];
+        }
+        return DEMO_STATE.tasks;
+    }
+
+    function demoTaskIndex(id) {
+        return demoTasks().findIndex(function (item) {
+            return item.id === id;
+        });
+    }
+
+    function demoRequireTask(id) {
+        const index = demoTaskIndex(id);
+        if (index < 0) {
+            throw new ApiError('Задача ' + id + ' в записанных данных не найдена', 'NOT_FOUND', 404);
+        }
+        return index;
+    }
+
+    async function demoCall(method, url, options = {}) {
+        await demoSleep();
+        const parts = url.split('?');
+        const path = parts[0];
+        const query = new URLSearchParams(parts[1] || '');
+        const taskMatch = path.match(/^\/api\/v1\/work-items\/(\d+)(\/notes|\/status)?$/);
+        if (method === 'GET' && path === '/api/v1/work-items') {
+            return demoTaskPage(query);
+        }
+        if (method === 'POST' && path === '/api/v1/work-items') {
+            return demoCreateTask(options.json);
+        }
+        if (taskMatch) {
+            return demoTaskRoute(method, Number(taskMatch[1]), taskMatch[2], query, options);
+        }
+        return demoRecorded(method, path, query, options);
+    }
+
+    function demoTaskPage(query) {
+        const status = query.get('status') || '';
+        const page = Number(query.get('page') || 0);
+        const size = Number(query.get('size') || 10);
+        const matched = demoTasks().filter(function (item) {
+            return !status || item.status === status;
+        });
+        const totalPages = Math.max(1, Math.ceil(matched.length / size));
+        return {
+            items: demoClone(matched.slice(page * size, page * size + size)),
+            page: page,
+            size: size,
+            totalItems: matched.length,
+            totalPages: totalPages,
+            hasNext: page + 1 < totalPages
+        };
+    }
+
+    function demoTaskRoute(method, id, suffix, query, options) {
+        const index = demoRequireTask(id);
+        const task = demoTasks()[index];
+        if (suffix === '/notes') {
+            return demoNotes(method, id, options);
+        }
+        if (suffix === '/status') {
+            return demoStatusChange(task, query.get('target'));
+        }
+        return demoTaskAction(method, index, options);
+    }
+
+    function demoTaskAction(method, index, options) {
+        const tasks = demoTasks();
+        if (method === 'GET') {
+            return demoClone(tasks[index]);
+        }
+        if (method === 'DELETE') {
+            tasks.splice(index, 1);
+            return null;
+        }
+        const patch = options.json || {};
+        const task = tasks[index];
+        ['title', 'description', 'priority'].forEach(function (field) {
+            if (patch[field] !== undefined) {
+                task[field] = patch[field];
+            }
+        });
+        if (patch.assigneeId !== undefined) {
+            const assignee = STATE.assignees.find(function (item) {
+                return item.id === Number(patch.assigneeId);
+            });
+            task.assigneeId = Number(patch.assigneeId);
+            task.assigneeName = assignee ? assignee.name : null;
+        }
+        task.version = (task.version || 0) + 1;
+        task.updatedAt = new Date().toISOString();
+        return demoClone(task);
+    }
+
+    function demoCreateTask(body) {
+        const tasks = demoTasks();
+        const nextId = tasks.reduce(function (max, item) {
+            return Math.max(max, item.id);
+        }, 0) + 1;
+        const assignee = STATE.assignees.find(function (item) {
+            return item.id === Number(body.assigneeId);
+        });
+        const created = {
+            id: nextId,
+            title: body.title,
+            description: body.description || '',
+            status: 'NEW',
+            priority: Number(body.priority || 3),
+            assigneeId: assignee ? assignee.id : null,
+            assigneeName: assignee ? assignee.name : null,
+            notesCount: 0,
+            version: 0,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        tasks.unshift(created);
+        return demoClone(created);
+    }
+
+    function demoNotes(method, id, options) {
+        const notes = DEMO_STATE.notes[id] || [];
+        if (method === 'GET') {
+            return demoClone(notes);
+        }
+        const task = demoTasks()[demoTaskIndex(id)];
+        const note = {
+            id: notes.length + 1,
+            author: 'демо-сессия',
+            content: options.json ? options.json.content : '',
+            createdAt: new Date().toISOString()
+        };
+        notes.push(note);
+        DEMO_STATE.notes[id] = notes;
+        task.notesCount = notes.length;
+        return demoClone(note);
+    }
+
+    function demoStatusChange(task, target) {
+        const allowed = STATE.transitions[task.status] || [];
+        if (!allowed.includes(target)) {
+            throw new ApiError('Переход ' + task.status + ' → ' + target + ' запрещён', 'INVALID_TRANSITION', 409);
+        }
+        task.status = target;
+        task.version = (task.version || 0) + 1;
+        task.updatedAt = new Date().toISOString();
+        return demoClone(task);
+    }
+
+    function demoRecorded(method, path, query, options) {
+        if (path === '/api/v3/tx/accounts') {
+            return demoClone(DEMO_STATE.accounts);
+        }
+        if (path === '/api/v3/tx/entries') {
+            return demoClone(DEMO_STATE.entries);
+        }
+        if (path === '/api/v3/tx/audit') {
+            return demoClone(DEMO_STATE.audit);
+        }
+        if (method === 'POST' && path === '/api/v3/tx/transfer-with-audit') {
+            return demoTransferReport(options.json, true);
+        }
+        if (method === 'POST' && path === '/api/v3/tx/transfer') {
+            return demoTransferReport(options.json, false);
+        }
+        const recorded = DEMO.routes[method + ' ' + path];
+        if (recorded === undefined) {
+            throw new ApiError('В демо-режиме нет ответа для ' + method + ' ' + path, 'DEMO', 0);
+        }
+        return demoClone(recorded);
+    }
+
+    function demoTransferReport(body, withAudit) {
+        const source = DEMO_STATE.accounts.find(function (item) {
+            return item.code === body.sourceCode;
+        });
+        const target = DEMO_STATE.accounts.find(function (item) {
+            return item.code === body.targetCode;
+        });
+        const amount = Number(body.amount);
+        if (!source || !target) {
+            throw new ApiError('Счёт не найден', 'NOT_FOUND', 404);
+        }
+        if (!(amount > 0) || source.balance < amount) {
+            throw new ApiError('Недостаточно средств на ' + source.code, 'INSUFFICIENT_FUNDS', 409);
+        }
+        if (withAudit) {
+            const task = { state: demoClone(DEMO_STATE.accounts), rolledBack: true, auditRecordsWritten: 1 };
+            task.message = 'Демонстрационный сбой после движения денег: транзакция откатилась, аудит в REQUIRES_NEW сохранился';
+            DEMO_STATE.audit.unshift({
+                id: DEMO_STATE.audit.length + 1,
+                kind: 'REQUIRES_NEW',
+                message: 'аудит зафиксирован до бизнес-операции ' + source.code + ' -> ' + target.code,
+                createdAt: new Date().toISOString()
+            });
+            return task;
+        }
+        source.balance -= amount;
+        target.balance += amount;
+        const entry = {
+            id: DEMO_STATE.entries.length + 1,
+            sourceAccount: source.code,
+            targetAccount: target.code,
+            amount: amount,
+            operation: 'TRANSFER',
+            createdAt: new Date().toISOString()
+        };
+        DEMO_STATE.entries.unshift(entry);
+        return {
+            entryId: entry.id,
+            sourceCode: source.code,
+            sourceBalance: source.balance,
+            targetCode: target.code,
+            targetBalance: target.balance,
+            amount: amount
         };
     }
 
@@ -931,6 +1181,10 @@
     }
 
     async function connectSocket() {
+        if (DEMO) {
+            connectDemoSocket();
+            return;
+        }
         if (STATE.socket && STATE.socket.readyState === WebSocket.OPEN) {
             toast('Соединение уже открыто');
             return;
@@ -970,6 +1224,34 @@
         }
         const address = url.toString();
         return address;
+    }
+
+    function connectDemoSocket() {
+        const schema = DEMO.routes['GET /api/v8/ws/schema'] || {};
+        const start = (schema.states || ['NEW'])[0];
+        DEMO_STATE.socketState = start;
+        DEMO_STATE.socketHistory = [start];
+        wsLog('демо-режим: соединение эмулируется в браузере', 'muted');
+        wsLog('welcome · сессия demo · лимит 4096 Б', 'ok');
+        renderCommands(start, (schema.transitions || {})[start] || [], DEMO_STATE.socketHistory);
+    }
+
+    function demoCommand(command) {
+        const schema = DEMO.routes['GET /api/v8/ws/schema'] || {};
+        const transitions = schema.transitions || {};
+        if (!DEMO_STATE.socketState) {
+            wsLog('соединение не открыто', 'err');
+            return;
+        }
+        const allowed = transitions[DEMO_STATE.socketState] || [];
+        if (!allowed.includes(command)) {
+            wsLog('error · INVALID_TRANSITION · ' + DEMO_STATE.socketState + ' → ' + command, 'err');
+            return;
+        }
+        DEMO_STATE.socketState = command;
+        DEMO_STATE.socketHistory.push(command);
+        wsLog('state → ' + command, 'ok');
+        renderCommands(command, transitions[command] || [], DEMO_STATE.socketHistory);
     }
 
     function handleFrame(frame) {
@@ -1014,6 +1296,10 @@
     }
 
     function sendCommand(command) {
+        if (DEMO) {
+            demoCommand(command);
+            return;
+        }
         if (!STATE.socket || STATE.socket.readyState !== WebSocket.OPEN) {
             toast('Соединение не открыто', 'err');
             return;
@@ -1061,6 +1347,16 @@
 
     async function checkHealth() {
         const badge = $('#healthBadge');
+        if (DEMO) {
+            const demoBadge = $('#demoBadge');
+            if (demoBadge) {
+                demoBadge.hidden = false;
+                demoBadge.classList.add('is-demo');
+            }
+            badge.classList.remove('is-down');
+            badge.replaceChildren(document.createTextNode('сервер: '), el('b', { text: 'без backend' }));
+            return;
+        }
         try {
             const health = await call('GET', '/actuator/health');
             badge.classList.toggle('is-down', health.status !== 'UP');

@@ -257,7 +257,7 @@
     }
 
     function assigneeSelect(selectedId) {
-        return el('select', { class: 'select', id: 'detailAssignee' },
+        return el('select', { class: 'select', id: 'detailAssignee', name: 'assigneeId' },
             STATE.assignees.map(function (assignee) {
                 return el('option', {
                     value: assignee.id,
@@ -936,10 +936,10 @@
             return;
         }
         const schema = STATE.schema || await call('GET', '/api/v8/ws/schema');
-        const scheme = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-        const socket = new WebSocket(scheme + window.location.host + schema.endpoint);
+        const address = socketAddress(schema.endpoint);
+        const socket = new WebSocket(address);
         STATE.socket = socket;
-        wsLog('соединение с ' + schema.endpoint, 'muted');
+        wsLog('соединение с ' + address, 'muted');
         socket.addEventListener('open', function () {
             wsLog('соединение открыто', 'ok');
         });
@@ -953,6 +953,23 @@
         socket.addEventListener('error', function () {
             wsLog('ошибка транспорта', 'err');
         });
+    }
+
+    function socketAddress(endpoint) {
+        const url = new URL(endpoint, window.location.href);
+        const securePage = window.location.protocol === 'https:';
+        const schemaIsLocal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+        const pageIsLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (securePage || url.protocol === 'https:') {
+            url.protocol = 'wss:';
+        } else if (url.protocol === 'http:') {
+            url.protocol = 'ws:';
+        }
+        if (schemaIsLocal && !pageIsLocal) {
+            url.host = window.location.host;
+        }
+        const address = url.toString();
+        return address;
     }
 
     function handleFrame(frame) {
@@ -1023,6 +1040,7 @@
             call('GET', '/api/game/leaderboard?limit=10')
         ]);
         const perLevel = Object.entries(stats.runsPerLevel || {})
+            .filter(function (entry) { return entry[1] > 0; })
             .map(function (entry) { return entry[0] + ': ' + entry[1]; })
             .join(' · ');
         metrics($('#gameMetrics'), [

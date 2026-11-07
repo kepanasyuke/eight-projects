@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!--
+    Пробник интерфейса: обходит все разделы консоли, нажимает каждую видимую кнопку
+    и показывает отчёт об ошибках JS и ответах 4xx/5xx.
+
+    Запуск:
+      1. скопировать файл в src/main/resources/static/__probe.html
+      2. поднять приложение: .\mvnw.cmd spring-boot:run
+      3. снять экран: chrome --headless=new --window-size=1400,2600
+         --virtual-time-budget=180000 --screenshot=probe.png http://localhost:8080/__probe.html
+      4. файл из static/ удалить — в собранном приложении он не нужен
+-->
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Проверка кнопок консоли</title>
+    <style>
+        html, body { margin: 0; padding: 0; background: #0b1220; color: #dbe6f5; }
+        #frame { display: block; width: 1280px; height: 900px; border: 0; }
+        #report { padding: 14px 18px; font: 12px/1.45 Consolas, monospace; white-space: pre-wrap; }
+        .ok { color: #65d69a; }
+        .bad { color: #ff7a7a; }
+        .muted { color: #7d8ea8; }
+    </style>
+</head>
+<body>
+<iframe id="frame" src="/#tasks"></iframe>
+<div id="report">идёт перебор кнопок…</div>
+<script>
+(() => {
+    const TABS = ['tasks', 'jpa', 'tx', 'conc', 'bus', 'xml', 'crypto', 'ws', 'game'];
+    const report = document.getElementById('report');
+    const frame = document.getElementById('frame');
+    const state = { errors: [], requests: [], toasts: [], lines: [], fails: 0 };
+
+    const pace = async (rounds) => {
+        for (let i = 0; i < (rounds || 6); i++) {
+            await fetch('/actuator/health?probe=' + i);
+            await new Promise((resolve) => setTimeout(resolve, 12));
+        }
+    };
+
+    const watch = (win, doc) => {
+        win.confirm = () => true;
+        win.alert = () => undefined;
+        win.prompt = () => '';
+        win.addEventListener('error', (event) => {
+            state.errors.push(String(event.message) + ' @ ' + String(event.filename || '').split('/').pop() + ':' + event.lineno);
+        });
+        win.addEventListener('unhandledrejection', (event) => {
+            state.errors.push('rejection: ' + String(event.reason && event.reason.message ? event.reason.message : event.reason));
+        });
+        const native = win.fetch;
+        win.fetch = function (input, init) {
+            const url = typeof input === 'string' ? input : (input && input.url) || '';
+            const method = (init && init.method) || 'GET';
+            return native.call(win, input, init).then((response) => {
+                const entry = { method: method, url: url, status: response.status, body: '' };
+                state.requests.push(entry);
+                if (response.status >= 400) {
+                    response.clone().text().then((text) => { entry.body = text.slice(0, 160); }, () => undefined);
+                }
+                return response;
+            }, (error) => {
+                state.requests.push({ method: method, url: url, status: 'FAIL ' + error.message, body: '' });
+                throw error;
+            });
+        };
+        const toast = doc.getElementById('toast');
+        if (toast) {
+            new win.MutationObserver(() => {
+                const text = toast.textContent.trim();
+                if (text) {
+                    state.toasts.push(text);
+                }
+            }).observe(toast, { childList: true, subtree: true, characterData: true });
+        }
+    };
+
+    const visibleButtons = (doc, tab) => Array.from(doc.querySelectorAll('.pane[data-pane="' + tab + '"] button'))
+        .filter((button) => button.offsetParent !== null);
+
+    const runTab = async (doc, tab) => {
+        const rail = doc.querySelector('.rail__item[data-tab="' + tab + '"]');
+        if (!rail) {
+            state.lines.push({ tab: tab, label: 'раздел не найден', ok: false });
+            state.fails += 1;
+            return;
+        }
+        rail.click();
+        await pace(4);
+        if (tab === 'tasks') {
+            const row = doc.querySelector('#taskRows tr');
+            if (row) {
+                row.click();
+                await pace(10);
+            }
+        }
+        const seen = new Set();
+        for (let round = 0; round < 40; round++) {
+            if (tab === 'ws' && round === 1) {
+                await pace(30);
+            }
+            const next = visibleButtons(doc, tab).find((button) => !seen.has(button));
+            if (!next) {
+                break;
+            }
+            seen.add(next);
+            const label = (next.textContent || next.id || 'без текста').trim().replace(/\s+/g, ' ').slice(0, 42);
+            const errorsBefore = state.errors.length;
+            const requestsBefore = state.requests.length;
+            try {
+                next.click();
+            } catch (error) {
+                state.errors.push('click ' + label + ': ' + error.message);
+            }
+            await pace(6);
+            const freshErrors = state.errors.slice(errorsBefore);
+            const freshRequests = state.requests.slice(requestsBefore);
+            const badStatus = freshRequests.filter((item) => typeof item.status === 'number' && item.status >= 400);
+            const ok = freshErrors.length === 0 && badStatus.length === 0;
+            if (!ok) {
+                state.fails += 1;
+            }
+            state.lines.push({
+                tab: tab,
+                label: label,
+                ok: ok,
+                note: freshErrors.concat(badStatus.map((item) => item.method + ' ' + item.url + ' → ' + item.status + ' ' + item.body)).join(' | ')
+            });
+        }
+    };
+
+    const render = () => {
+        const total = state.lines.length;
+        const head = [
+            'кнопок проверено: ' + total + '   проблем: ' + state.fails,
+            'запросов: ' + state.requests.length + '   ответов 4xx/5xx: ' + state.requests.filter((item) => typeof item.status === 'number' && item.status >= 400).length,
+            'ошибок JS: ' + state.errors.length + '   тостов: ' + state.toasts.length,
+            ''
+        ];
+        const rows = state.lines.map((line) => (line.ok ? '[ ok ] ' : '[ !! ] ') + line.tab.padEnd(7) + line.label + (line.note ? '  ←  ' + line.note : ''));
+        const tail = state.toasts.length ? ['', 'тосты: ' + state.toasts.slice(0, 10).join(' · ')] : [];
+        report.textContent = head.concat(rows, tail).join('\n');
+        report.className = state.fails === 0 ? 'ok' : 'bad';
+        frame.style.display = 'none';
+        document.title = 'проблем: ' + state.fails;
+    };
+
+    frame.addEventListener('load', async () => {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument;
+        watch(win, doc);
+        await pace(8);
+        for (const tab of TABS) {
+            await runTab(doc, tab);
+        }
+        render();
+    }, { once: true });
+})();
+</script>
+</body>
+</html>

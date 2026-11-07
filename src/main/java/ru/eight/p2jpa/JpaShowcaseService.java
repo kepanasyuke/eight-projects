@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +25,7 @@ import ru.eight.domain.WorkItemStatus;
 public class JpaShowcaseService {
 
     private static final int PAGE_SIZE = 20;
+    private static final String CONCURRENT_SUFFIX = " [правка параллельной транзакции]";
 
     private final WorkItemRepository items;
     private final EntityManagerFactory entityManagerFactory;
@@ -73,14 +74,14 @@ public class JpaShowcaseService {
 
         this.transactionTemplate.executeWithoutResult(session -> {
             WorkItem fresh = this.items.findById(id).orElseThrow();
-            fresh.setTitle(fresh.getTitle() + " [правка параллельной транзакции]");
+            fresh.setTitle(baseTitle(fresh.getTitle()) + CONCURRENT_SUFFIX);
         });
 
         boolean detected = false;
         String message = "Конфликт не обнаружен";
         try {
-            this.transactionTemplate.executeWithoutResult(session -> this.items.save(detached));
-        } catch (ObjectOptimisticLockingFailureException ex) {
+            this.transactionTemplate.executeWithoutResult(session -> this.items.saveAndFlush(detached));
+        } catch (OptimisticLockingFailureException ex) {
             detected = true;
             message = "Устаревшая версия отклонена: запись изменена параллельной транзакцией";
         }
@@ -89,6 +90,13 @@ public class JpaShowcaseService {
                 .orElseThrow(() -> ApiException.notFound("Задача " + id + " не найдена"))).getVersion();
         OptimisticReport report = new OptimisticReport(id, detected, versionBefore, versionAfter, message);
         return report;
+    }
+
+    private static String baseTitle(String title) {
+        String base = title.endsWith(CONCURRENT_SUFFIX)
+                ? title.substring(0, title.length() - CONCURRENT_SUFFIX.length())
+                : title;
+        return base;
     }
 
     public LockReport pessimisticLock(Long id, long holdMillis) {

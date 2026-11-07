@@ -95,6 +95,27 @@ class JpaModeMatrixTest {
     }
 
     @Test
+    @DisplayName("повторные нажатия оптимистичной блокировки не ломают запись")
+    void optimisticConflictIsRepeatable() throws Exception {
+        for (int attempt = 1; attempt <= 6; attempt++) {
+            MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/jpa/optimistic")
+                            .param("id", "4"))
+                    .andReturn();
+
+            JsonNode report = this.objectMapper.readTree(
+                    result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+            assertThat(result.getResponse().getStatus()).as("попытка " + attempt).isEqualTo(200);
+            assertThat(report.get("conflictDetected").asBoolean()).as("попытка " + attempt).isTrue();
+        }
+
+        MvcResult item = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/work-items/4"))
+                .andReturn();
+        JsonNode payload = this.objectMapper.readTree(
+                item.getResponse().getContentAsString(StandardCharsets.UTF_8));
+        assertThat(payload.get("title").asText()).hasSizeLessThanOrEqualTo(120);
+    }
+
+    @Test
     @DisplayName("пессимистичная блокировка удерживает строку заявленное время")
     void pessimisticHoldsRow() throws Exception {
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v2/jpa/pessimistic")

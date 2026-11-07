@@ -3,6 +3,7 @@ package ru.multitool.eight.p8ws;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -120,14 +121,10 @@ public class StateSocketHandler extends TextWebSocketHandler {
     }
 
     private WorkItemStatus parseStatus(String command) {
-        WorkItemStatus status = null;
-        for (WorkItemStatus candidate : WorkItemStatus.values()) {
-            if (candidate.name().equalsIgnoreCase(command)) {
-                status = candidate;
-                break;
-            }
-        }
-        return status;
+        return Arrays.stream(WorkItemStatus.values())
+                .filter(candidate -> candidate.name().equalsIgnoreCase(command))
+                .findFirst()
+                .orElse(null);
     }
 
     private void sendWelcome(WebSocketSession session) {

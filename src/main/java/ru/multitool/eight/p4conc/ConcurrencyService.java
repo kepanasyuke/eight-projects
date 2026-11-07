@@ -173,12 +173,14 @@ public class ConcurrencyService {
 
     private void awaitDrain() {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
-        for (int attempt = 0; attempt < 100 && System.nanoTime() < deadline; attempt++) {
-            if (this.executor.getActiveCount() == 0 && this.executor.getQueue().isEmpty()) {
-                break;
-            }
+        for (int attempt = 0; attempt < 100 && System.nanoTime() < deadline && !drained(); attempt++) {
             sleepQuietly(50L);
         }
+    }
+
+    private boolean drained() {
+        boolean idle = this.executor.getActiveCount() == 0;
+        return idle && this.executor.getQueue().isEmpty();
     }
 
     private void acquirePair(ReentrantLock first, ReentrantLock second, boolean ordered,

@@ -30,6 +30,7 @@ WebSocket с машиной состояний.
 | `/showcase.html` | витрина: восемь карточек с SVG-анимациями и живыми данными |
 | `/projects/p1.html` … `/projects/p8.html` | страница проекта: задача, решения, вызов API, фрагмент кода |
 | `/game.html` | платформер из восьми уровней и таблица лидеров |
+| `/logic.html` | «Логика»: сборка программы, вентили, поиск бага, планировщик |
 | `/sand.html` | песочница «Поток»: песчинка — запись данных, створы — контракт и JPA |
 | `/actuator/health` | состояние приложения |
 | `/api/showcase/projects` | JSON витрины (единый источник правды для страниц) |
@@ -102,6 +103,8 @@ docker compose up -d          # postgres:16-alpine, база eight
 | --- | --- |
 | ![Консоль: список задач](docs/screenshots/console-tasks.png?v=3) | ![Консоль: транзакции](docs/screenshots/console-tx.png?v=3) |
 
+![Игра «Логика»](docs/screenshots/logic.png?v=1)
+
 ![Игра «Восемь уровней»](docs/screenshots/game.png?v=3)
 
 ![Песочница «Поток»](docs/screenshots/sand.png?v=3)
@@ -141,7 +144,7 @@ src/main/resources
 └── static/          витрина, страницы проектов, платформер и песочница «Поток», ассеты, SVG
 
 docs/demo/           GIF-ролики, собранные из кадров SVG
-docs/screenshots/    скриншоты консоли, платформера и песочницы для README
+docs/screenshots/    скриншоты консоли, «Логики», платформера и песочницы для README
 docs/                статическая сборка для GitHub Pages: лендинг и обе игры
 tools/               генераторы SVG, GIF, страниц и сборка docs/
 ```

@@ -13,7 +13,7 @@ import shutil
 
 STATIC = os.path.join("src", "main", "resources", "static")
 DOCS = "docs"
-ASSETS = ["styles.css", "icons.js", "game.css", "game.js", "sand.css", "sand.js"]
+ASSETS = ["styles.css", "icons.js", "game.css", "game.js", "logic.css", "logic.js", "sand.css", "sand.js"]
 
 OFFLINE_FLAG = '<script>window.EIGHT_OFFLINE = true;</script>\n'
 
@@ -25,6 +25,7 @@ PATH_REPLACEMENTS = [
     ('href="/showcase.html#projects"', 'href="showcase.html"'),
     ('href="/showcase.html"', 'href="showcase.html"'),
     ('href="/game.html"', 'href="game.html"'),
+    ('href="/logic.html"', 'href="logic.html"'),
     ('href="/sand.html"', 'href="sand.html"'),
     ('href="/index.html#projects"', 'href="index.html#projects"'),
     ('href="/"', 'href="index.html"'),
@@ -64,6 +65,11 @@ def build_sand() -> None:
     write(os.path.join(DOCS, "sand.html"), markup)
 
 
+def build_logic() -> None:
+    markup = relativize(read(os.path.join(STATIC, "logic.html")))
+    write(os.path.join(DOCS, "logic.html"), markup)
+
+
 def build_assets() -> None:
     target = os.path.join(DOCS, "assets")
     os.makedirs(target, exist_ok=True)
@@ -76,6 +82,7 @@ def main() -> None:
     build_assets()
     build_game()
     build_sand()
+    build_logic()
     write(os.path.join(DOCS, ".nojekyll"), "")
     print("docs/ собран: game.html, sand.html, assets/, .nojekyll")
 

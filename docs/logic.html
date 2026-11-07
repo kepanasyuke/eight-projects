@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Логика — четыре мини-игры по коду</title>
+    <meta name="description" content="Четыре логические мини-игры по backend-коду: соберите программу из блоков, настройте щиток вентилей, найдите баг в коде и расставьте работы по зависимостям.">
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="assets/icons.js" defer></script>
+    <link rel="stylesheet" href="assets/game.css">
+    <link rel="stylesheet" href="assets/logic.css">
+</head>
+<body class="game-body logic-body">
+<div class="grid-bg" aria-hidden="true"></div>
+
+<header class="topbar">
+    <div class="wrap topbar__inner">
+        <a class="brand" href="index.html">
+            <span class="brand__mark" aria-hidden="true"><svg class="icon"><use href="#i-grid"></use></svg></span>
+            <span class="brand__name">Логика <span>/ четыре мини-игры</span></span>
+        </a>
+        <nav class="nav" aria-label="Основная навигация">
+            <a href="console.html"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>
+            <a href="showcase.html"><svg class="icon"><use href="#i-window"></use></svg>Витрина</a>
+            <a href="showcase.html"><svg class="icon"><use href="#i-folder"></use></svg>Проекты</a>
+            <a href="logic.html" aria-current="page"><svg class="icon"><use href="#i-code"></use></svg>Логика</a>
+            <a href="sand.html"><svg class="icon"><use href="#i-sand"></use></svg>Поток</a>
+        </nav>
+    </div>
+</header>
+
+<main class="wrap game-wrap">
+    <div class="game-head">
+        <div>
+            <h1>Логика</h1>
+            <p id="mode-subtitle">Соберите программу из блоков — ровно три шага.</p>
+        </div>
+        <div class="game-hud" aria-live="polite">
+            <div class="hud-item"><span>звёзды</span><b id="hud-stars">0</b></div>
+            <div class="hud-item"><span>уровень</span><b id="hud-level">1</b></div>
+            <div class="hud-item"><span>серия</span><b id="hud-streak">0</b></div>
+            <div class="hud-item"><span>наклейки</span><b id="hud-stickers">0 / 6</b></div>
+        </div>
+    </div>
+
+    <div class="lg-window window">
+        <div class="window__bar">
+            <span class="window__app"><svg class="icon"><use href="#i-code"></use></svg>Логика</span>
+            <span class="window__title">logic · четыре игры в окне</span>
+            <span class="window__controls">
+                <span class="window__btn"><svg><use href="#i-minimize"></use></svg></span>
+                <span class="window__btn"><svg><use href="#i-maximize"></use></svg></span>
+                <span class="window__btn window__btn--close"><svg><use href="#i-close"></use></svg></span>
+            </span>
+        </div>
+        <div class="window__body lg-body">
+            <aside class="lg-rail" aria-label="Выбор мини-игры">
+                <button type="button" class="lg-tab is-active" data-mode="steps" aria-pressed="true">
+                    <svg class="icon"><use href="#i-save"></use></svg>
+                    <span>Сборочный цех</span>
+                </button>
+                <button type="button" class="lg-tab" data-mode="gates" aria-pressed="false">
+                    <svg class="icon"><use href="#i-plug"></use></svg>
+                    <span>Щиток</span>
+                </button>
+                <button type="button" class="lg-tab" data-mode="bug" aria-pressed="false">
+                    <svg class="icon"><use href="#i-search"></use></svg>
+                    <span>Охота на баг</span>
+                </button>
+                <button type="button" class="lg-tab" data-mode="plan" aria-pressed="false">
+                    <svg class="icon"><use href="#i-clock"></use></svg>
+                    <span>Планировщик</span>
+                </button>
+                <div class="lg-level">
+                    <div class="lg-level__top"><span>опыт</span><b id="level-text">0 / 50</b></div>
+                    <div class="lg-level__bar"><i id="level-fill"></i></div>
+                </div>
+                <div class="lg-stickers" id="stickers" aria-label="Наклейки"></div>
+            </aside>
+
+            <section class="lg-stage">
+                <div class="lg-task">
+                    <span class="lg-task__eyebrow" id="task-eyebrow">задача 1</span>
+                    <h2 id="task-title">Сборочный цех</h2>
+                    <p id="task-text">Соберите программу из блоков, чтобы получить нужный результат.</p>
+                </div>
+
+                <div class="lg-board" id="board"></div>
+
+                <div class="lg-actions">
+                    <button type="button" class="btn btn--primary" id="check">
+                        <svg class="icon"><use href="#i-check"></use></svg>Проверить
+                    </button>
+                    <button type="button" class="btn btn--ok" id="next" hidden>
+                        Дальше<svg class="icon"><use href="#i-arrow-right"></use></svg>
+                    </button>
+                    <button type="button" class="btn btn--ghost" id="reset">
+                        <svg class="icon"><use href="#i-refresh"></use></svg>Заново
+                    </button>
+                    <button type="button" class="btn btn--ghost lg-sound" id="sound" aria-pressed="true">
+                        <svg class="icon"><use href="#i-play"></use></svg>Звук
+                    </button>
+                </div>
+
+                <div class="lg-feedback" id="feedback" aria-live="polite"></div>
+            </section>
+        </div>
+    </div>
+
+    <p class="lg-note">Хотите старую игру — <a href="game.html">платформер «Восемь уровней»</a>. Поток данных — в разделе <a href="sand.html">«Поток»</a>.</p>
+</main>
+
+<script src="assets/logic.js" defer></script>
+</body>
+</html>

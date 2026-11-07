@@ -50,15 +50,27 @@ class VitrinaStaticTest {
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8})
-    @DisplayName("страница проекта открывается и содержит гифку")
+    @DisplayName("страница проекта открывается и содержит SVG-анимацию")
     void projectPages(int number) throws Exception {
         MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/projects/p" + number + ".html"))
                 .andReturn();
 
         String html = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         assertThat(result.getResponse().getStatus()).isEqualTo(200);
-        assertThat(html).contains("/gifs/p" + number + ".gif");
+        assertThat(html).contains("/svg/p" + number + ".svg");
         assertThat(html).contains("data-call");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"hero", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8"})
+    @DisplayName("SVG-анимация отдаётся как изображение")
+    void svgVisuals(String name) throws Exception {
+        MvcResult result = this.mockMvc.perform(MockMvcRequestBuilders.get("/svg/" + name + ".svg")).andReturn();
+
+        String svg = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        assertThat(result.getResponse().getStatus()).as(name).isEqualTo(200);
+        assertThat(result.getResponse().getContentType()).contains("image/svg+xml");
+        assertThat(svg).contains("<svg").contains("viewBox").isNotBlank();
     }
 
     @ParameterizedTest
@@ -136,6 +148,7 @@ class VitrinaStaticTest {
         assertThat(project.get("key").asText()).isEqualTo("p" + (index + 1));
         assertThat(project.get("page").asText()).isEqualTo("/projects/p" + (index + 1) + ".html");
         assertThat(project.get("gif").asText()).isEqualTo("/gifs/p" + (index + 1) + ".gif");
+        assertThat(project.get("visual").asText()).isEqualTo("/svg/p" + (index + 1) + ".svg");
         assertThat(project.get("accent").asText()).startsWith("#");
         assertThat(project.get("skills").size()).isGreaterThanOrEqualTo(4);
         assertThat(project.get("endpoints").size()).isGreaterThanOrEqualTo(1);

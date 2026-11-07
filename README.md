@@ -1,9 +1,14 @@
 # Восемь проектов
 
+![Восемь проектов](docs/demo/hero.gif)
+
 Восемь backend-проектов на Java 17 и Spring Boot 3.3 плюс витрина с анимациями и платформер из восьми
 уровней. Каждый блок закрывает тему из вакансии Middle Java Developer: контракт REST, устранение N+1,
 границы транзакций, многопоточность, брокер сообщений с outbox и DLQ, XML/XSD, подпись и сертификаты,
 WebSocket с машиной состояний.
+
+Вся графика в интерфейсе нарисована вручную: анимированные SVG лежат в
+`src/main/resources/static/svg/`, GIF-ролики для README собраны из их кадров. Ни одной стоковой картинки.
 
 ## Быстрый старт
 
@@ -17,7 +22,7 @@ WebSocket с машиной состояний.
 
 | Адрес | Что там |
 | --- | --- |
-| `/` | витрина: восемь карточек с GIF и живыми данными |
+| `/` | витрина: восемь карточек с SVG-анимациями и живыми данными |
 | `/projects/p1.html` … `/projects/p8.html` | страница проекта: задача, решения, вызов API, фрагмент кода |
 | `/game.html` | платформер из восьми уровней и таблица лидеров |
 | `/actuator/health` | состояние приложения |
@@ -48,6 +53,17 @@ docker compose up -d          # postgres:16-alpine, база eight
 Игровой модуль: `/api/game/levels`, `POST /api/game/scores`, `GET /api/game/leaderboard`,
 `GET /api/game/stats`.
 
+## Демо
+
+Анимации выше — это те же SVG, что показывает витрина; GIF собраны из их кадров.
+
+| | |
+| --- | --- |
+| ![REST API](docs/demo/p1.gif) REST: идемпотентность | ![JPA](docs/demo/p2.gif) JPA: число запросов падает |
+| ![Транзакции](docs/demo/p3.gif) Транзакции: commit и rollback | ![Многопоточность](docs/demo/p4.gif) Пул, таймауты, гонки |
+| ![Брокер](docs/demo/p5.gif) Брокер: партиции и DLQ | ![XML](docs/demo/p6.gif) XML: сборка дерева и XSD |
+| ![Подпись](docs/demo/p7.gif) Подпись и цепочка сертификатов | ![WebSocket](docs/demo/p8.gif) WebSocket: переходы состояний |
+
 ## Структура
 
 ```
@@ -69,10 +85,19 @@ src/main/resources
 ├── db/migration/    Flyway: схема, демо-данные, правка ограничений
 ├── xsd/             invoice.xsd + common-types.xsd
 ├── crypto/          демо-хранилище PKCS12
-└── static/          витрина, страницы проектов, игра, ассеты, GIF
+└── static/          витрина, страницы проектов, игра, ассеты, SVG
+
+docs/demo/           GIF-ролики, собранные из кадров SVG
+tools/               генераторы SVG, GIF и страниц
 ```
 
-Страницы проектов и GIF генерируются скриптами: `python tools/make_gifs.py`, `python tools/make_pages.py`.
+Генераторы идемпотентны и лежат в репозитории:
+
+```bash
+python tools/make_svgs.py        # 9 анимированных SVG (SMIL) в static/svg
+python tools/make_demo_gifs.py   # GIF для README из кадров SVG (нужен Chrome или Edge)
+python tools/make_pages.py       # HTML страниц проектов из общего словаря метаданных
+```
 
 ## Тесты
 
@@ -80,9 +105,34 @@ src/main/resources
 ./mvnw test
 ```
 
-43 теста: машина состояний, сервис XML (валидация, XXE, сборка), обработчик WebSocket на моке сессии
-и сквозной `ApiIntegrationTest` на MockMvc — контракт REST, идемпотентность, недопустимые переходы,
-переживающий откат аудит, DLQ, outbox, подпись и лидерборд.
+511 тестов, все зелёные. Кроме сквозного `ApiIntegrationTest` на MockMvc добавлены матричные наборы,
+которые перебирают варианты поведения, а не только счастливый путь:
+
+| Набор | Что проверяет |
+| --- | --- |
+| `WorkItemStateMachineMatrixTest` | все пары «состояние → команда», включая запрещённые |
+| `XmlValidationMatrixTest` | допустимые и недопустимые значения XSD, XXE и DOCTYPE |
+| `StateCommandMatrixTest` | разбор команд WebSocket, лимиты сообщений |
+| `RestContractMatrixTest` | коды ответов и тела ошибок по каждому эндпоинту |
+| `BoundarySweepTest` | граничные значения параметров: нули, отрицательные, максимумы |
+| `PatternSweepTest` | регулярные выражения и форматы полей |
+| `GameApiMatrixTest` | уровни, результаты, лидерборд |
+| `JpaModeMatrixTest` | все режимы загрузки связей и число запросов |
+| `LedgerMatrixTest` | переводы, откаты, аудит в `REQUIRES_NEW` |
+| `BusMatrixTest` | партиции, повторы, DLQ, дедупликация |
+| `CryptoCasesTest` | подпись, подмена, просроченный сертификат |
+| `ConcurrencyMatrixTest` | гонки, таймауты, дедлок |
+| `VitrinaStaticTest` | отдача страниц, JS и SVG, доступность витрины |
+
+## Правила стиля
+
+Код держится в одном стиле, проверенном по всему `src/main`:
+
+- у метода один `return` в конце: ранние выходы заменены предикатом в заголовке цикла или `Stream`;
+- нет `break`, `continue` и `while` — только `for` с единственной точкой выхода;
+- методы короче 30 строк, классы без Lombok: геттеры и сеттеры пишутся явно;
+- ошибки отдаются через единый `ApiError`, обработчики собраны в `GlobalExceptionHandler`;
+- тесты читают тело через `getContentAsString(StandardCharsets.UTF_8)`, иначе ломается кириллица.
 
 ## Ограничения и допущения
 
@@ -93,3 +143,5 @@ src/main/resources
   дедупликация), а не клиент настоящего кластера: цель — воспроизводимая демонстрация поведения.
 - **База.** По умолчанию H2 в режиме PostgreSQL; для реального PostgreSQL есть профиль `postgres`
   и `docker-compose.yml`.
+- **Демо-хранилище.** `src/main/resources/crypto/demo-keystore.p12` — учебный PKCS12 с паролем
+  `changeit`, никаких реальных ключей в репозитории нет.

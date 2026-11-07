@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270" role="img" aria-label="транзакции">
+  <title>транзакции</title>
+  <defs>
+    <pattern id="grid-p3" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="rgba(120, 160, 210, 0.10)" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="glow-p3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line-p3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#f472b6" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#f472b6" stop-opacity="0.15"/>
+    </linearGradient>
+    <filter id="blur-p3" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  <rect width="480" height="270" fill="#0b1220"/>
+  <rect width="480" height="270" fill="url(#grid-p3)"/>
+  <circle cx="392" cy="64" r="86" fill="url(#glow-p3)">
+    <animate attributeName="r" values="78;92;78" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="0.5" y="0.5" width="479" height="269" fill="none" stroke="#f472b6" stroke-opacity="0.35"/>
+  <text x="22" y="34" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#e6eefc">транзакции</text>
+  <text x="22" y="54" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#93a4c0">REQUIRES_NEW</text>
+  <line x1="22" y1="64" x2="458" y2="64" stroke="#f472b6" stroke-opacity="0.3"/>
+  <rect x="40" y="92" width="400" height="44" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#f472b6" stroke-opacity="0.3"/>
+  <text x="50" y="108" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="10" fill="#93a4c0">transfer: REQUIRED</text>
+  <rect x="42" y="112" height="22" rx="4" fill="#f472b6" fill-opacity="0.55">
+    <animate attributeName="width" values="0;394;394;0" keyTimes="0;0.55;0.7;1" dur="5s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="40" y="154" width="400" height="44" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#f472b6" stroke-opacity="0.3"/>
+  <text x="50" y="170" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="10" fill="#93a4c0">audit: REQUIRES_NEW</text>
+  <rect x="42" y="174" height="22" rx="4" fill="#34d399" fill-opacity="0.6">
+    <animate attributeName="width" values="0;120;120" keyTimes="0;0.35;1" dur="5s" repeatCount="indefinite"/>
+  </rect>
+  <text x="176" y="192" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#a7f3d0">
+    <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.4;0.5;1" dur="5s" repeatCount="indefinite"/>
+    аудит пережил откат
+  </text>
+  <rect x="40" y="212" width="400" height="32" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#f87171" stroke-opacity="0.35"/>
+  <text x="50" y="233" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#fca5a5">
+    <animate attributeName="opacity" values="0;0;1;0" keyTimes="0;0.55;0.7;1" dur="5s" repeatCount="indefinite"/>
+    rollback: деньги вернулись
+  </text>
+</svg>

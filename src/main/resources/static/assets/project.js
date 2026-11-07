@@ -141,3 +141,22 @@ copyButtons.forEach((button) => {
         }
     });
 });
+
+const revealBlocks = () => {
+    const blocks = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("is-visible");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: "0px 0px -30px 0px" });
+        blocks.forEach((block) => observer.observe(block));
+    } else {
+        blocks.forEach((block) => block.classList.add("is-visible"));
+    }
+};
+
+revealBlocks();

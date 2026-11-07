@@ -4,7 +4,7 @@ const statsHost = document.querySelector("[data-stats]");
 const cardTemplate = (project) => `
     <article class="card" style="--accent:${project.accent}" data-reveal>
         <div class="card__media">
-            <img src="${project.gif}" alt="Анимация проекта ${project.number}: ${project.title}" loading="lazy" width="480" height="270">
+            <img src="${project.visual || project.gif}" alt="Анимация проекта ${project.number}: ${project.title}" loading="lazy" width="480" height="270">
             <span class="card__num">0${project.number}</span>
         </div>
         <div class="card__body">

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 270" width="480" height="270" role="img" aria-label="многопоточность">
+  <title>многопоточность</title>
+  <defs>
+    <pattern id="grid-p4" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="rgba(120, 160, 210, 0.10)" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="glow-p4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line-p4" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#fbbf24" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.15"/>
+    </linearGradient>
+    <filter id="blur-p4" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  <rect width="480" height="270" fill="#0b1220"/>
+  <rect width="480" height="270" fill="url(#grid-p4)"/>
+  <circle cx="392" cy="64" r="86" fill="url(#glow-p4)">
+    <animate attributeName="r" values="78;92;78" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="0.5" y="0.5" width="479" height="269" fill="none" stroke="#fbbf24" stroke-opacity="0.35"/>
+  <text x="22" y="34" font-family="Inter, 'Segoe UI', sans-serif" font-size="16" font-weight="700" fill="#e6eefc">многопоточность</text>
+  <text x="22" y="54" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="11" fill="#93a4c0">orTimeout</text>
+  <line x1="22" y1="64" x2="458" y2="64" stroke="#fbbf24" stroke-opacity="0.3"/>
+  <line x1="40" y1="96" x2="440" y2="96" stroke="#fbbf24" stroke-opacity="0.22"/>
+  <circle r="7" fill="#fbbf24" opacity="0.95">
+    <animate attributeName="cx" values="40;440" dur="2.60s" repeatCount="indefinite"/>
+  </circle>
+  <text x="46" y="88" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="8" fill="#93a4c0">eight-worker-1</text>
+  <line x1="40" y1="134" x2="440" y2="134" stroke="#fbbf24" stroke-opacity="0.22"/>
+  <circle r="7" fill="#fbbf24" opacity="0.83">
+    <animate attributeName="cx" values="40;440" dur="2.95s" repeatCount="indefinite"/>
+  </circle>
+  <text x="46" y="126" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="8" fill="#93a4c0">eight-worker-2</text>
+  <line x1="40" y1="172" x2="440" y2="172" stroke="#fbbf24" stroke-opacity="0.22"/>
+  <circle r="7" fill="#fbbf24" opacity="0.71">
+    <animate attributeName="cx" values="40;440" dur="3.30s" repeatCount="indefinite"/>
+  </circle>
+  <text x="46" y="164" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="8" fill="#93a4c0">eight-worker-3</text>
+  <line x1="40" y1="210" x2="440" y2="210" stroke="#fbbf24" stroke-opacity="0.22"/>
+  <circle r="7" fill="#fbbf24" opacity="0.59">
+    <animate attributeName="cx" values="40;440" dur="3.65s" repeatCount="indefinite"/>
+  </circle>
+  <text x="46" y="202" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="8" fill="#93a4c0">eight-worker-4</text>
+  <g opacity="0.9">
+    <circle cx="404" cy="212" r="12" fill="none" stroke="#f87171" stroke-width="2">
+      <animate attributeName="opacity" values="0;0.2;1;0.2" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <path d="M397 205 L411 219 M411 205 L397 219" stroke="#f87171" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="opacity" values="0;0.2;1;0.2" dur="3s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  <rect x="40" y="222" width="250" height="28" rx="8" fill="rgba(18, 27, 43, 0.85)" stroke="#fbbf24" stroke-opacity="0.3"/>
+  <text x="52" y="241" font-family="'Cascadia Code', 'JetBrains Mono', Consolas, monospace" font-size="10" fill="#93a4c0">orTimeout(1200 ms)</text>
+</svg>

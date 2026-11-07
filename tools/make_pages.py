@@ -434,7 +434,7 @@ TEMPLATE = """<!DOCTYPE html>
             <div class="tags">%%TAGS%%</div>
         </div>
         <div class="project-hero__media">
-            <img src="/gifs/%%KEY%%.gif" alt="Анимация проекта: %%TITLE%%" width="480" height="270">
+            <img src="/svg/%%KEY%%.svg" alt="Анимация проекта: %%TITLE%%" width="480" height="270">
         </div>
     </section>
 

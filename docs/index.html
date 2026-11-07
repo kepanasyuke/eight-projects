@@ -7,103 +7,130 @@
     <meta name="description" content="Восемь учебных backend-проектов на Spring Boot: REST, JPA, транзакции, многопоточность, брокер, XML, подпись, WebSocket. Плюс игра-платформер по этим проектам.">
     <style>
         :root {
-            --bg: #070b14;
-            --panel: rgba(9, 15, 27, 0.78);
-            --line: rgba(120, 150, 190, 0.22);
-            --ink: #e8eefc;
-            --muted: #93a3bd;
-            --accent: #7dd3fc;
-            --accent-2: #a78bfa;
+            --bg: #f7f5ef;
+            --bg-soft: #f0ece2;
+            --panel: #ffffff;
+            --line: #e1dccc;
+            --line-strong: #b8b1a0;
+            --ink: #1a1712;
+            --muted: #6d6555;
+            --accent: #a8451f;
+            --serif: Georgia, "Times New Roman", "PT Serif", serif;
+            --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
         }
 
         * { box-sizing: border-box; }
 
         body {
             margin: 0;
-            background: radial-gradient(900px 500px at 12% -10%, rgba(56, 189, 248, 0.16), transparent 70%),
-                        radial-gradient(700px 460px at 92% 4%, rgba(167, 139, 250, 0.15), transparent 72%),
-                        var(--bg);
+            background: var(--bg);
             color: var(--ink);
-            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-            line-height: 1.55;
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
         a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-        .wrap { width: min(1080px, 92vw); margin: 0 auto; }
+        .wrap { width: min(1040px, 92vw); margin: 0 auto; }
 
         header.top {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 16px;
-            padding: 22px 0;
+            padding: 20px 0;
             border-bottom: 1px solid var(--line);
         }
 
-        .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-weight: 700; }
+        .brand { display: flex; align-items: baseline; gap: 12px; color: var(--ink); font-family: var(--serif); font-size: 21px; }
         .brand span.dot {
-            width: 26px; height: 26px; border-radius: 9px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            box-shadow: 0 0 22px rgba(125, 211, 252, 0.4);
+            width: 30px; height: 30px; border-radius: 3px;
+            border: 1px solid var(--line-strong);
+            background: var(--panel);
+            color: var(--accent);
+            font-family: var(--serif);
+            font-size: 16px;
+            line-height: 28px;
+            text-align: center;
+            align-self: center;
         }
-        .brand small { color: var(--muted); font-weight: 500; }
+        .brand small { color: var(--muted); font-family: var(--sans); font-size: 13px; }
+        header.top a { font-size: 14px; }
 
-        .hero { padding: 56px 0 32px; }
-        .hero h1 { margin: 0 0 14px; font-size: clamp(30px, 4.6vw, 50px); line-height: 1.1; letter-spacing: -0.02em; }
-        .hero p { margin: 0; max-width: 62ch; color: var(--muted); font-size: 17px; }
+        .hero { padding: 56px 0 34px; }
+        .eyebrow {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+            line-height: 1.4; color: var(--muted); margin: 0 0 22px;
+        }
+        .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--line-strong); }
+        .hero h1 {
+            margin: 0 0 16px;
+            font-family: var(--serif); font-weight: 400;
+            font-size: clamp(30px, 4.2vw, 46px); line-height: 1.14; letter-spacing: -0.01em;
+        }
+        .hero p { margin: 0; max-width: 64ch; color: var(--muted); font-size: 17px; }
 
-        .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+        .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
         .btn {
             display: inline-flex; align-items: center; gap: 8px;
-            padding: 12px 22px; border-radius: 12px;
-            border: 1px solid var(--line); color: var(--ink);
+            padding: 12px 22px; border-radius: 3px;
+            border: 1px solid var(--line-strong); color: var(--ink);
+            background: var(--panel);
             font-weight: 600; font-size: 15px;
         }
-        .btn:hover { text-decoration: none; border-color: var(--accent); }
+        .btn:hover { text-decoration: none; border-color: var(--accent); color: var(--accent); }
         .btn--primary {
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            color: #0b1a2b;
-            border-color: transparent;
+            background: var(--ink);
+            color: #fdfbf6;
+            border-color: var(--ink);
+        }
+        .btn--primary:hover { background: var(--accent); border-color: var(--accent); color: #fdfbf6; }
+
+        figure { margin: 38px 0 0; }
+        figure img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 3px; }
+        figcaption { color: var(--muted); font-size: 13px; margin-top: 12px; }
+
+        section { padding: 38px 0; border-top: 1px solid var(--line); }
+        section:first-of-type { border-top: none; }
+        .section-title {
+            margin: 0 0 20px;
+            font-family: var(--serif); font-weight: 400; font-size: 26px;
         }
 
-        figure { margin: 34px 0 0; }
-        figure img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 16px; }
-        figcaption { color: var(--muted); font-size: 13px; margin-top: 10px; }
-
-        section { padding: 34px 0; }
-
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
         .card {
-            padding: 20px; border: 1px solid var(--line); border-radius: 16px;
-            background: var(--panel);
+            padding: 22px; background: var(--panel);
         }
-        .card h2 { margin: 0 0 8px; font-size: 17px; }
-        .card p { margin: 0 0 12px; color: var(--muted); font-size: 14px; }
+        .card h2 { margin: 0 0 8px; font-family: var(--serif); font-weight: 400; font-size: 19px; }
+        .card p { margin: 0 0 14px; color: var(--muted); font-size: 14.5px; }
         .card a { font-size: 14px; font-weight: 600; }
 
-        .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
-        .demos img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 12px; background: #0b1220; }
+        .demos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .demos img { width: 100%; display: block; border: 1px solid var(--line); border-radius: 3px; background: var(--bg-soft); }
 
         footer {
-            margin-top: 30px; padding: 26px 0 44px;
+            margin-top: 10px; padding: 26px 0 46px;
             border-top: 1px solid var(--line);
             color: var(--muted); font-size: 13px;
             display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between;
         }
 
-        code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 12.5px; color: #cbd5e1; }
+        code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 12.5px; color: var(--ink); background: var(--bg-soft); padding: 1px 5px; border-radius: 2px; }
     </style>
 </head>
 <body>
 <div class="wrap">
     <header class="top">
-        <div class="brand"><span class="dot" aria-hidden="true"></span>Восемь проектов <small>/ backend-портфолио</small></div>
+        <div class="brand"><span class="dot" aria-hidden="true">8</span>Восемь проектов <small>/ backend-портфолио</small></div>
         <a href="https://github.com/kepanasyuke/eight-projects">Исходный код на GitHub</a>
     </header>
 
     <div class="hero">
+        <p class="eyebrow">Spring Boot · Java 17 · монорепозиторий</p>
         <h1>Восемь проектов на Spring Boot — от REST-контракта до подписи и WebSocket</h1>
         <p>
             Учебный монорепозиторий: восемь законченных backend-тем, живая консоль поверх собственного API
@@ -142,6 +169,7 @@
     </section>
 
     <section>
+        <h2 class="section-title">Демо проектов</h2>
         <div class="demos">
             <img src="demo/p1.gif" alt="Анимация проекта 1: REST API по контракту">
             <img src="demo/p3.gif" alt="Анимация проекта 3: транзакции и откат">

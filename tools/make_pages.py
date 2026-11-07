@@ -121,7 +121,7 @@ public ResponseEntity<WorkItemResponse> create(@RequestHeader("Idempotency-Key")
 @Query("select w from WorkItem w where w.id = :id")
 Optional<WorkItem> findByIdForUpdate(@Param("id") Long id);
 
-@Query("select new ru.multitool.eight.p2jpa.WorkItemSummary(w.id, w.title, a.name, size(w.notes), w.status) "
+@Query("select new ru.eight.p2jpa.WorkItemSummary(w.id, w.title, a.name, size(w.notes), w.status) "
         + "from WorkItem w join w.assignee a where w.status = :status order by w.id")
 List<WorkItemSummary> summarizeByStatus(@Param("status") WorkItemStatus status);
 """,

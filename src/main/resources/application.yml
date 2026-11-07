@@ -70,5 +70,5 @@ eight:
 logging:
   level:
     root: info
-    ru.multitool.eight: info
+    ru.eight: info
     org.hibernate.SQL: warn

@@ -67,7 +67,7 @@ docker compose up -d          # postgres:16-alpine, база eight
 ## Структура
 
 ```
-src/main/java/ru/multitool/eight
+src/main/java/ru/eight
 ├── common/      ApiError, ApiException, GlobalExceptionHandler, PageResponse
 ├── domain/      WorkItem, Assignee, WorkNote, WorkItemStateMachine, репозитории
 ├── p1rest/      REST-контракт, идемпотентность

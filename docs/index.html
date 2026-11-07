@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -41,7 +41,7 @@
         a { color: var(--accent); text-decoration: none; }
         a:hover { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 3px; }
 
-        .wrap { width: min(1060px, 92vw); margin: 0 auto; }
+        .wrap { width: min(1060px, 92vw); margin: 0 auto; } nav.links { display: flex; gap: 16px; font-size: 13.5px; flex-wrap: wrap; } .shot-link { display: block; color: inherit; } .shot-link:hover { text-decoration: none; } .shot-link .shot { transition: box-shadow 0.15s ease, transform 0.15s ease; } .shot-link:hover .shot { box-shadow: var(--shadow); transform: translateY(-1px); }
 
         header.top {
             display: flex; align-items: center; justify-content: space-between;
@@ -140,7 +140,13 @@
             <span class="mark" aria-hidden="true">8</span>
             Восемь проектов <small>/ backend</small>
         </div>
-        <a href="https://github.com/kepanasyuke/eight-projects">Исходный код на GitHub</a>
+        <nav class="links">
+            <a href="showcase.html">Витрина</a>
+            <a href="console.html">Консоль</a>
+            <a href="game.html">Игра</a>
+            <a href="sand.html">Поток</a>
+            <a href="https://github.com/kepanasyuke/eight-projects">Исходный код</a>
+        </nav>
     </header>
 
     <div class="hero">
@@ -156,7 +162,7 @@
             <a class="btn" href="https://github.com/kepanasyuke/eight-projects">Код и README</a>
         </div>
 
-        <figure class="shot" style="margin: 34px 0 0;">
+        <a class="shot-link" href="console.html" aria-label="Открыть страницу консоли"><figure class="shot" style="margin: 34px 0 0;">
             <div class="shot__body">
                 <img src="screenshots/console-tasks.png" alt="Консоль проекта: список задач из REST API">
             </div>
@@ -172,7 +178,7 @@
                 <a href="https://github.com/kepanasyuke/eight-projects#readme">Как запустить локально →</a>
             </article>
             <article class="card">
-                <h2>Игра</h2>
+                <h2>РРіСЂР°</h2>
                 <p>Платформер из восьми уровней с таймером, навыками и багами. Собирает очки и пишет результат в лидерборд.</p>
                 <a href="game.html">Открыть игру →</a>
             </article>
@@ -200,3 +206,4 @@
 </div>
 </body>
 </html>
+

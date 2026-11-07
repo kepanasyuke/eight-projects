@@ -18,12 +18,17 @@ ASSETS = ["styles.css", "icons.js", "game.css", "game.js", "sand.css", "sand.js"
 OFFLINE_FLAG = '<script>window.EIGHT_OFFLINE = true;</script>\n'
 
 PATH_REPLACEMENTS = [
+    ('<a href="/"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>',
+     '<a href="console.html"><svg class="icon"><use href="#i-terminal"></use></svg>Консоль</a>'),
     ('href="/assets/', 'href="assets/'),
     ('src="/assets/', 'src="assets/'),
+    ('href="/showcase.html#projects"', 'href="showcase.html"'),
+    ('href="/showcase.html"', 'href="showcase.html"'),
     ('href="/game.html"', 'href="game.html"'),
     ('href="/sand.html"', 'href="sand.html"'),
     ('href="/index.html#projects"', 'href="index.html#projects"'),
     ('href="/"', 'href="index.html"'),
+    ('href="/projects/', 'href="showcase.html"'),
     ('<title>', '<title>'),
 ]
 

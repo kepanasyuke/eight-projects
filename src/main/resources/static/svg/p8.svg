@@ -2,52 +2,52 @@
   <title>WebSocket</title>
   <defs>
     <linearGradient id="bg-p8" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#eef1f5"/>
+      <stop offset="0%" stop-color="#f7f8fa"/>
+      <stop offset="100%" stop-color="#e2e7ee"/>
     </linearGradient>
     <linearGradient id="line-p8" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#c42b1c" stop-opacity="0.2"/>
       <stop offset="50%" stop-color="#c42b1c" stop-opacity="0.9"/>
       <stop offset="100%" stop-color="#c42b1c" stop-opacity="0.2"/>
     </linearGradient>
-    <filter id="sh-p8" x="-20%" y="-20%" width="140%" height="160%">
-      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
+    <filter id="sh-p8" x="-14%" y="-18%" width="128%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.6" flood-color="#1a2129" flood-opacity="0.30"/>
     </filter>
   </defs>
   <rect width="480" height="270" fill="url(#bg-p8)"/>
-  <circle cx="404" cy="52" r="92" fill="#c42b1c" fill-opacity="0.05"/>
-  <text x="22" y="34" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#1b1b1b">WebSocket</text>
-  <text x="22" y="53" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="11" fill="#6b6b6b">/ws/state</text>
-  <rect x="22" y="63" width="436" height="1" fill="#ececec"/>
+  <circle cx="404" cy="52" r="92" fill="#c42b1c" fill-opacity="0.09"/>
+  <text x="22" y="34" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#15181c">WebSocket</text>
+  <text x="22" y="53" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="11" fill="#565c66">/ws/state</text>
+  <rect x="22" y="63" width="436" height="1" fill="#dfe4eb"/>
   <rect x="22" y="63" width="34" height="2" rx="1" fill="#c42b1c" fill-opacity="0.85"/>
-  <rect x="40" y="100" width="112" height="40" rx="8" fill="#f6f7f9" stroke="#c42b1c" stroke-opacity="0.3"/>
-  <text x="50" y="125" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">NEW</text>
-  <rect x="184" y="100" width="112" height="40" rx="8" fill="#f6f7f9" stroke="#c42b1c" stroke-opacity="0.3"/>
-  <text x="194" y="125" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">IN_PROGRESS</text>
-  <rect x="340" y="100" width="112" height="40" rx="8" fill="#f6f7f9" stroke="#c42b1c" stroke-opacity="0.3"/>
-  <text x="350" y="125" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">DONE</text>
+  <rect x="40" y="100" width="112" height="40" rx="8" fill="#ffffff" stroke="#c42b1c" stroke-opacity="0.55" filter="url(#sh-p8)"/>
+  <text x="50" y="125" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#15181c">NEW</text>
+  <rect x="184" y="100" width="112" height="40" rx="8" fill="#ffffff" stroke="#c42b1c" stroke-opacity="0.55" filter="url(#sh-p8)"/>
+  <text x="194" y="125" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#15181c">IN_PROGRESS</text>
+  <rect x="340" y="100" width="112" height="40" rx="8" fill="#ffffff" stroke="#c42b1c" stroke-opacity="0.55" filter="url(#sh-p8)"/>
+  <text x="350" y="125" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#15181c">DONE</text>
   <line x1="152" y1="120" x2="184" y2="120" stroke="url(#line-p8)" stroke-width="2"/>
   <line x1="296" y1="120" x2="340" y2="120" stroke="url(#line-p8)" stroke-width="2"/>
   <circle r="5" fill="#c42b1c">
-    <animateMotion dur="3s" begin="0.0s" repeatCount="indefinite" path="M96,120 L184,120"/>
+    <animateMotion dur="3s" begin="0.0s" repeatCount="indefinite" path="M156,120 L180,120"/>
   </circle>
   <circle r="5" fill="#c42b1c">
-    <animateMotion dur="3s" begin="1.5s" repeatCount="indefinite" path="M240,120 L340,120"/>
+    <animateMotion dur="3s" begin="1.5s" repeatCount="indefinite" path="M300,120 L336,120"/>
   </circle>
-  <rect x="240" y="100" width="112" height="40" rx="8" fill="none" stroke="#c42b1c" stroke-width="2">
+  <rect x="184" y="100" width="112" height="40" rx="8" fill="none" stroke="#c42b1c" stroke-width="2">
     <animate attributeName="stroke-opacity" values="0.15;1;0.15" dur="3s" repeatCount="indefinite"/>
   </rect>
-  <rect x="72" y="168" width="336" height="12" rx="6" fill="#f6f7f9"/>
+  <rect x="72" y="168" width="336" height="12" rx="6" fill="#eaeef4"/>
   <rect x="72" y="168" width="80" height="12" rx="6" fill="#c42b1c" fill-opacity="0.6">
     <animate attributeName="width" values="80;200;80" dur="2.4s" repeatCount="indefinite"/>
   </rect>
-  <rect x="72" y="192" width="296" height="12" rx="6" fill="#f6f7f9"/>
+  <rect x="72" y="192" width="296" height="12" rx="6" fill="#eaeef4"/>
   <rect x="72" y="192" width="110" height="12" rx="6" fill="#c42b1c" fill-opacity="0.6">
     <animate attributeName="width" values="110;240;110" dur="2.8s" repeatCount="indefinite"/>
   </rect>
-  <rect x="72" y="216" width="256" height="12" rx="6" fill="#f6f7f9"/>
+  <rect x="72" y="216" width="256" height="12" rx="6" fill="#eaeef4"/>
   <rect x="72" y="216" width="140" height="12" rx="6" fill="#c42b1c" fill-opacity="0.6">
     <animate attributeName="width" values="140;280;140" dur="3.2s" repeatCount="indefinite"/>
   </rect>
-  <text x="72" y="250" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#6b6b6b">валидация команд и лимит размера сообщения</text>
+  <text x="72" y="250" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#565c66">валидация команд и лимит размера сообщения</text>
 </svg>

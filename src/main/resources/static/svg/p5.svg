@@ -2,26 +2,26 @@
   <title>брокер</title>
   <defs>
     <linearGradient id="bg-p5" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#eef1f5"/>
+      <stop offset="0%" stop-color="#f7f8fa"/>
+      <stop offset="100%" stop-color="#e2e7ee"/>
     </linearGradient>
     <linearGradient id="line-p5" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#107c10" stop-opacity="0.2"/>
       <stop offset="50%" stop-color="#107c10" stop-opacity="0.9"/>
       <stop offset="100%" stop-color="#107c10" stop-opacity="0.2"/>
     </linearGradient>
-    <filter id="sh-p5" x="-20%" y="-20%" width="140%" height="160%">
-      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
+    <filter id="sh-p5" x="-14%" y="-18%" width="128%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.6" flood-color="#1a2129" flood-opacity="0.30"/>
     </filter>
   </defs>
   <rect width="480" height="270" fill="url(#bg-p5)"/>
-  <circle cx="404" cy="52" r="92" fill="#107c10" fill-opacity="0.05"/>
-  <text x="22" y="34" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#1b1b1b">брокер</text>
-  <text x="22" y="53" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="11" fill="#6b6b6b">topic → partitions</text>
-  <rect x="22" y="63" width="436" height="1" fill="#ececec"/>
+  <circle cx="404" cy="52" r="92" fill="#107c10" fill-opacity="0.09"/>
+  <text x="22" y="34" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="15" font-weight="600" fill="#15181c">брокер</text>
+  <text x="22" y="53" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="11" fill="#565c66">topic → partitions</text>
+  <rect x="22" y="63" width="436" height="1" fill="#dfe4eb"/>
   <rect x="22" y="63" width="34" height="2" rx="1" fill="#107c10" fill-opacity="0.85"/>
   <rect x="36" y="92" width="92" height="108" rx="8" fill="#ffffff" stroke="#107c10" stroke-opacity="0.45" filter="url(#sh-p5)"/>
-  <text x="50" y="112" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#1b1b1b">producer</text>
+  <text x="50" y="112" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#15181c">producer</text>
   <rect x="52" y="122" width="18" height="14" rx="3" fill="#107c10" fill-opacity="0.7">
     <animate attributeName="x" values="52;160;160" keyTimes="0;0.45;1" dur="2.4s" begin="0.0s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.45;0.55" dur="2.4s" begin="0.0s" repeatCount="indefinite"/>
@@ -34,27 +34,27 @@
     <animate attributeName="x" values="52;160;160" keyTimes="0;0.45;1" dur="3.2s" begin="0.6s" repeatCount="indefinite"/>
     <animate attributeName="opacity" values="1;1;0" keyTimes="0;0.45;0.55" dur="3.2s" begin="0.6s" repeatCount="indefinite"/>
   </rect>
-  <rect x="160" y="92" width="168" height="30" rx="6" fill="#f6f7f9" stroke="#e3e3e3" stroke-opacity="1"/>
-  <text x="172" y="111" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">partition 0</text>
-  <rect x="172" y="114" width="144" height="3" rx="1.5" fill="#107c10" fill-opacity="0.25"/>
+  <rect x="160" y="92" width="168" height="30" rx="6" fill="#eaeef4" stroke="#d3d9e2" stroke-opacity="1"/>
+  <text x="172" y="111" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#15181c">partition 0</text>
+  <rect x="172" y="114" width="144" height="3" rx="1.5" fill="#107c10" fill-opacity="0.42"/>
   <circle cx="316" cy="107" r="4" fill="#107c10">
     <animate attributeName="opacity" values="0.2;1;0.2" dur="1.6s" repeatCount="indefinite"/>
   </circle>
-  <rect x="160" y="130" width="168" height="30" rx="6" fill="#f6f7f9" stroke="#e3e3e3" stroke-opacity="1"/>
-  <text x="172" y="149" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">partition 1</text>
-  <rect x="172" y="152" width="144" height="3" rx="1.5" fill="#107c10" fill-opacity="0.25"/>
+  <rect x="160" y="130" width="168" height="30" rx="6" fill="#eaeef4" stroke="#d3d9e2" stroke-opacity="1"/>
+  <text x="172" y="149" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#15181c">partition 1</text>
+  <rect x="172" y="152" width="144" height="3" rx="1.5" fill="#107c10" fill-opacity="0.42"/>
   <circle cx="316" cy="145" r="4" fill="#107c10">
     <animate attributeName="opacity" values="0.2;1;0.2" dur="2.1s" repeatCount="indefinite"/>
   </circle>
-  <rect x="160" y="168" width="168" height="30" rx="6" fill="#f6f7f9" stroke="#e3e3e3" stroke-opacity="1"/>
-  <text x="172" y="187" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#1b1b1b">partition 2</text>
-  <rect x="172" y="190" width="144" height="3" rx="1.5" fill="#107c10" fill-opacity="0.25"/>
+  <rect x="160" y="168" width="168" height="30" rx="6" fill="#eaeef4" stroke="#d3d9e2" stroke-opacity="1"/>
+  <text x="172" y="187" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#15181c">partition 2</text>
+  <rect x="172" y="190" width="144" height="3" rx="1.5" fill="#107c10" fill-opacity="0.42"/>
   <circle cx="316" cy="183" r="4" fill="#107c10">
     <animate attributeName="opacity" values="0.2;1;0.2" dur="2.6s" repeatCount="indefinite"/>
   </circle>
   <rect x="348" y="92" width="96" height="72" rx="8" fill="#ffffff" stroke="#107c10" stroke-opacity="0.4" filter="url(#sh-p5)"/>
-  <text x="362" y="112" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#1b1b1b">consumer</text>
-  <text x="362" y="130" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#6b6b6b">group A</text>
+  <text x="362" y="112" font-family="'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#15181c">consumer</text>
+  <text x="362" y="130" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#565c66">group A</text>
   <text x="362" y="152" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="9" font-weight="400" fill="#107c10">offset</text>
   <rect x="160" y="212" width="168" height="32" rx="8" fill="#fdf3f2" stroke="#c42b1c" stroke-opacity="0.4"/>
   <text x="174" y="233" font-family="'Cascadia Code', 'Cascadia Mono', Consolas, monospace" font-size="10" fill="#c42b1c">

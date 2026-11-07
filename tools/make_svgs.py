@@ -11,14 +11,14 @@ from __future__ import annotations
 import os
 
 W, H = 480, 270
-BG_TOP = "#ffffff"
-BG_BOTTOM = "#eef1f5"
+BG_TOP = "#f7f8fa"
+BG_BOTTOM = "#e2e7ee"
 CARD = "#ffffff"
-CARD_ALT = "#f6f7f9"
-BORDER = "#e3e3e3"
-LINE = "#ececec"
-TEXT = "#1b1b1b"
-MUTED = "#6b6b6b"
+CARD_ALT = "#eaeef4"
+BORDER = "#d3d9e2"
+LINE = "#dfe4eb"
+TEXT = "#15181c"
+MUTED = "#565c66"
 OK = "#107c10"
 BAD = "#c42b1c"
 MONO = "'Cascadia Code', 'Cascadia Mono', Consolas, monospace"
@@ -51,12 +51,12 @@ def head(key: str, accent: str, title: str, subtitle: str) -> str:
       <stop offset="50%" stop-color="{accent}" stop-opacity="0.9"/>
       <stop offset="100%" stop-color="{accent}" stop-opacity="0.2"/>
     </linearGradient>
-    <filter id="sh-{key}" x="-20%" y="-20%" width="140%" height="160%">
-      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.10"/>
+    <filter id="sh-{key}" x="-14%" y="-18%" width="128%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.6" flood-color="#1a2129" flood-opacity="0.30"/>
     </filter>
   </defs>
   <rect width="{W}" height="{H}" fill="url(#bg-{key})"/>
-  <circle cx="404" cy="52" r="92" fill="{accent}" fill-opacity="0.05"/>
+  <circle cx="404" cy="52" r="92" fill="{accent}" fill-opacity="0.09"/>
   <text x="22" y="34" font-family="{SANS}" font-size="15" font-weight="600" fill="{TEXT}">{title}</text>
   <text x="22" y="53" font-family="{MONO}" font-size="11" fill="{MUTED}">{subtitle}</text>
   <rect x="22" y="63" width="{W - 44}" height="1" fill="{LINE}"/>
@@ -68,7 +68,7 @@ def tail() -> str:
     return "</svg>\n"
 
 
-def card(x: int, y: int, w: int, h: int, accent: str | None = None, opacity: float = 0.45,
+def card(x: int, y: int, w: int, h: int, accent: str | None = None, opacity: float = 0.75,
          fill: str = CARD, rx: int = 8, shadow: bool = True) -> str:
     stroke = accent if accent else BORDER
     shadow_attr = ' filter="url(#sh-{})"'.format(_KEY) if shadow else ""
@@ -113,7 +113,7 @@ def scene_p1(accent: str) -> str:
             f'  </circle>\n'
         )
         body += (
-            f'  <circle r="5" fill="{accent}" opacity="0.35">\n'
+            f'  <circle r="5" fill="{accent}" opacity="0.45">\n'
             f'    <animateMotion dur="3s" begin="{delay}" repeatCount="indefinite" '
             f'path="M340,166 L140,166"/>\n'
             f'  </circle>\n'
@@ -199,7 +199,7 @@ def scene_p4(accent: str) -> str:
         y = 96 + lane * 38
         body += f'  <line x1="40" y1="{y}" x2="440" y2="{y}" stroke="{BORDER}" stroke-width="2"/>\n'
         body += (
-            f'  <circle r="7" fill="{accent}" fill-opacity="{0.9 - lane * 0.13:.2f}">\n'
+            f'  <circle cy="{y}" r="7" fill="{accent}" fill-opacity="{0.9 - lane * 0.13:.2f}">\n'
             f'    <animate attributeName="cx" values="40;440" dur="{2.6 + lane * 0.35:.2f}s" '
             f'repeatCount="indefinite"/>\n'
             f"  </circle>\n"
@@ -238,7 +238,7 @@ def scene_p5(accent: str) -> str:
         y = 92 + part * 38
         body += card(160, y, 168, 30, None, shadow=False, fill=CARD_ALT, rx=6)
         body += label(172, y + 19, f"partition {part}", TEXT, 9)
-        body += f'  <rect x="172" y="{y + 22}" width="144" height="3" rx="1.5" fill="{accent}" fill-opacity="0.25"/>\n'
+        body += f'  <rect x="172" y="{y + 22}" width="144" height="3" rx="1.5" fill="{accent}" fill-opacity="0.42"/>\n'
         body += (
             f'  <circle cx="316" cy="{y + 15}" r="4" fill="{accent}">\n'
             f'    <animate attributeName="opacity" values="0.2;1;0.2" dur="{1.6 + part * 0.5:.1f}s" '
@@ -273,7 +273,7 @@ def scene_p6(accent: str) -> str:
         x1, y1 = nodes[start]
         x2, y2 = nodes[end]
         body += (
-            f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{accent}" stroke-opacity="0.35" '
+            f'  <line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{accent}" stroke-opacity="0.55" '
             f'stroke-width="2"/>\n'
         )
     for index, (x, y) in enumerate(nodes):
@@ -347,11 +347,11 @@ def scene_p8(accent: str) -> str:
     body = ""
     states = [("NEW", 96), ("IN_PROGRESS", 240), ("DONE", 396)]
     for name, x in states:
-        body += card(x - 56, 100, 112, 40, accent, 0.3, shadow=False, fill=CARD_ALT)
+        body += card(x - 56, 100, 112, 40, accent, 0.55)
         body += label(x - 46, 125, name, TEXT, 9)
     body += f'  <line x1="152" y1="120" x2="184" y2="120" stroke="url(#line-p8)" stroke-width="2"/>\n'
     body += f'  <line x1="296" y1="120" x2="340" y2="120" stroke="url(#line-p8)" stroke-width="2"/>\n'
-    for index, (start, end) in enumerate(((96, 184), (240, 340))):
+    for index, (start, end) in enumerate(((156, 180), (300, 336))):
         body += (
             f'  <circle r="5" fill="{accent}">\n'
             f'    <animateMotion dur="3s" begin="{index * 1.5}s" repeatCount="indefinite" '
@@ -359,7 +359,7 @@ def scene_p8(accent: str) -> str:
             f'  </circle>\n'
         )
     body += (
-        f'  <rect x="240" y="100" width="112" height="40" rx="8" fill="none" stroke="{accent}" '
+        f'  <rect x="184" y="100" width="112" height="40" rx="8" fill="none" stroke="{accent}" '
         f'stroke-width="2">\n'
         f'    <animate attributeName="stroke-opacity" values="0.15;1;0.15" dur="3s" repeatCount="indefinite"/>\n'
         f"  </rect>\n"
@@ -388,7 +388,7 @@ def scene_hero(accent: str) -> str:
         f"  </circle>\n"
     )
     body += (
-        f'  <circle cx="240" cy="152" r="66" fill="{CARD}" stroke="{accent}" stroke-opacity="0.35" '
+        f'  <circle cx="240" cy="152" r="66" fill="{CARD}" stroke="{accent}" stroke-opacity="0.55" '
         f'filter="url(#sh-hero)">\n'
         f'    <animate attributeName="r" values="64;70;64" dur="7s" repeatCount="indefinite"/>\n'
         f"  </circle>\n"
@@ -408,7 +408,7 @@ def scene_hero(accent: str) -> str:
         f'font-weight="700" fill="{TEXT}">8</text>\n'
     )
     body += (
-        f'  <text x="240" y="98" text-anchor="middle" font-family="{MONO}" font-size="10" '
+        f'  <text x="240" y="194" text-anchor="middle" font-family="{MONO}" font-size="10" '
         f'fill="{MUTED}">проектов</text>\n'
     )
     for index, (x, y) in enumerate(((78, 92), (402, 92), (78, 212), (402, 212))):

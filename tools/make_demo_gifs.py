@@ -25,7 +25,7 @@ SCALE = 2
 FRAMES = 18
 WINDOW_SECONDS = 3.6
 FRAME_MS = 200
-PALETTE = 64
+PALETTE = 160
 
 CHROME_CANDIDATES = [
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -119,7 +119,7 @@ def build(browser: str, key: str, name: str, work: str, out_dir: str = OUT_DIR) 
         shoot(browser, work, svg, seconds, raw)
         image = Image.open(raw).convert("RGB")
         small = image.resize((WIDTH, HEIGHT), Image.LANCZOS)
-        frames.append(small.quantize(colors=PALETTE, method=Image.MEDIANCUT, dither=Image.NONE))
+        frames.append(small.quantize(colors=PALETTE, method=Image.MEDIANCUT, dither=Image.Dither.NONE))
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, f"{key}.gif")
     frames[0].save(
